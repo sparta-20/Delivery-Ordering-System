@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class TestService {
-    private final TestEntityRepository repository;
 
+    private final TestEntityRepository repository;
 
     @Transactional
     public Long save(TestEntity entity) {
