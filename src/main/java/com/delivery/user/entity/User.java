@@ -30,7 +30,7 @@ public class User extends Timestamped {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private PublicStatus publicStatus = PublicStatus.PUBLIC;;
+    private PublicStatus publicStatus = PublicStatus.PUBLIC;
 
     public User(String nickname, String email, String password) {
         this.nickname = nickname;
