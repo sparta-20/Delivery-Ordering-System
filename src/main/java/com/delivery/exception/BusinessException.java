@@ -1,4 +1,4 @@
-package com.delivery.execption;
+package com.delivery.exception;
 
 import lombok.Getter;
 
