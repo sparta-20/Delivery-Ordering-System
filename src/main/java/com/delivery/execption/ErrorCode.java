@@ -14,7 +14,8 @@ public enum ErrorCode {
 
     // 사용자 도메인 예시
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U001", "사용자를 찾을 수 없습니다."),
-    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "U002", "이미 가입된 이메일입니다.");
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "U002", "이미 가입된 이메일입니다."),
+    DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "U003", "이미 사용 중인 닉네임입니다.");
 
     private final HttpStatus status;
     private final String code;
@@ -25,5 +26,4 @@ public enum ErrorCode {
         this.code = code;
         this.message = message;
     }
-
 }
