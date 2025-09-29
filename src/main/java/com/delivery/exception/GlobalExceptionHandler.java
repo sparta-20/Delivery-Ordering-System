@@ -1,4 +1,4 @@
-package com.delivery.execption;
+package com.delivery.exception;
 
 import com.delivery.common.ApiResponse;
 import lombok.extern.slf4j.Slf4j;

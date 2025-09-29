@@ -1,7 +1,7 @@
 package com.delivery.security;
 
-import com.delivery.execption.BusinessException;
-import com.delivery.execption.ErrorCode;
+import com.delivery.exception.BusinessException;
+import com.delivery.exception.ErrorCode;
 import com.delivery.user.entity.User;
 import com.delivery.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,8 @@
 package com.delivery.test;
 
 import com.delivery.common.ApiResponse;
-import com.delivery.execption.BusinessException;
-import com.delivery.execption.ErrorCode;
+import com.delivery.exception.BusinessException;
+import com.delivery.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
