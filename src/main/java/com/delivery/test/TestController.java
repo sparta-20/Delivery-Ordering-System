@@ -18,17 +18,21 @@ public class TestController {
 
     /**
      * @return {
-     * "data": "value"
+     *   "data": {
+     *     "id": 1,
+     *     "value": "value",
+     *     "isNullField": null
+     *   }
      * }
      */
     @GetMapping("/test/v1")
-    public ResponseEntity<ApiResponse<String>> get() {
+    public ResponseEntity<ApiResponse<TestEntity>> get() {
 
         Long id = testService.save(new TestEntity("value"));
         TestEntity testEntity = testService.getTestEntity(id);
 
         System.out.println(testEntity.getValue());
-        return ResponseEntity.ok(ApiResponse.success(testEntity.getValue()));
+        return ResponseEntity.ok(ApiResponse.success(testEntity));
     }
 
     /**
