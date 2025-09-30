@@ -18,9 +18,6 @@ public class TestController {
 
     /**
      * @return {
-     * "success": true,
-     * "code": "S000",
-     * "message": "성공",
      * "data": "value"
      * }
      */
@@ -36,10 +33,8 @@ public class TestController {
 
     /**
      * @return {
-     * "success": false,
      * "code": "U002",
      * "message": "이미 가입된 이메일입니다.",
-     * "data": null
      * }
      */
     @GetMapping("/test/error/v1")
