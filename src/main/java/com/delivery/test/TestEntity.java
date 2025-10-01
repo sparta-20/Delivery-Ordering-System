@@ -19,6 +19,8 @@ class TestEntity {
 
     private String value;
 
+    private String isNullField = null;
+
     public TestEntity(String value) {
         this.value = value;
     }

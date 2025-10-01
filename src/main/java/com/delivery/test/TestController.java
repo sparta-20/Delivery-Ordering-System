@@ -18,28 +18,27 @@ public class TestController {
 
     /**
      * @return {
-     * "success": true,
-     * "code": "S000",
-     * "message": "성공",
-     * "data": "value"
+     *   "data": {
+     *     "id": 1,
+     *     "value": "value",
+     *     "isNullField": null
+     *   }
      * }
      */
     @GetMapping("/test/v1")
-    public ResponseEntity<ApiResponse<String>> get() {
+    public ResponseEntity<ApiResponse<TestEntity>> get() {
 
         Long id = testService.save(new TestEntity("value"));
         TestEntity testEntity = testService.getTestEntity(id);
 
         System.out.println(testEntity.getValue());
-        return ResponseEntity.ok(ApiResponse.success(testEntity.getValue()));
+        return ResponseEntity.ok(ApiResponse.success(testEntity));
     }
 
     /**
      * @return {
-     * "success": false,
      * "code": "U002",
      * "message": "이미 가입된 이메일입니다.",
-     * "data": null
      * }
      */
     @GetMapping("/test/error/v1")
