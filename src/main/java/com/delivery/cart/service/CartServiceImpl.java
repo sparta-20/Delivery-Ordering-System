@@ -6,6 +6,8 @@ import com.delivery.cart.entity.Cart;
 import com.delivery.cart.entity.CartItem;
 import com.delivery.cart.repository.CartItemRepository;
 import com.delivery.cart.repository.CartRepository;
+import com.delivery.exception.BusinessException;
+import com.delivery.exception.ErrorCode;
 import com.delivery.user.entity.User;
 import com.delivery.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,7 @@ public class CartServiceImpl implements CartService {
     @Transactional
     public Cart addToCart(Long userId, CartRequestDto dto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
         Cart cart = Cart.builder()
                 .user(user)
                 .build();
