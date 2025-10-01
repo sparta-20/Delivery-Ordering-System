@@ -2,6 +2,7 @@ package com.delivery.order.controller;
 
 import com.delivery.order.dto.OrderResponseDto;
 import com.delivery.order.service.OrderService;
+import com.delivery.order.service.OrderServiceImpl;
 import com.delivery.security.UserDetailsImpl;
 import com.delivery.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,6 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    // 추후 JWT 기반 유저 정보 수정
     public ResponseEntity<?> getOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         List<OrderResponseDto.OrderListDto> list = orderService.getOrderList(user.getUserId());
