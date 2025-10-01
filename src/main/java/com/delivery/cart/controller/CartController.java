@@ -27,7 +27,7 @@ public class CartController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody CartRequestDto.AddCartItemDto dto) {
         User user = userDetails.getUser();
-        Cart cart = cartService.addToCart(user.getUserId(), dto.getMenuId(), dto.getQuantity());
+        Cart cart = cartService.addToCart(user.getUserId(), dto);
         return ResponseEntity
                 .created(URI.create("/api/v1/orders/cart/" + cart.getCartId()))
                 .build();
