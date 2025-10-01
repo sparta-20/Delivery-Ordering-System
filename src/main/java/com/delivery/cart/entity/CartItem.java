@@ -38,4 +38,8 @@ public class CartItem extends Timestamped {
         this.menuId = menuId;
         this.quantity = quantity;
     }
+
+    public void updateQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
 }

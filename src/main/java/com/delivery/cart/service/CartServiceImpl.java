@@ -4,6 +4,7 @@ import com.delivery.cart.dto.CartItemDto;
 import com.delivery.cart.dto.CartRequestDto;
 import com.delivery.cart.entity.Cart;
 import com.delivery.cart.entity.CartItem;
+import com.delivery.cart.entity.CartStatus;
 import com.delivery.cart.repository.CartItemRepository;
 import com.delivery.cart.repository.CartRepository;
 import com.delivery.exception.BusinessException;
@@ -14,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
@@ -23,22 +26,21 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public Cart addToCart(Long userId, CartRequestDto dto) {
+    public Cart addToCart(Long userId, UUID menuId, Integer quantity) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-        Cart cart = Cart.builder()
-                .user(user)
-                .build();
-        cartRepository.save(cart);
-
-        for (CartItemDto itemDto: dto.getItems()) {
-            CartItem item = CartItem.builder()
+        Cart cart = cartRepository.findByUserAndStatus(user, CartStatus.CART)
+                        .orElseGet(() -> cartRepository.save(Cart.builder().user(user).build()));
+        CartItem item = cartItemRepository.findByCartAndMenuId(cart, menuId).orElse(null);
+        if (item != null) item.updateQuantity(item.getQuantity() + quantity);
+        else {
+            CartItem newItem = CartItem.builder()
                     .cart(cart)
-                    .menuId(itemDto.getMenuId())
-                    .quantity(itemDto.getQuantity())
+                    .menuId(menuId)
+                    .quantity(quantity)
                     .build();
-            cartItemRepository.save(item);
-            cart.addToCart(item);
+            cartItemRepository.save(newItem);
+            cart.addToCart(newItem);
         }
         return cart;
     }
