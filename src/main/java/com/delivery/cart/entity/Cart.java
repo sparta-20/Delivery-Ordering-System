@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -22,25 +24,20 @@ public class Cart extends Timestamped {
     @Enumerated(EnumType.STRING)
     private CartStatus status = CartStatus.CART;
 
-    @Column(nullable = false)
-    private Integer quantity;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    /* Menu 연결 필요
-    private Menu menu;
-     */
-
-    // 추후 수정될 항목
-    @Column(nullable = false)
-    private UUID menuId;
+    @OneToMany(mappedBy = "cart")
+    private List<CartItem> items = new ArrayList<>();
 
     @Builder
-    public Cart(Integer quantity, User user, UUID menuId) {
-        this.quantity = quantity;
+    public Cart(User user) {
         this.user = user;
-        this.menuId = menuId;
     }
+
+    public void addToCart(CartItem cartItem) {
+        this.items.add(cartItem);
+    }
+
 }

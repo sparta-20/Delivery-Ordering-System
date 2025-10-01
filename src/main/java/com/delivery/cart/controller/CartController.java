@@ -25,9 +25,9 @@ public class CartController {
     @PostMapping
     public ResponseEntity<?> addToCart(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody CartRequestDto.CartInfoDto cartInfoDto) {
+            @RequestBody CartRequestDto dto) {
         User user = userDetails.getUser();
-        Cart cart = cartService.addToCart(user.getUserId(), cartInfoDto);
+        Cart cart = cartService.addToCart(user.getUserId(), dto);
         return ResponseEntity
                 .created(URI.create("/api/v1/orders/cart/" + cart.getCartId()))
                 .build();
