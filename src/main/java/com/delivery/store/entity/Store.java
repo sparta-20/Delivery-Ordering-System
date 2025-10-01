@@ -15,7 +15,8 @@ public class Store extends Timestamped {
 
     // PK를 자동생성: DB생성 방식
     @Id
-    @Column(columnDefinition = "UUID DEFAULT gen_random_uuid()", updatable = false, nullable = false)
+    //@Column(columnDefinition = "UUID DEFAULT gen_random_uuid()", updatable = false, nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false, length=100)
