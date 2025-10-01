@@ -33,6 +33,8 @@ public class Order extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    // Store 추가 필요
+
     @OneToMany(mappedBy = "order")
     private List<OrderMenu> orderMenus = new ArrayList<>();
 }
