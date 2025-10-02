@@ -2,12 +2,13 @@ package com.delivery.user.entity;
 
 import com.delivery.common.entity.Timestamped;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor
 @Table(name = "p_user")
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 @Getter
 public class User extends Timestamped {
 
