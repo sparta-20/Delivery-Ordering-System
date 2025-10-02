@@ -25,7 +25,7 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<?> getUserMe(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User requester = userDetails.getUser();
-        UserResponse userResponse = userService.getUserIfAccessible(requester.getUserId(), requester.getUserId());
-        return new ResponseEntity<>(ApiResponse.success(userResponse), HttpStatus.OK);
+        User user = userService.getUserIfAccessible(requester.getUserId(), requester.getUserId());
+        return new ResponseEntity<>(ApiResponse.success(UserResponse.from(user)), HttpStatus.OK);
     }
 }

@@ -39,7 +39,7 @@ class UserServiceTest {
         when(userRepository.findByUserIdAndDeletedAtIsNull(userId))
                 .thenReturn(Optional.of(user));
 
-        UserResponse result = userService.getUserIfAccessible(requesterId, userId);
+        User result = userService.getUserIfAccessible(requesterId, userId);
 
         assertEquals(userId, result.getUserId());
     }

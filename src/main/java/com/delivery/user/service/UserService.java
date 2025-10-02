@@ -15,13 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
 
-    public UserResponse getUserIfAccessible(Long requesterId, Long userId) {
+    public User getUserIfAccessible(Long requesterId, Long userId) {
         if(!requesterId.equals(userId)){
             throw new BusinessException(ErrorCode.USER_ACCESS_DENIED);
         }
 
-        User user = getActivityUser(userId);
-        return UserResponse.from(user);
+        return getActivityUser(userId);
     }
 
     private User getActivityUser(Long userId) {
