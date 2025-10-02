@@ -32,10 +32,18 @@ public class CartItem extends Timestamped {
     @Column(nullable = false)
     private UUID menuId;
 
+    @Column(nullable = false)
+    private Integer price;
+
     @Builder
-    public CartItem(Cart cart, UUID menuId, Integer quantity) {
+    public CartItem(Cart cart, UUID menuId, Integer quantity, Integer price) {
         this.cart = cart;
         this.menuId = menuId;
+        this.quantity = quantity;
+        this.price = price;
+    }
+
+    public void updateQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 }
