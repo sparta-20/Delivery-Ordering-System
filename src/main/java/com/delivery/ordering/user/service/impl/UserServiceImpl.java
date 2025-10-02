@@ -1,10 +1,10 @@
-package com.delivery.user.service.impl;
+package com.delivery.ordering.user.service.impl;
 
 import com.delivery.exception.BusinessException;
 import com.delivery.exception.ErrorCode;
 import com.delivery.user.entity.User;
 import com.delivery.user.repository.UserRepository;
-import com.delivery.user.service.UserService;
+import com.delivery.ordering.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

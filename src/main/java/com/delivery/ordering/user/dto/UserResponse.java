@@ -1,4 +1,4 @@
-package com.delivery.user.dto;
+package com.delivery.ordering.user.dto;
 
 import com.delivery.user.entity.PublicStatus;
 import com.delivery.user.entity.User;

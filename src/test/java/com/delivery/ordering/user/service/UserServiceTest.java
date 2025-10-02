@@ -1,8 +1,7 @@
-package com.delivery.user.service;
+package com.delivery.ordering.user.service;
 
 import com.delivery.exception.BusinessException;
 import com.delivery.exception.ErrorCode;
-import com.delivery.user.dto.UserResponse;
 import com.delivery.user.entity.User;
 import com.delivery.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
