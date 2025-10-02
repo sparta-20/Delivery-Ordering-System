@@ -1,6 +1,5 @@
-package com.delivery.cart.dto;
+package com.delivery.domain.cart.dto;
 
-import com.delivery.cart.entity.CartItem;
 import lombok.*;
 
 import java.util.List;

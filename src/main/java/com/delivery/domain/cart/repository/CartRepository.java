@@ -1,7 +1,7 @@
-package com.delivery.cart.repository;
+package com.delivery.domain.cart.repository;
 
-import com.delivery.cart.entity.Cart;
-import com.delivery.cart.entity.CartStatus;
+import com.delivery.domain.cart.entity.Cart;
+import com.delivery.domain.cart.entity.CartStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

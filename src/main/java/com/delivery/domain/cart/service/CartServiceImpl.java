@@ -1,22 +1,21 @@
-package com.delivery.cart.service;
+package com.delivery.domain.cart.service;
 
-import com.delivery.cart.dto.CartRequestDto;
-import com.delivery.cart.dto.CartResponseDto;
-import com.delivery.cart.entity.Cart;
-import com.delivery.cart.entity.CartItem;
-import com.delivery.cart.entity.CartStatus;
-import com.delivery.cart.repository.CartItemRepository;
-import com.delivery.cart.repository.CartRepository;
-import com.delivery.exception.BusinessException;
-import com.delivery.exception.ErrorCode;
-import com.delivery.user.entity.User;
-import com.delivery.user.repository.UserRepository;
+import com.delivery.domain.cart.dto.CartRequestDto;
+import com.delivery.domain.cart.dto.CartResponseDto;
+import com.delivery.domain.cart.entity.Cart;
+import com.delivery.domain.cart.entity.CartItem;
+import com.delivery.domain.cart.entity.CartStatus;
+import com.delivery.domain.cart.repository.CartItemRepository;
+import com.delivery.domain.cart.repository.CartRepository;
+import com.delivery.domain.user.entity.User;
+import com.delivery.domain.user.repository.UserRepository;
+import com.delivery.global.exception.BusinessException;
+import com.delivery.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
