@@ -1,14 +1,11 @@
-package com.delivery.store.dto;
+package com.delivery.domain.store.dto;
 
-import com.delivery.store.entity.Store;
-import lombok.Builder;
+import com.delivery.domain.store.entity.Store;
 import lombok.Getter;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
-@Builder
 public class StoreResponseDto {
 
     private UUID id;
@@ -36,7 +33,6 @@ public class StoreResponseDto {
         this.minPrice = store.getMinPrice();
         this.status = store.getStatus().name();
 
-
         if (store.getCategory() != null) {
             this.categoryId = store.getCategory().getId();
             this.categoryName = store.getCategory().getName();
@@ -45,7 +41,11 @@ public class StoreResponseDto {
         this.ownerUserId = store.getOwnerUserId();
         this.createdAt = store.getCreatedAt();
         this.modifiedAt = store.getModifiedAt();
-
     }
+
+    public static StoreResponseDto from(Store store) {
+        return new StoreResponseDto(store);
+    }
+
 
 }

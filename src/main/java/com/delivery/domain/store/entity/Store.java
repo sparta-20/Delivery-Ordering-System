@@ -1,6 +1,6 @@
-package com.delivery.store.entity;
-import com.delivery.common.entity.Timestamped;
-import com.delivery.store.model.StoreStatus;
+package com.delivery.domain.store.entity;
+import com.delivery.domain.store.model.StoreStatus;
+import com.delivery.global.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

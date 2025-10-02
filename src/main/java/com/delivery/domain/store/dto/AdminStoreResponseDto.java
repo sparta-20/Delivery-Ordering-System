@@ -1,4 +1,4 @@
-package com.delivery.store.dto;
+package com.delivery.domain.store.dto;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

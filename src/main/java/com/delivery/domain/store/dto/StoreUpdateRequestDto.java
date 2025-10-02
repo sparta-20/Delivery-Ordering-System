@@ -1,6 +1,5 @@
-package com.delivery.store.dto;
+package com.delivery.domain.store.dto;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -8,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class StoreCreateRequestDto {
+public class StoreUpdateRequestDto {
 
     @NotBlank(message = "가게명은 필수입니다.")
     private String name;
@@ -28,6 +27,4 @@ public class StoreCreateRequestDto {
     @NotNull(message = "카테고리는 필수입니다.")
     private Integer categoryId;
 
-    @NotNull(message = "점주 ID는 필수입니다.")
-    private Long ownerUserId;
 }
