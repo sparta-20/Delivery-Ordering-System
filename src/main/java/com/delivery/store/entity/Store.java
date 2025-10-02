@@ -15,7 +15,6 @@ public class Store extends Timestamped {
 
     // PK를 자동생성: DB생성 방식
     @Id
-    //@Column(columnDefinition = "UUID DEFAULT gen_random_uuid()", updatable = false, nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
@@ -47,8 +46,7 @@ public class Store extends Timestamped {
     @Column(nullable = false)
     private Long ownerUserId;
 
-    // 생성 팩토리
-    public static Store create(
+    public Store (
             String name,
             StoreCategory category,
             String address,
@@ -57,16 +55,14 @@ public class Store extends Timestamped {
             Integer minPrice,
             Long ownerUserId
     ){
-        Store store = new Store();
-        store.name = name;
-        store.category = category;
-        store.address = address;
-        store.city = city;
-        store.district = district;
-        store.minPrice = minPrice;
-        store.status = StoreStatus.ACTIVE;
-        store.ownerUserId = ownerUserId;
-        return store;
+        this.name = name;
+        this.category = category;
+        this.address = address;
+        this.city = city;
+        this.district = district;
+        this.minPrice = minPrice;
+        this.ownerUserId = ownerUserId;
+        this.status = StoreStatus.ACTIVE;
     }
 
     // 도메인 동작
