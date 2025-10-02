@@ -30,16 +30,5 @@ public class CartResponseDto {
         private Integer quantity;
         private Integer price;
         private Integer totalPrice;
-
-        public static CartItemDetailDto from(CartItem item) {
-            return CartItemDetailDto.builder()
-                    .cartItemId(item.getCartMenuId())
-                    .menuId(item.getMenuId())
-                    .menuName("메뉴 이름 " + item.getMenuId()) // 추후 수정 필요
-                    .quantity(item.getQuantity())
-                    .price(item.getPrice())
-                    .totalPrice(item.getPrice() * item.getQuantity())
-                    .build();
-        }
     }
 }

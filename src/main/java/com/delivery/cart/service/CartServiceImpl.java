@@ -53,10 +53,17 @@ public class CartServiceImpl implements CartService {
         Cart cart = cartRepository.findByUser_UserIdAndStatus(userId, CartStatus.CART)
                 .orElseGet(() -> Cart.builder().user(user).build());
         List<CartResponseDto.CartItemDetailDto> items = cart.getItems().stream()
-                .map(CartResponseDto.CartItemDetailDto::from)
+                .map(item -> CartResponseDto.CartItemDetailDto.builder()
+                        .cartItemId(item.getCartMenuId())
+                        .menuId(item.getMenuId())
+                        .menuName("메뉴 이름: " + item.getMenuId()) // 수정 필요
+                        .quantity(item.getQuantity())
+                        .price(item.getPrice())
+                        .totalPrice(item.getPrice() * item.getQuantity())
+                        .build())
                 .toList();
-        Integer totalPrice = items.stream()
-                .mapToInt(CartResponseDto.CartItemDetailDto::getTotalPrice)
+        int totalPrice = cart.getItems().stream()
+                .mapToInt(item -> item.getQuantity() * item.getPrice())
                 .sum();
         return CartResponseDto.CartListDto.builder()
                 .cartId(cart.getCartId())
