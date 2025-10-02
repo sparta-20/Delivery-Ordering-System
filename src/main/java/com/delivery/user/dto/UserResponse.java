@@ -4,16 +4,14 @@ import com.delivery.user.entity.PublicStatus;
 import com.delivery.user.entity.User;
 import com.delivery.user.entity.UserRoleEnum;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
 @Data
 @AllArgsConstructor
+@Builder
 public class UserResponse {
     private Long userId;
     private String nickname;

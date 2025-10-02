@@ -13,7 +13,10 @@ public enum ErrorCode {
     FORBIDDEN(HttpStatus.FORBIDDEN, "E004", "접근이 거부되었습니다."),
 
     // 사용자 도메인 예시
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U001", "사용자를 찾을 수 없습니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "US001", "사용자를 찾을 수 없습니다."),
+    USER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "US002", "접근 권한이 없습니다."),
+    ACTIVITY_USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "US003", "삭제되지 않은 사용자를 찾을 수 없습니다."),
+
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "U002", "이미 가입된 이메일입니다."),
     DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "U003", "이미 사용 중인 닉네임입니다."),
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "E005", "아이디 또는 비밀번호가 올바르지 않습니다."),

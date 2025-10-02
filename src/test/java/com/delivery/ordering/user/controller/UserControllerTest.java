@@ -3,9 +3,12 @@ package com.delivery.ordering.user.controller;
 import com.delivery.ordering.TestSecurityConfig;
 import com.delivery.ordering.WithMockCustomUser;
 import com.delivery.user.controller.UserController;
+import com.delivery.user.dto.UserResponse;
+import com.delivery.user.entity.UserRoleEnum;
 import com.delivery.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -21,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = {UserController.class})
 @Import(TestSecurityConfig.class)
 @ActiveProfiles("test")
-class UserControllerTest{
+class UserControllerTest {
 
     @Autowired
     protected MockMvc mockMvc;
@@ -33,14 +36,22 @@ class UserControllerTest{
     @DisplayName("내 정보를 조회할 수 있다")
     @WithMockCustomUser(id = 1L, nickname = "hong", email = "hong@example.com", role = "CUSTOMER")
     void 내_정보를_조회할_수_있다() throws Exception {
-        mockMvc.perform(
-                        get("/api/v1/users/me")
-                                .contentType("application/json")
+        UserResponse mockUserResponse = UserResponse.builder()
+                .userId(1L)
+                .nickname("nickname")
+                .email("hong@example.com")
+                .role(UserRoleEnum.CUSTOMER)
+                .build();
+
+        Mockito.when(userService.getUserIfAccessible(1L,1L)).thenReturn(mockUserResponse);
+
+        mockMvc.perform(get("/api/v1/users/me")
+                        .contentType("application/json")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.userId").value(1))
-                .andExpect(jsonPath("$.data.nickname").value("hong"))
+                .andExpect(jsonPath("$.data.nickname").value("nickname"))
                 .andExpect(jsonPath("$.data.email").value("hong@example.com"))
                 .andExpect(jsonPath("$.data.role").value("CUSTOMER"));
     }
