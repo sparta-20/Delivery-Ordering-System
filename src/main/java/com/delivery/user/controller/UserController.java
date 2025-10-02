@@ -1,11 +1,9 @@
 package com.delivery.user.controller;
 
 import com.delivery.common.ApiResponse;
-import com.delivery.jwt.JwtUtil;
 import com.delivery.security.UserDetailsImpl;
 import com.delivery.user.dto.UserResponse;
 import com.delivery.user.entity.User;
-import com.delivery.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
