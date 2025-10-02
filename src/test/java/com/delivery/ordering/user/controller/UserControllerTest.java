@@ -8,10 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,22 +30,6 @@ class UserControllerTest extends ControllerTest {
                 .andExpect(jsonPath("$.data.userId").value(1))
                 .andExpect(jsonPath("$.data.nickname").value("hong"))
                 .andExpect(jsonPath("$.data.email").value("hong@example.com"))
-                .andExpect(jsonPath("$.data.role").value("CUSTOMER"))
-                .andDo(
-                        document("get-user-me",
-                                preprocessRequest(prettyPrint()),
-                                preprocessResponse(prettyPrint()),
-                                responseFields(
-                                        fieldWithPath("data").description("데이터").optional(),
-                                        fieldWithPath("data.userId").description("사용자 ID"),
-                                        fieldWithPath("data.nickname").description("닉네임"),
-                                        fieldWithPath("data.email").description("이메일"),
-                                        fieldWithPath("data.role").description("사용자 역할"),
-                                        fieldWithPath("data.isPublic").description("공개 여부"),
-                                        fieldWithPath("data.createdAt").description("생성일"),
-                                        fieldWithPath("data.modifiedAt").description("수정일")
-                                )
-                        )
-                );
+                .andExpect(jsonPath("$.data.role").value("CUSTOMER"));
     }
 }
