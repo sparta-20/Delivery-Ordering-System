@@ -31,6 +31,9 @@ public class Cart extends Timestamped {
     @OneToMany(mappedBy = "cart")
     private List<CartItem> items = new ArrayList<>();
 
+    @Column
+    private UUID storeId;
+
     @Builder
     public Cart(User user) {
         this.user = user;
