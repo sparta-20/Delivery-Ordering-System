@@ -12,7 +12,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,7 +32,7 @@ public class CartController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getCart(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<CartResponseDto.CartListDto> getCart(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         CartResponseDto.CartListDto result = cartService.getCart(user.getUserId());
         return ResponseEntity.ok(result);
