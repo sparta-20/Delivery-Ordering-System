@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,5 +37,15 @@ public class CartController {
         User user = userDetails.getUser();
         CartResponseDto.CartListDto result = cartService.getCart(user.getUserId());
         return ResponseEntity.ok(result);
+    }
+
+    @PatchMapping("/items/{cartItemId}")
+    public ResponseEntity<Void> updateCartItem(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable("cartItemId") UUID cartItemId,
+            @RequestParam Integer quantity) {
+        User user = userDetails.getUser();
+        cartService.updateCartItem(user.getUserId(), cartItemId, quantity);
+        return ResponseEntity.noContent().build();
     }
 }
