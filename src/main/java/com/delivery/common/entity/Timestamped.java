@@ -40,4 +40,9 @@ public abstract class Timestamped {
         this.deletedAt = LocalDateTime.now();
         this.deletedBy = userId;
     }
+
+    public void cancelDeleted(Long userId) {
+        this.deletedAt = null;
+        this.deletedBy = userId;
+    }
 }
