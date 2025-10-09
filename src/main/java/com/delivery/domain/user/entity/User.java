@@ -38,4 +38,10 @@ public class User extends Timestamped {
         this.email = email;
         this.password = password;
     }
+
+    public void update(String nickname, String email, PublicStatus publicStatus) {
+        this.nickname = nickname;
+        this.email = email;
+        this.publicStatus = publicStatus;
+    }
 }
