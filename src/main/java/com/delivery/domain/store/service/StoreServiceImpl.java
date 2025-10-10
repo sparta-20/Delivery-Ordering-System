@@ -108,7 +108,7 @@ public class StoreServiceImpl implements StoreService {
 
 
 
-    // 누구나 전체 가게 목록 조회
+    // 전체 가게 목록 조회
     @Override
     public Page<StoreResponseDto> getStores(int page, int size, String sortBy, boolean isAsc) {
         Sort.Direction dir = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
@@ -121,7 +121,9 @@ public class StoreServiceImpl implements StoreService {
 
     // 가게 상세 조회
 
+
     // 지역별 가게 조회
+
 
     // 카테고리별 가게 조회
 

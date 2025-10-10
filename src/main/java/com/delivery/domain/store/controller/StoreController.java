@@ -58,13 +58,17 @@ public class StoreController {
         return ResponseEntity.noContent().build();
     }
 
+    // OWNER, MASTER - 본인 가게 조회
+
+
+    // MASTER - 점주별 가게 조회
 
 
 
-    //가게 검색 => 서치 기능에는 10건, 30건, 50건 기준으로 페이지에 노출됨. 기본은 10건, 생성일순
+    // 가게 검색 => 서치 기능에는 10건, 30건, 50건 기준으로 페이지에 노출됨. 기본은 10건, 생성일순
 
 
-    // 5. 전체 가게 목록 조회 => pageable로 만들기...
+    // 전체 가게 목록 조회 => pageable로 만들기...
     @GetMapping
     public Page<StoreResponseDto> getStores(
             @RequestParam("page") int page,
@@ -75,9 +79,11 @@ public class StoreController {
         return storeService.getStores(page - 1, size, sortBy, isAsc);
     }
 
-    // 6. 가게 상세 조회
+    // 가게 상세 조회
+
 
     // 지역별 가게 조회
+
 
     // 카테고리별 가게 조회
 
