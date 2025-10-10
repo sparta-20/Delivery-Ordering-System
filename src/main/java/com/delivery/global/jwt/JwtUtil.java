@@ -3,7 +3,6 @@ package com.delivery.global.jwt;
 import com.delivery.domain.user.entity.UserRoleEnum;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -25,8 +25,7 @@ public class JwtUtil {
 
     @Value("${jwt.secret.key}")
     private String secretKey;
-    private Key key;
-    private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+    private SecretKey key;
 
     @PostConstruct
     public void init() {
@@ -38,10 +37,10 @@ public class JwtUtil {
         Date date = new Date();
 
         return Jwts.builder()
-                .setSubject(username)
+                .subject(username)
                 .claim(AUTHORIZATION_KEY, role.getAuthority())
-                .setExpiration(new Date(date.getTime() + EXPIRE_TIME))
-                .signWith(key, signatureAlgorithm)
+                .expiration(new Date(date.getTime() + EXPIRE_TIME))
+                .signWith(key)
                 .compact();
     }
 
@@ -54,10 +53,10 @@ public class JwtUtil {
     }
 
     public void validateToken(String token) {
-        Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+        Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
     }
 
     public Claims getUserInfoFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
     }
 }
