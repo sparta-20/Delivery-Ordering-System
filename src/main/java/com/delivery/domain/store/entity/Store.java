@@ -1,5 +1,5 @@
 package com.delivery.domain.store.entity;
-import com.delivery.domain.store.model.StoreStatus;
+import com.delivery.domain.store.model.StoreStatusEnum;
 import com.delivery.global.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -16,7 +16,7 @@ public class Store extends Timestamped {
     // PK를 자동생성: DB생성 방식
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private UUID storeId;
 
     @Column(nullable = false, length=100)
     private String name;
@@ -35,20 +35,21 @@ public class Store extends Timestamped {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
-    private StoreCategory category;
+    private StoreCategory categoryId;
 
     // 상태값을 칼럼으로 저장하는 Enum에는 @Enumerated를 붙여서 안전하게 매핑함.
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private StoreStatus status = StoreStatus.ACTIVE;
+    private StoreStatusEnum status = StoreStatusEnum.ACTIVE;
 
     // 외부 User 서비스의 사용자 PK만 보관
     @Column(nullable = false)
     private Long ownerUserId;
 
+    // 가게 생성 생성자
     public Store (
             String name,
-            StoreCategory category,
+            StoreCategory categoryId,
             String address,
             String city,
             String district,
@@ -56,17 +57,34 @@ public class Store extends Timestamped {
             Long ownerUserId
     ){
         this.name = name;
-        this.category = category;
+        this.categoryId = categoryId;
         this.address = address;
         this.city = city;
         this.district = district;
         this.minPrice = minPrice;
         this.ownerUserId = ownerUserId;
-        this.status = StoreStatus.ACTIVE;
+        this.status = StoreStatusEnum.ACTIVE;
+    }
+
+    // 가게 수정 메서드
+    public void update(String name,
+                       StoreCategory categoryId,
+                       String address,
+                       String city,
+                       String district,
+                       Integer minPrice,
+                       StoreStatusEnum status) {
+        this.name = name;
+        this.categoryId = categoryId;
+        this.address = address;
+        this.city = city;
+        this.district = district;
+        this.minPrice = minPrice;
+        this.status = status;
     }
 
     // 도메인 동작
-    public void changeStatus(StoreStatus newStatus){
+    public void changeStatus(StoreStatusEnum newStatus){
         this.status = newStatus;
     }
 

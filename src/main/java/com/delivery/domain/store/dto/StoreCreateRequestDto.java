@@ -1,10 +1,13 @@
 package com.delivery.domain.store.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
@@ -26,8 +29,9 @@ public class StoreCreateRequestDto {
     private Integer minPrice;
 
     @NotNull(message = "카테고리는 필수입니다.")
-    private Integer categoryId;
+    private UUID categoryId;
 
-    @NotNull(message = "점주 ID는 필수입니다.")
+    //@NotNull(message = "점주 ID는 필수입니다.")
+    @JsonIgnore
     private Long ownerUserId;
 }

@@ -8,7 +8,7 @@ import java.util.UUID;
 @Getter
 public class StoreResponseDto {
 
-    private UUID id;
+    private UUID storeId;
     private String name;
     private String address;
     private String city;
@@ -16,7 +16,7 @@ public class StoreResponseDto {
     private Integer minPrice;
     private String status;
 
-    private Integer categoryId;
+    private UUID categoryId;
     private String categoryName;
 
     private Long ownerUserId;
@@ -25,7 +25,7 @@ public class StoreResponseDto {
     private LocalDateTime modifiedAt;
 
     public StoreResponseDto(Store store) {
-        this.id = store.getId();
+        this.storeId = store.getStoreId();
         this.name = store.getName();
         this.address = store.getAddress();
         this.city = store.getCity();
@@ -33,9 +33,9 @@ public class StoreResponseDto {
         this.minPrice = store.getMinPrice();
         this.status = store.getStatus().name();
 
-        if (store.getCategory() != null) {
-            this.categoryId = store.getCategory().getId();
-            this.categoryName = store.getCategory().getName();
+        if (store.getCategoryId() != null) {
+            this.categoryId = store.getCategoryId().getCategoryId();
+            this.categoryName = store.getCategoryId().getCategoryName();
         }
 
         this.ownerUserId = store.getOwnerUserId();

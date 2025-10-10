@@ -5,24 +5,25 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @NoArgsConstructor
 @Table(name = "p_store_category")
 public class StoreCategory extends Timestamped {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID categoryId;
 
     @Column(nullable = false, length = 50)
-    private String name;
+    private String categoryName;
 
     @Column(nullable = false)
     private boolean isActive = true;
 
-    public StoreCategory(String code, String name) {
-        this.name = name;
-        this.isActive = true;
+    public StoreCategory(String name) {
+        this.categoryName = name;
     }
 
     public void activate()   { this.isActive = true; }

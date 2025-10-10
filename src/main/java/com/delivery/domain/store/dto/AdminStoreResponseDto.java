@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public class AdminStoreResponseDto {
 
-    private UUID id;
+    private UUID storeId;
     private String name;
     private String address;
     private String city;
@@ -13,7 +13,7 @@ public class AdminStoreResponseDto {
     private Integer minPrice;
     private String status;
 
-    private Integer categoryId;
+    private UUID categoryId;
     private String categoryName;
 
     private Long ownerUserId;

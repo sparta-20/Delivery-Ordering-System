@@ -1,6 +1,6 @@
 package com.delivery.domain.store.model;
 
-public enum StoreStatus {
+public enum StoreStatusEnum {
     ACTIVE,
     INACTIVE
 }
