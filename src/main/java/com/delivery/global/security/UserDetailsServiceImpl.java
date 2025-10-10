@@ -24,7 +24,7 @@ public class UserDetailsServiceImpl implements CustomUserDetailsService {
     }
 
     public UserDetails loadUserByUserId(Long userId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         return new UserDetailsImpl(user);
