@@ -105,18 +105,7 @@ public class StoreServiceImpl implements StoreService {
     // MASTER - 점주별 가게 조회
 
 
-
-
-
     // 전체 가게 목록 조회
-    @Override
-    public Page<StoreResponseDto> getStores(int page, int size, String sortBy, boolean isAsc) {
-        Sort.Direction dir = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sortBy));
-
-        Page<Store> stores = storeRepository.findAll(pageable);
-        return stores.map(StoreResponseDto::new);
-    }
 
 
     // 가게 상세 조회

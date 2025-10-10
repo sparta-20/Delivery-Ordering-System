@@ -33,7 +33,7 @@ public interface StoreService {
 
 
     // 전체 가게 목록 조회
-    Page<StoreResponseDto> getStores(int page, int size, String sortBy, boolean isAsc);
+
 
 
     // 가게 상세 조회
