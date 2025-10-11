@@ -1,6 +1,7 @@
 package com.delivery.domain.store.controller;
 import com.delivery.domain.store.dto.StoreUpdateReq;
 import com.delivery.domain.store.service.StoreService;
+import com.delivery.domain.store.util.PageableUtils;
 import com.delivery.domain.user.entity.User;
 import com.delivery.global.common.ApiResponse;
 import com.delivery.global.security.UserDetailsImpl;
@@ -8,6 +9,9 @@ import com.delivery.domain.store.dto.StoreCreateReq;
 import com.delivery.domain.store.dto.StoreRes;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -57,6 +61,17 @@ public class StoreController {
         return ResponseEntity.noContent().build();
     }
 
+    // OWNER, MASTER - 본인 가게 조회
+    @PreAuthorize("hasAnyRole('OWNER', 'MASTER')")
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<Page<StoreRes>>> getMyStores(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PageableDefault(size = 10) Pageable pageable){
+        Pageable p = PageableUtils.enforce(pageable);
+        User user = userDetails.getUser();
+        Page<StoreRes> result = storeService.getMyStores(user.getUserId(), p);
+        return ResponseEntity.ok(ApiResponse.success(result));
+    }
 
 }
 

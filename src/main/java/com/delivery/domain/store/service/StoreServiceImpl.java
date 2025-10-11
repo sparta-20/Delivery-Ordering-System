@@ -1,5 +1,4 @@
 package com.delivery.domain.store.service;
-
 import com.delivery.domain.store.dto.StoreCreateReq;
 import com.delivery.domain.store.dto.StoreRes;
 import com.delivery.domain.store.dto.StoreUpdateReq;
@@ -13,6 +12,8 @@ import com.delivery.domain.user.entity.UserRoleEnum;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,6 +99,18 @@ public class StoreServiceImpl implements StoreService {
         store.markDeleted();
         return new StoreRes(store);
     }
+
+
+    // OWNER, MASTER - 본인 가게 조회
+    @Override
+    public Page<StoreRes> getMyStores(Long userId, Pageable pageable){
+        Page<Store> stores = storeRepository.findAllByOwnerUserId(userId, pageable);
+        if(stores.isEmpty()){
+            throw new BusinessException(ErrorCode.STORE_NOT_FOUND);
+        }
+        return stores.map(StoreRes::from);
+    }
+
 
 }
 
