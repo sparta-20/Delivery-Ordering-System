@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +49,12 @@ public class CartServiceImpl implements CartService {
                 .totalPrice(totalPrice)
                 .items(items)
                 .build();
+    }
+
+    @Override
+    public void updateCartItem(Long userId, UUID cartItemId, Integer quantity) {
+        CartItem item = findCartItem(cartItemId, userId);
+        item.updateQuantity(quantity);
     }
 
     private User findUserById(Long userId) {
@@ -88,5 +95,9 @@ public class CartServiceImpl implements CartService {
         return items.stream()
                 .mapToInt(item -> item.getQuantity() * item.getPrice())
                 .sum();
+    }
+
+    private CartItem findCartItem(UUID cartItemId, Long userId) {
+        return cartItemRepository.findByCartMenuIdAndCart_User_UserId(cartItemId, userId).orElseThrow(() -> new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR));
     }
 }
