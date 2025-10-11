@@ -39,13 +39,12 @@ public class CartController {
         return ResponseEntity.ok(result);
     }
 
-    @PatchMapping("/items/{cartItemId}")
+    @PatchMapping("/items")
     public ResponseEntity<Void> updateCartItem(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable("cartItemId") UUID cartItemId,
-            @RequestParam Integer quantity) {
+            @RequestBody CartRequestDto.UpdateCartItemDto dto) {
         User user = userDetails.getUser();
-        cartService.updateCartItem(user.getUserId(), cartItemId, quantity);
+        cartService.updateCartItem(user.getUserId(), dto.getCartItemId(), dto.getQuantity());
         return ResponseEntity.noContent().build();
     }
 }
