@@ -20,7 +20,6 @@ public class CartRequestDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UpdateCartItemDto {
-        private UUID cartItemId;
         private Integer quantity;
     }
 }

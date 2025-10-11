@@ -53,8 +53,8 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public void updateCartItem(Long userId, UUID cartItemId, Integer quantity) {
-        CartItem item = findCartItem(cartItemId, userId);
+    public void updateCartItem(Long userId, UUID itemId, Integer quantity) {
+        CartItem item = findCartItem(itemId, userId);
         item.updateQuantity(quantity);
     }
 
