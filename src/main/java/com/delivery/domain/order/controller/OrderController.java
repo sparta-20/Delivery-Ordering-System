@@ -1,5 +1,6 @@
 package com.delivery.domain.order.controller;
 
+import com.delivery.domain.order.dto.OrderRequestDto;
 import com.delivery.domain.order.dto.OrderResponseDto;
 import com.delivery.domain.order.service.OrderService;
 import com.delivery.global.security.UserDetailsImpl;
@@ -35,5 +36,13 @@ public class OrderController {
         User user = userDetails.getUser();
         // 추후 store -> 수정 (현재는 사장이 로그인했다고 가정하고 ID로 찾음)
         return ResponseEntity.ok(orderService.getOrdersByOwner(user.getUserId()));
+    }
+    @PatchMapping("/{orderId}/cancel")
+    public ResponseEntity<Void> cancelOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                            @PathVariable UUID orderId,
+                                            @RequestBody OrderRequestDto.CancelOrderDto dto) {
+        User user = userDetails.getUser();
+        orderService.cancelOrder(user.getUserId(), orderId);
+        return ResponseEntity.noContent().build();
     }
 }

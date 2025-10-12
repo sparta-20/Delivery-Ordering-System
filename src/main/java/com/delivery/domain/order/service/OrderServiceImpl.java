@@ -5,8 +5,10 @@ import com.delivery.domain.order.entity.Order;
 import com.delivery.domain.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -28,5 +30,9 @@ public class OrderServiceImpl implements OrderService {
         return orders.stream()
                 .map(OrderResponseDto.OrderListDto::from)
                 .toList();
+    }
+    
+    @Transactional
+    public void cancelOrder(Long userId, UUID orderId) {
     }
 }
