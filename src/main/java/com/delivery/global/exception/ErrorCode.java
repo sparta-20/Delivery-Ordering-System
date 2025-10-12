@@ -17,7 +17,14 @@ public enum ErrorCode {
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "U002", "이미 가입된 이메일입니다."),
     DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "U003", "이미 사용 중인 닉네임입니다."),
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "E005", "아이디 또는 비밀번호가 올바르지 않습니다."),
-    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "A001", "유효하지 않은 토큰입니다.");
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "A001", "유효하지 않은 토큰입니다."),
+
+    // AI 도메인
+    AI_API_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "AI001", "AI API 호출 중 오류가 발생했습니다."),
+    AI_RESPONSE_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "AI002", "AI 응답이 비어있습니다."),
+    AI_UNSUPPORTED_REQUEST_TYPE(HttpStatus.BAD_REQUEST, "AI003", "지원하지 않는 요청 타입입니다."),
+    AI_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "AI004", "AI 요청 기록을 찾을 수 없습니다."),
+    ;
 
     private final HttpStatus status;
     private final String code;
