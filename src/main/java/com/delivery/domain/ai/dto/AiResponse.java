@@ -13,18 +13,18 @@ import java.util.UUID;
 public class AiResponse {
     private UUID aiId;
     private Long userId;
-    private Long menuId;
+    private UUID menuId;
     private RequestTypeEnum requestType;
     private String prompt;
     private String response;
     private LocalDateTime createdAt;
 
     // Entity → DTO 변환
-    public static AiResponse from(Ai ai) {
+    public static AiResponse from(Ai ai, Long userId, UUID menuId) {
         return AiResponse.builder()
                 .aiId(ai.getAiId())
-                .userId(ai.getUser().getUserId())
-                .menuId(ai.getMenuId())
+                .userId(userId)
+                .menuId(menuId)
                 .requestType(ai.getRequestType())
                 .prompt(ai.getPrompt())
                 .response(ai.getResponse())
