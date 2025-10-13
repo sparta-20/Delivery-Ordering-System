@@ -24,3 +24,12 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     org.springframework.orm.jpa: DEBUG
     org.springframework.transaction: DEBUG
+
+
+jwt:
+  secret:
+    key: "jwt-key"
+  access-token:
+    expire-time: 1800000
+  refresh-token:
+    expire-time: 604800000

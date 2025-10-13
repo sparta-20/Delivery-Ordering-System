@@ -1,17 +1,18 @@
-package com.delivery.global.security;
+package com.delivery.global.security.filter;
 
 import com.delivery.domain.auth.dto.LoginRequestDto;
+import com.delivery.domain.auth.service.AuthService;
 import com.delivery.domain.user.entity.UserRoleEnum;
-import com.delivery.global.common.ApiResponse;
-import com.delivery.global.exception.BusinessException;
+import com.delivery.global.common.FilterResponseUtil;
 import com.delivery.global.exception.ErrorCode;
 import com.delivery.global.jwt.JwtUtil;
+import com.delivery.global.security.service.UserDetailsImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -26,9 +27,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final JwtUtil jwtUtil;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final AuthService authService;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil){
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, AuthService authService) {
         this.jwtUtil = jwtUtil;
+        this.authService = authService;
         setFilterProcessesUrl("/api/v1/auth/login");
     }
 
@@ -47,7 +50,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             return getAuthenticationManager().authenticate(authenticationToken);
 
         } catch (IOException e) {
-            throw new BusinessException(ErrorCode.INVALID_INPUT);
+            throw new AuthenticationServiceException(e.getMessage());
         }
     }
 
@@ -59,41 +62,28 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String nickname = userDetails.getUsername();
         UserRoleEnum role = userDetails.getRole();
 
-        String accessToken = jwtUtil.createToken(userId, nickname, role);
+        String accessToken = jwtUtil.createAccessToken(userId, nickname, role);
+        String refreshToken = jwtUtil.createRefreshToken(userId, nickname, role);
 
-        addAccessTokenToCookie(response, accessToken);
+        jwtUtil.addAccessTokenToCookie(response, accessToken);
+        authService.saveOrUpdateRefreshToken(userId, refreshToken);
 
         Map<String, Object> data = new HashMap<>();
         data.put("userId", userId);
         data.put("nickname", nickname);
         data.put("role", role.getAuthority());
 
-        ApiResponse<?> apiResponse = ApiResponse.success(data);
-        writeResponse(response, apiResponse);
+        FilterResponseUtil.sendSuccess(response, data);
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
-        ApiResponse<?> apiResponse = ApiResponse.error(ErrorCode.INVALID_CREDENTIALS.getCode(), ErrorCode.INVALID_CREDENTIALS.getMessage());
+        ErrorCode errorCode = ErrorCode.INVALID_NICKNAME;
 
-        writeResponse(response, apiResponse);
-    }
+        if (failed instanceof BadCredentialsException) {
+            errorCode = ErrorCode.INVALID_PASSWORD;
+        }
 
-    private void writeResponse(HttpServletResponse response, ApiResponse<?> apiResponse) throws IOException {
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        objectMapper.writeValue(response.getWriter(), apiResponse);
-    }
-
-    private void addAccessTokenToCookie(HttpServletResponse response, String token) {
-        ResponseCookie cookie = ResponseCookie.from("accessToken", token)
-                .path("/")
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("Lax")
-                .maxAge(30 * 60)
-                .build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        FilterResponseUtil.sendError(response, errorCode);
     }
 }
