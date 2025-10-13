@@ -1,8 +1,8 @@
 package com.delivery.domain.user.dto;
 
-import com.delivery.user.entity.PublicStatus;
-import com.delivery.user.entity.User;
-import com.delivery.user.entity.UserRoleEnum;
+import com.delivery.domain.user.entity.PublicStatus;
+import com.delivery.domain.user.entity.User;
+import com.delivery.domain.user.entity.UserRoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
