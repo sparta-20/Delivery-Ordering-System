@@ -37,10 +37,17 @@ public class Store extends Timestamped {
     @JoinColumn(name = "category_id", nullable = false)
     private StoreCategory categoryId;
 
-    // 상태값을 칼럼으로 저장하는 Enum에는 @Enumerated를 붙여서 안전하게 매핑함.
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private StoreStatusEnum status = StoreStatusEnum.ACTIVE;
+
+    public void changeStatus(StoreStatusEnum newStatus) {
+        this.status = newStatus;
+    }
+
+    public void markDeleted() {
+        this.status = StoreStatusEnum.INACTIVE;
+    }
 
     // 외부 User 서비스의 사용자 PK만 보관
     @Column(nullable = false)
@@ -81,11 +88,6 @@ public class Store extends Timestamped {
         this.district = district;
         this.minPrice = minPrice;
         this.status = status;
-    }
-
-    // 도메인 동작
-    public void changeStatus(StoreStatusEnum newStatus){
-        this.status = newStatus;
     }
 
 }

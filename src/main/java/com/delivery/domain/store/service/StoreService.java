@@ -4,13 +4,8 @@ import com.delivery.domain.store.dto.StoreCreateRequestDto;
 import com.delivery.domain.store.dto.StoreResponseDto;
 import com.delivery.domain.store.dto.StoreUpdateRequestDto;
 import com.delivery.domain.user.entity.User;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
 import java.util.UUID;
 
-@Service
 public interface StoreService {
 
     // OWNER, MASTER - 가게 생성

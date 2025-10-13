@@ -63,7 +63,7 @@ public class StoreServiceImpl implements StoreService {
         if(user.getRole() == UserRoleEnum.CUSTOMER){
             throw new BusinessException(ErrorCode.FORBIDDEN_UPDATE_STORE);
         }
-        if(user.getRole() == UserRoleEnum.MASTER && !store.getOwnerUserId().equals(user.getUserId())){
+        if(user.getRole() != UserRoleEnum.MASTER && !store.getOwnerUserId().equals(user.getUserId())){
             throw new BusinessException(ErrorCode.FORBIDDEN_UPDATE_STORE);
         }
 
@@ -92,10 +92,10 @@ public class StoreServiceImpl implements StoreService {
         if(user.getRole() == UserRoleEnum.CUSTOMER){
             throw new BusinessException(ErrorCode.FORBIDDEN_DELETE_STORE);
         }
-        if(user.getRole() == UserRoleEnum.MASTER && !store.getOwnerUserId().equals(user.getUserId())){
+        if(user.getRole() != UserRoleEnum.MASTER && !store.getOwnerUserId().equals(user.getUserId())){
             throw new BusinessException(ErrorCode.FORBIDDEN_DELETE_STORE);
         }
-        storeRepository.delete(store);
+        store.markDeleted();
         return new StoreResponseDto(store);
     }
 

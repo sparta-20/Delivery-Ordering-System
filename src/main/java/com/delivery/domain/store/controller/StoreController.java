@@ -27,7 +27,7 @@ public class StoreController {
     private final StoreService storeService;
 
     // OWNER, MASTER - 가게 생성
-    @PreAuthorize("hasAnyRole('OWNER', 'MASTER')")
+    @PreAuthorize("hasAnyRole('OWNER', 'MASTER', 'MANAGER')")
     @PostMapping
     public ResponseEntity<ApiResponse<StoreResponseDto>> createStore(
             @RequestBody @Valid StoreCreateRequestDto requestDto,
@@ -38,7 +38,7 @@ public class StoreController {
     }
 
     // OWNER, MASTER - 가게 수정
-    @PreAuthorize("hasAnyRole('OWNER', 'MASTER')")
+    @PreAuthorize("hasAnyRole('OWNER', 'MASTER','MANAGER')")
     @PutMapping("/{storeId}")
     public ResponseEntity<ApiResponse<StoreResponseDto>> updateStore(
             @PathVariable UUID storeId,
@@ -50,7 +50,7 @@ public class StoreController {
     }
 
     // OWNER, MASTER - 가게 삭제
-    @PreAuthorize("hasAnyRole('OWNER', 'MASTER')")
+    @PreAuthorize("hasAnyRole('OWNER', 'MASTER','MANAGER')")
     @DeleteMapping("/{storeId}")
     public ResponseEntity<ApiResponse<Void>> deleteStore(
             @PathVariable UUID storeId,

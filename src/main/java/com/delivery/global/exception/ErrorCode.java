@@ -22,7 +22,7 @@ public enum ErrorCode {
     // 가게 도메인
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "S001", "가게를 찾을 수 없습니다."),
     FORBIDDEN_CREATE_STORE(HttpStatus.FORBIDDEN, "S002", "가게를 생성할 권한이 없습니다."),
-    CATEGORY_NOT_FOUND(HttpStatus.FORBIDDEN, "C002", "카테고리를 찾을 수 없습니다." ),
+    CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "C002", "카테고리를 찾을 수 없습니다." ),
     FORBIDDEN_UPDATE_STORE(HttpStatus.FORBIDDEN, "S003", "가게를 수정할 권한이 없습니다."),
     FORBIDDEN_DELETE_STORE(HttpStatus.FORBIDDEN, "S004", "가게를 삭제할 권한이 없습니다.");
 
