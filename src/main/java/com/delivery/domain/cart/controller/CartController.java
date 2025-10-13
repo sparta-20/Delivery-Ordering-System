@@ -38,4 +38,11 @@ public class CartController {
         CartResponseDto.CartListDto result = cartService.getCart(user.getUserId());
         return ResponseEntity.ok(result);
     }
+
+    @PatchMapping("/clear")
+    public ResponseEntity<Void> clearCart(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+        cartService.clearCart(user.getUserId());
+        return ResponseEntity.noContent().build();
+    }
 }

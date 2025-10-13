@@ -50,6 +50,14 @@ public class CartServiceImpl implements CartService {
                 .build();
     }
 
+    @Override
+    @Transactional
+    public void clearCart(Long userId) {
+        Cart cart = cartRepository.findByUser_UserIdAndStatus(userId, CartStatus.CART)
+                .orElseThrow(() -> new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR));
+        cart.clearCart();
+    }
+
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
