@@ -119,7 +119,7 @@ public class StoreServiceImpl implements StoreService {
             throw new BusinessException(ErrorCode.FORBIDDEN_READ_STORE);
         }
 
-        Page<Store> stores = storeRepository.findAllByOwnerUserId(user.getUserId(), pageable);
+        Page<Store> stores = storeRepository.findAllByOwnerUserIdAndStatus(user.getUserId(), StoreStatusEnum.ACTIVE, pageable);
 
         if(stores.isEmpty()){
             throw new BusinessException(ErrorCode.STORE_NOT_FOUND);
@@ -135,7 +135,7 @@ public class StoreServiceImpl implements StoreService {
             throw new BusinessException(ErrorCode.FORBIDDEN_READ_STORE);
         }
 
-        Page<Store> stores = storeRepository.findAllByOwnerUserId(ownerUserId, pageable);
+        Page<Store> stores = storeRepository.findAllByOwnerUserIdAndStatus(ownerUserId, StoreStatusEnum.ACTIVE,pageable);
 
         if(stores.isEmpty()){
             throw new BusinessException(ErrorCode.STORE_NOT_FOUND);

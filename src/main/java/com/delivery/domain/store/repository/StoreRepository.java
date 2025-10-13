@@ -11,8 +11,7 @@ import java.util.UUID;
 
 public interface StoreRepository extends JpaRepository<Store,UUID> {
 
-    Optional<Store> findByStoreIdAndStatus(UUID storeId, StoreStatusEnum storeStatusEnum);
-
-    Page<Store> findAllByOwnerUserId(Long ownerUserId, Pageable pageable);
+    Optional<Store> findByStoreIdAndStatus(UUID storeId, StoreStatusEnum status);
+    Page<Store> findAllByOwnerUserIdAndStatus(Long ownerUserId, StoreStatusEnum status, Pageable pageable);
 
 }
