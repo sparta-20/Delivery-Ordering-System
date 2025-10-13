@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -45,6 +46,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthorizationFilter jwtAuthorizationFilter, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http.csrf((csrf) -> csrf.disable());
+
+        http.sessionManagement((session) ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        );
 
         //추후 경로 추가, ex) .requestMatchers("/stores/**", "/menus/**").hasRole("OWNER")
         http.authorizeHttpRequests((authorizeHttpRequests) ->

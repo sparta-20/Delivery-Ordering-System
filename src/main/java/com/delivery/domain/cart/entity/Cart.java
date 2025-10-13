@@ -43,4 +43,7 @@ public class Cart extends Timestamped {
         this.items.add(cartItem);
     }
 
+    public void clearCart() {
+        this.status = CartStatus.CART_CANCEL;
+    }
 }
