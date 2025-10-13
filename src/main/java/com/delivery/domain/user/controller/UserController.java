@@ -1,5 +1,6 @@
 package com.delivery.domain.user.controller;
 
+import com.delivery.domain.user.dto.UpdateUserPasswordRequest;
 import com.delivery.domain.user.dto.UpdateUserRequest;
 import com.delivery.domain.user.dto.UserResponse;
 import com.delivery.domain.user.entity.User;
@@ -36,5 +37,26 @@ public class UserController {
         User requester = userDetails.getUser();
         User user = userService.updateUser(requester.getUserId(), request);
         return ResponseEntity.ok(ApiResponse.success(UserResponse.from(user)));
+    }
+
+    @PostMapping("/me/password")
+    public ResponseEntity<?> updateUserMePassword(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Valid @RequestBody UpdateUserPasswordRequest request)
+    {
+        User requester = userDetails.getUser();
+        userService.updateUserPassword(requester.getUserId(), request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<?> updateUserMePassword(
+            @AuthenticationPrincipal UserDetailsImpl userDetails)
+    {
+        User requester = userDetails.getUser();
+        Long requesterUserId = requester.getUserId();
+        Long targetId = requester.getUserId();
+        userService.delete(requesterUserId, targetId);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -15,6 +15,8 @@ public enum ErrorCode {
     // 사용자 도메인 예시
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "US001", "사용자를 찾을 수 없습니다."),
     USER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "US002", "접근 권한이 없습니다."),
+    INVALID_CONFIRM_NEW_PASSWORD(HttpStatus.BAD_REQUEST, "US003", "확인 비밀번호가 틀렸습니다."),
+    INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "US004", "비밀번호가 틀렸습니다."),
 
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "U002", "이미 가입된 이메일입니다."),
     DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "U003", "이미 사용 중인 닉네임입니다."),

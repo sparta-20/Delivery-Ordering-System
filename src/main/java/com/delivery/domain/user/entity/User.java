@@ -44,4 +44,8 @@ public class User extends Timestamped {
         this.email = email;
         this.publicStatus = publicStatus;
     }
+
+    public void updatePassword(String encodePassword) {
+        this.password = encodePassword;
+    }
 }

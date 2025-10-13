@@ -1,5 +1,6 @@
 package com.delivery.domain.user.service.impl;
 
+import com.delivery.domain.user.dto.UpdateUserPasswordRequest;
 import com.delivery.domain.user.dto.UpdateUserRequest;
 import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.repository.UserRepository;
@@ -7,6 +8,7 @@ import com.delivery.domain.user.service.UserService;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,12 +20,15 @@ import java.util.Objects;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
+    @Override
     public User getUserById(Long userId) {
         return userRepository.findByUserIdAndDeletedAtIsNull(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
     }
 
+    @Override
     @Transactional
     public User updateUser(Long userId, UpdateUserRequest request) {
         request.trim();
@@ -33,8 +38,36 @@ public class UserServiceImpl implements UserService {
         validateEmail(user.getEmail(), request.getEmail());
 
         user.update(request.getNickname(), request.getEmail(), request.getPublicStatus());
-
         return user;
+    }
+
+    @Override
+    @Transactional
+    public User updateUserPassword(Long userId, UpdateUserPasswordRequest request) {
+        User user = getUserById(userId);
+
+        //현재 비밀번호 검증: 현재 비밀번호와 일치 하는가
+        String encodeCurrentPassword = passwordEncoder.encode(request.getCurrentPassword());
+        if(!user.getPassword().equals(encodeCurrentPassword)){
+            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        // 확인&변경 비밀번호 검증: 확인 비밀번호와 변경 비밀번호가 일치 하는가
+        String newPassword = request.getNewPassword();
+        String confirmNewPassword = request.getConfirmNewPassword();
+        if(!newPassword.equals(confirmNewPassword)){
+            throw new BusinessException(ErrorCode.INVALID_CONFIRM_NEW_PASSWORD);
+        }
+
+        user.updatePassword(passwordEncoder.encode(request.getNewPassword()));
+        return user;
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long requestUserId, Long userId) {
+        User user = getUserById(userId);
+        user.markDeleted(requestUserId);
     }
 
     private void validateNickname(String userNickname, String newNickname) {
