@@ -1,15 +1,17 @@
 package com.delivery.global.security;
 
 import com.delivery.domain.auth.dto.LoginRequestDto;
+import com.delivery.domain.user.entity.UserRoleEnum;
 import com.delivery.global.common.ApiResponse;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import com.delivery.global.jwt.JwtUtil;
-import com.delivery.domain.user.entity.UserRoleEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -51,15 +53,20 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
-        String nickname = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
-        UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authResult.getPrincipal();
 
-        String token = jwtUtil.createToken(nickname, role);
+        Long userId = userDetails.getUserId();
+        String nickname = userDetails.getUsername();
+        UserRoleEnum role = userDetails.getRole();
+
+        String accessToken = jwtUtil.createToken(userId, nickname, role);
+
+        addAccessTokenToCookie(response, accessToken);
 
         Map<String, Object> data = new HashMap<>();
+        data.put("userId", userId);
         data.put("nickname", nickname);
         data.put("role", role.getAuthority());
-        data.put("token", token);
 
         ApiResponse<?> apiResponse = ApiResponse.success(data);
         writeResponse(response, apiResponse);
@@ -76,5 +83,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         objectMapper.writeValue(response.getWriter(), apiResponse);
+    }
+
+    private void addAccessTokenToCookie(HttpServletResponse response, String token) {
+        ResponseCookie cookie = ResponseCookie.from("accessToken", token)
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Lax")
+                .maxAge(30 * 60)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 }
