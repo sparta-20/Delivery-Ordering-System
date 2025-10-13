@@ -6,12 +6,15 @@ import com.delivery.global.security.UserDetailsImpl;
 import com.delivery.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,5 +27,13 @@ public class OrderController {
         User user = userDetails.getUser();
         List<OrderResponseDto.OrderListDto> list = orderService.getOrderList(user.getUserId());
         return ResponseEntity.ok(list);
+    }
+
+    @PreAuthorize("hasRole('OWNER')")
+    @GetMapping("/owner")
+    public ResponseEntity<?> getOwnerOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+        // 추후 store -> 수정 (현재는 사장이 로그인했다고 가정하고 ID로 찾음)
+        return ResponseEntity.ok(orderService.getOrdersByOwner(user.getUserId()));
     }
 }

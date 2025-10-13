@@ -35,6 +35,10 @@ public class Order extends Timestamped {
 
     // Store 추가 필요
 
+    // 임시로 추가 -> 추후 Store과 연결
+    @Column(nullable = false)
+    private Long ownerId;
+
     @OneToMany(mappedBy = "order")
     private List<OrderMenu> orderMenus = new ArrayList<>();
 }

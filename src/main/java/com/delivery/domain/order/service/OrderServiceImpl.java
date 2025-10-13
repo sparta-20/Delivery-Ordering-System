@@ -20,4 +20,13 @@ public class OrderServiceImpl implements OrderService {
                 .map(OrderResponseDto.OrderListDto::from)
                 .toList();
     }
+
+    @Override
+    public List<OrderResponseDto.OrderListDto> getOrdersByOwner(Long ownerId) {
+        // 수정 필요
+        List<Order> orders = orderRepository.findByOwnerId(ownerId);
+        return orders.stream()
+                .map(OrderResponseDto.OrderListDto::from)
+                .toList();
+    }
 }
