@@ -6,7 +6,6 @@ import com.delivery.domain.store.dto.StoreUpdateReq;
 import com.delivery.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
 import java.util.UUID;
 
 public interface StoreService {
@@ -21,6 +20,7 @@ public interface StoreService {
     StoreRes deleteStore(UUID storeId, User user);
 
     // OWNER, MASTER - 본인 가게 조회
+
     Page<StoreRes> getMyStores(Long userId, Pageable pageable);
 
 

@@ -110,8 +110,6 @@ public class StoreServiceImpl implements StoreService {
         }
         return stores.map(StoreRes::from);
     }
-
-
 }
 
 

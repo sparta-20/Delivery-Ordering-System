@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -66,13 +65,12 @@ public class StoreController {
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<Page<StoreRes>>> getMyStores(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PageableDefault(size = 10) Pageable pageable){
+            Pageable pageable){
         Pageable p = PageableUtils.enforce(pageable);
         User user = userDetails.getUser();
         Page<StoreRes> result = storeService.getMyStores(user.getUserId(), p);
         return ResponseEntity.ok(ApiResponse.success(result));
     }
-
 }
 
 
