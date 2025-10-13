@@ -1,8 +1,9 @@
 package com.delivery.user.dto;
 
-import com.delivery.user.entity.PublicStatus;
-import com.delivery.user.entity.User;
-import com.delivery.user.entity.UserRoleEnum;
+import com.delivery.domain.user.dto.UserResponse;
+import com.delivery.domain.user.entity.PublicStatus;
+import com.delivery.domain.user.entity.User;
+import com.delivery.domain.user.entity.UserRoleEnum;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

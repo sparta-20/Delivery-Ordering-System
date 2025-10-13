@@ -1,7 +1,8 @@
 package com.delivery.user.service;
 
-import com.delivery.user.entity.User;
-import com.delivery.user.repository.UserRepository;
+import com.delivery.domain.user.entity.User;
+import com.delivery.domain.user.repository.UserRepository;
+import com.delivery.domain.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
