@@ -1,6 +1,6 @@
 package com.delivery.domain.store.dto;
 
-import com.delivery.domain.store.model.StoreStatusEnum;
+import com.delivery.domain.store.entity.StoreStatusEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

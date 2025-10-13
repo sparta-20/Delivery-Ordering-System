@@ -1,4 +1,4 @@
-package com.delivery.domain.store.model;
+package com.delivery.domain.store.entity;
 
 public enum StoreStatusEnum {
     ACTIVE,
