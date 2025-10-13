@@ -1,6 +1,5 @@
 package com.delivery.domain.store.dto;
 
-import com.delivery.domain.store.entity.StoreStatusEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -10,7 +9,7 @@ import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
-public class StoreUpdateRequestDto {
+public class StoreCreateReq {
 
     @NotBlank(message = "가게명은 필수입니다.")
     private String name;
@@ -30,6 +29,4 @@ public class StoreUpdateRequestDto {
     @NotNull(message = "카테고리는 필수입니다.")
     private UUID categoryId;
 
-    @NotNull(message = "상태값은 필수입니다.")
-    private StoreStatusEnum status;
 }

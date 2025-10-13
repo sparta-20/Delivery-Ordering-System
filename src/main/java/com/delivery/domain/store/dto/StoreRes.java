@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
-public class StoreResponseDto {
+public class StoreRes {
 
     private UUID storeId;
     private String name;
@@ -22,7 +22,7 @@ public class StoreResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public StoreResponseDto(Store store) {
+    public StoreRes(Store store) {
         this.storeId = store.getStoreId();
         this.name = store.getName();
         this.address = store.getAddress();
@@ -44,8 +44,8 @@ public class StoreResponseDto {
         this.modifiedAt = store.getModifiedAt();
     }
 
-    public static StoreResponseDto from(Store store) {
-        return new StoreResponseDto(store);
+    public static StoreRes from(Store store) {
+        return new StoreRes(store);
     }
 
 

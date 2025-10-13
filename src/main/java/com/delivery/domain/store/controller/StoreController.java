@@ -1,16 +1,13 @@
 package com.delivery.domain.store.controller;
-import com.delivery.domain.store.dto.StoreUpdateRequestDto;
+import com.delivery.domain.store.dto.StoreUpdateReq;
 import com.delivery.domain.store.service.StoreService;
 import com.delivery.domain.user.entity.User;
 import com.delivery.global.common.ApiResponse;
 import com.delivery.global.security.UserDetailsImpl;
-import com.delivery.domain.store.dto.StoreCreateRequestDto;
-import com.delivery.domain.store.dto.StoreResponseDto;
+import com.delivery.domain.store.dto.StoreCreateReq;
+import com.delivery.domain.store.dto.StoreRes;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,23 +26,23 @@ public class StoreController {
     // OWNER, MASTER - 가게 생성
     @PreAuthorize("hasAnyRole('OWNER', 'MASTER', 'MANAGER')")
     @PostMapping
-    public ResponseEntity<ApiResponse<StoreResponseDto>> createStore(
-            @RequestBody @Valid StoreCreateRequestDto requestDto,
+    public ResponseEntity<ApiResponse<StoreRes>> createStore(
+            @RequestBody @Valid StoreCreateReq requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails){
         User user = userDetails.getUser();
-        StoreResponseDto responseDto = storeService.createStore(requestDto, user);
+        StoreRes responseDto = storeService.createStore(requestDto, user);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(responseDto));
     }
 
     // OWNER, MASTER - 가게 수정
     @PreAuthorize("hasAnyRole('OWNER', 'MASTER','MANAGER')")
     @PutMapping("/{storeId}")
-    public ResponseEntity<ApiResponse<StoreResponseDto>> updateStore(
+    public ResponseEntity<ApiResponse<StoreRes>> updateStore(
             @PathVariable UUID storeId,
-            @RequestBody @Valid StoreUpdateRequestDto requestDto,
+            @RequestBody @Valid StoreUpdateReq requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails){
         User user = userDetails.getUser();
-        StoreResponseDto responseDto = storeService.updateStore(storeId, requestDto, user );
+        StoreRes responseDto = storeService.updateStore(storeId, requestDto, user );
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDto));
     }
 

@@ -1,8 +1,8 @@
 package com.delivery.domain.store.service;
 
-import com.delivery.domain.store.dto.StoreCreateRequestDto;
-import com.delivery.domain.store.dto.StoreResponseDto;
-import com.delivery.domain.store.dto.StoreUpdateRequestDto;
+import com.delivery.domain.store.dto.StoreCreateReq;
+import com.delivery.domain.store.dto.StoreRes;
+import com.delivery.domain.store.dto.StoreUpdateReq;
 import com.delivery.domain.store.entity.Store;
 import com.delivery.domain.store.entity.StoreCategory;
 import com.delivery.domain.store.entity.StoreStatusEnum;
@@ -29,7 +29,7 @@ public class StoreServiceImpl implements StoreService {
     // OWNER, MASTER, MANAGER - 가게 생성
     @Override
     @Transactional
-    public StoreResponseDto createStore(StoreCreateRequestDto requestDto, User user){
+    public StoreRes createStore(StoreCreateReq requestDto, User user){
         if(user.getRole() == UserRoleEnum.CUSTOMER){
             throw new BusinessException(ErrorCode.FORBIDDEN_CREATE_STORE);
         }
@@ -47,13 +47,13 @@ public class StoreServiceImpl implements StoreService {
                 user
         );
         storeRepository.save(store);
-        return new StoreResponseDto(store);
+        return new StoreRes(store);
     }
 
     // OWNER, MASTER, MANAGER - 가게 수정
     @Override
     @Transactional
-    public StoreResponseDto updateStore(UUID storeId, StoreUpdateRequestDto requestDto, User user){
+    public StoreRes updateStore(UUID storeId, StoreUpdateReq requestDto, User user){
         Store store = storeRepository.findByStoreIdAndStatus(storeId, StoreStatusEnum.ACTIVE).orElseThrow(
                 () -> new BusinessException(ErrorCode.STORE_NOT_FOUND));
 
@@ -77,13 +77,13 @@ public class StoreServiceImpl implements StoreService {
                 requestDto.getMinPrice(),
                 requestDto.getStatus()
         );
-        return new StoreResponseDto(store);
+        return new StoreRes(store);
     }
 
     // OWNER, MASTER - 가게 삭제
     @Override
     @Transactional
-    public StoreResponseDto deleteStore(UUID storeId, User user){
+    public StoreRes deleteStore(UUID storeId, User user){
         Store store = storeRepository.findByStoreIdAndStatus(storeId, StoreStatusEnum.ACTIVE).orElseThrow(
                 ()-> new BusinessException(ErrorCode.STORE_NOT_FOUND));
 
@@ -96,7 +96,7 @@ public class StoreServiceImpl implements StoreService {
         }
 
         store.markDeleted();
-        return new StoreResponseDto(store);
+        return new StoreRes(store);
     }
 
     // OWNER, MASTER - 본인 가게 조회
