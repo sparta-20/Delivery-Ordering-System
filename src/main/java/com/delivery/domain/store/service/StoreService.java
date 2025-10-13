@@ -19,9 +19,7 @@ public interface StoreService {
     // OWNER, MASTER - 가게 삭제
     StoreRes deleteStore(UUID storeId, User user);
 
-    // OWNER, MASTER - 본인 가게 조회
-
-    Page<StoreRes> getMyStores(Long userId, Pageable pageable);
-
+    // OWNER, MASTER - 본인 가게 조회<<<<<<< HEAD
+    Page<StoreRes> getMyStores(User user, Pageable pageable);
 
 }
