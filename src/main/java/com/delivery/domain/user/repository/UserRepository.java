@@ -1,6 +1,6 @@
-package com.delivery.domain.user.repository;
+package com.delivery.user.repository;
 
-import com.delivery.domain.user.entity.User;
+import com.delivery.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -10,5 +10,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
 
     Optional<User> findByNickname(String nickname);
+    Optional<User> findByUserIdAndDeletedAtIsNull(Long id);
     Optional<User> findByUserId(Long userId);
 }
