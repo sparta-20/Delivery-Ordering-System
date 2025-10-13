@@ -5,6 +5,7 @@ import com.delivery.domain.store.dto.StoreResponseDto;
 import com.delivery.domain.store.dto.StoreUpdateRequestDto;
 import com.delivery.domain.store.entity.Store;
 import com.delivery.domain.store.entity.StoreCategory;
+import com.delivery.domain.store.entity.StoreStatusEnum;
 import com.delivery.domain.store.repository.StoreCategoryRepository;
 import com.delivery.domain.store.repository.StoreRepository;
 import com.delivery.domain.user.entity.User;
@@ -12,10 +13,6 @@ import com.delivery.domain.user.entity.UserRoleEnum;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +26,7 @@ public class StoreServiceImpl implements StoreService {
     private final StoreRepository storeRepository;
     private final StoreCategoryRepository storeCategoryRepository;
 
-    // OWNER, MASTER - 가게 생성
+    // OWNER, MASTER, MANAGER - 가게 생성
     @Override
     @Transactional
     public StoreResponseDto createStore(StoreCreateRequestDto requestDto, User user){
@@ -47,23 +44,24 @@ public class StoreServiceImpl implements StoreService {
                 requestDto.getCity(),
                 requestDto.getDistrict(),
                 requestDto.getMinPrice(),
-                user.getUserId()
+                user
         );
         storeRepository.save(store);
         return new StoreResponseDto(store);
     }
 
-    // OWNER, MASTER - 가게 수정
+    // OWNER, MASTER, MANAGER - 가게 수정
     @Override
     @Transactional
     public StoreResponseDto updateStore(UUID storeId, StoreUpdateRequestDto requestDto, User user){
-        Store store = storeRepository.findById(storeId).orElseThrow(
+        Store store = storeRepository.findByStoreIdAndStatus(storeId, StoreStatusEnum.ACTIVE).orElseThrow(
                 () -> new BusinessException(ErrorCode.STORE_NOT_FOUND));
 
         if(user.getRole() == UserRoleEnum.CUSTOMER){
             throw new BusinessException(ErrorCode.FORBIDDEN_UPDATE_STORE);
         }
-        if(user.getRole() != UserRoleEnum.MASTER && !store.getOwnerUserId().equals(user.getUserId())){
+        if (!(user.getRole() == UserRoleEnum.MASTER || user.getRole() == UserRoleEnum.MANAGER ||
+                (user.getRole() == UserRoleEnum.OWNER && store.getOwner().getUserId().equals(user.getUserId())))) {
             throw new BusinessException(ErrorCode.FORBIDDEN_UPDATE_STORE);
         }
 
@@ -86,15 +84,17 @@ public class StoreServiceImpl implements StoreService {
     @Override
     @Transactional
     public StoreResponseDto deleteStore(UUID storeId, User user){
-        Store store = storeRepository.findById(storeId).orElseThrow(
+        Store store = storeRepository.findByStoreIdAndStatus(storeId, StoreStatusEnum.ACTIVE).orElseThrow(
                 ()-> new BusinessException(ErrorCode.STORE_NOT_FOUND));
 
         if(user.getRole() == UserRoleEnum.CUSTOMER){
             throw new BusinessException(ErrorCode.FORBIDDEN_DELETE_STORE);
         }
-        if(user.getRole() != UserRoleEnum.MASTER && !store.getOwnerUserId().equals(user.getUserId())){
+        if (!(user.getRole() == UserRoleEnum.MASTER || user.getRole() == UserRoleEnum.MANAGER ||
+                (user.getRole() == UserRoleEnum.OWNER && store.getOwner().getUserId().equals(user.getUserId())))) {
             throw new BusinessException(ErrorCode.FORBIDDEN_DELETE_STORE);
         }
+
         store.markDeleted();
         return new StoreResponseDto(store);
     }

@@ -31,7 +31,4 @@ public class StoreCreateRequestDto {
     @NotNull(message = "카테고리는 필수입니다.")
     private UUID categoryId;
 
-    //@NotNull(message = "점주 ID는 필수입니다.")
-    @JsonIgnore
-    private Long ownerUserId;
 }

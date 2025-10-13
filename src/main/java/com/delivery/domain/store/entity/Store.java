@@ -1,5 +1,5 @@
 package com.delivery.domain.store.entity;
-import com.delivery.domain.store.model.StoreStatusEnum;
+import com.delivery.domain.user.entity.User;
 import com.delivery.global.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -35,7 +35,7 @@ public class Store extends Timestamped {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
-    private StoreCategory categoryId;
+    private StoreCategory category;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -45,49 +45,65 @@ public class Store extends Timestamped {
         this.status = newStatus;
     }
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "owner_user_id", nullable = false)
+    private User owner;
+
+//    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Menu> menus = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Review> reviews = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Order> orders = new ArrayList<>();
+
+
+    //가게 비활성화 시 메뉴, 리뷰, 주문도 함께 비활성화됨.
     public void markDeleted() {
         this.status = StoreStatusEnum.INACTIVE;
+        /*
+        if (menus != null) menus.forEach(Menu::markDeleted);
+        if (reviews != null) reviews.forEach(Review::markDeleted);
+        if (orders != null) orders.forEach(Order::markDeleted);
+         */
     }
-
-    // 외부 User 서비스의 사용자 PK만 보관
-    @Column(nullable = false)
-    private Long ownerUserId;
 
     // 가게 생성 생성자
     public Store (
             String name,
-            StoreCategory categoryId,
+            StoreCategory category,
             String address,
             String city,
             String district,
             Integer minPrice,
-            Long ownerUserId
+            User owner
     ){
         this.name = name;
-        this.categoryId = categoryId;
+        this.category = category;
         this.address = address;
         this.city = city;
         this.district = district;
         this.minPrice = minPrice;
-        this.ownerUserId = ownerUserId;
+        this.owner = owner;
         this.status = StoreStatusEnum.ACTIVE;
     }
 
     // 가게 수정 메서드
     public void update(String name,
-                       StoreCategory categoryId,
+                       StoreCategory category,
                        String address,
                        String city,
                        String district,
                        Integer minPrice,
                        StoreStatusEnum status) {
-        this.name = name;
-        this.categoryId = categoryId;
-        this.address = address;
-        this.city = city;
-        this.district = district;
-        this.minPrice = minPrice;
-        this.status = status;
+        if (name != null) this.name = name;
+        if (category != null) this.category = category;
+        if (address != null) this.address = address;
+        if (city != null) this.city = city;
+        if (district != null) this.district = district;
+        if (minPrice != null) this.minPrice = minPrice;
+        if (status != null) this.status = status;
     }
 
 }

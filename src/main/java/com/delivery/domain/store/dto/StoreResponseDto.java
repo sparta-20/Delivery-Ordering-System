@@ -1,6 +1,7 @@
 package com.delivery.domain.store.dto;
 
 import com.delivery.domain.store.entity.Store;
+import com.delivery.domain.store.entity.StoreStatusEnum;
 import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -15,12 +16,9 @@ public class StoreResponseDto {
     private String district;
     private Integer minPrice;
     private String status;
-
     private UUID categoryId;
     private String categoryName;
-
     private Long ownerUserId;
-
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -31,14 +29,17 @@ public class StoreResponseDto {
         this.city = store.getCity();
         this.district = store.getDistrict();
         this.minPrice = store.getMinPrice();
-        this.status = store.getStatus().name();
+        this.status = store.getStatus()!= null ? store.getStatus().name() : StoreStatusEnum.ACTIVE.name();
 
-        if (store.getCategoryId() != null) {
-            this.categoryId = store.getCategoryId().getCategoryId();
-            this.categoryName = store.getCategoryId().getCategoryName();
+        if (store.getCategory() != null) {
+            this.categoryId = store.getCategory().getCategoryId();
+            this.categoryName = store.getCategory().getCategoryName();
         }
 
-        this.ownerUserId = store.getOwnerUserId();
+        if (store.getOwner() != null) {
+            this.ownerUserId = store.getOwner().getUserId();
+        }
+
         this.createdAt = store.getCreatedAt();
         this.modifiedAt = store.getModifiedAt();
     }
