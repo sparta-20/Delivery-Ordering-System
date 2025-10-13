@@ -3,9 +3,8 @@ package com.delivery.domain.order.service;
 import com.delivery.domain.order.dto.OrderRequestDto;
 import com.delivery.domain.order.dto.OrderResponseDto;
 import com.delivery.domain.order.entity.Order;
-import com.delivery.domain.order.entity.OrderStatus;
+import com.delivery.domain.order.entity.OrderStatusEnum;
 import com.delivery.domain.order.repository.OrderRepository;
-import com.delivery.domain.user.entity.User;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +53,7 @@ public class OrderServiceImpl implements OrderService {
     private void validateOrder(Order order, Long userId) {
         if (!order.getUser().getUserId().equals(userId))
             throw new BusinessException(ErrorCode.FORBIDDEN);
-        if (order.getStatus() != OrderStatus.PENDING)
+        if (order.getStatus() != OrderStatusEnum.PENDING)
             throw new BusinessException(ErrorCode.INVALID_ORDER_STATUS);
         if (Duration.between(order.getCreatedAt(), LocalDateTime.now()).toMinutes() > 5) {
             throw new BusinessException(ErrorCode.TIME_EXCEED);

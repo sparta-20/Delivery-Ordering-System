@@ -21,7 +21,7 @@ public class Order extends Timestamped {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private OrderStatus status = OrderStatus.PENDING;
+    private OrderStatusEnum status = OrderStatusEnum.PENDING;
 
     @Column(nullable = false)
     private Integer totalPrice;
@@ -47,6 +47,6 @@ public class Order extends Timestamped {
 
     public void cancel(String reason) {
         this.canceledReason = reason;
-        this.status = OrderStatus.CANCELED;
+        this.status = OrderStatusEnum.CANCELED;
     }
 }

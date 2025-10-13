@@ -22,7 +22,7 @@ public class OrderMenu extends Timestamped {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private OrderMenuStatus status = OrderMenuStatus.CART;
+    private OrderMenuStatusEnum status = OrderMenuStatusEnum.CART;
 
     @Column(nullable = false)
     private Integer quantity;
