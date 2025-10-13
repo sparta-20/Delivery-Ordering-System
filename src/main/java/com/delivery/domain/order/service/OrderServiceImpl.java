@@ -1,12 +1,18 @@
 package com.delivery.domain.order.service;
 
+import com.delivery.domain.order.dto.OrderRequestDto;
 import com.delivery.domain.order.dto.OrderResponseDto;
 import com.delivery.domain.order.entity.Order;
 import com.delivery.domain.order.repository.OrderRepository;
+import com.delivery.global.exception.BusinessException;
+import com.delivery.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -28,5 +34,24 @@ public class OrderServiceImpl implements OrderService {
         return orders.stream()
                 .map(OrderResponseDto.OrderListDto::from)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public void changeStatus(Long userId, UUID orderId, OrderRequestDto.ChangeOrderStatusDto dto) {
+        Order order = findOrderByOrderId(orderId);
+        // TODO: orderId 이용해서 Store 정보 -> 가게 주인 확인 후 현재 로그인한 유저랑 일치하는지 확인
+        validateOwner(userId, dto.getOwnerId());
+        order.changeStatus(dto.getStatus());
+    }
+
+    private void validateOwner(Long userId, Long ownerId) {
+        if (!userId.equals(ownerId)) throw new BusinessException(ErrorCode.FORBIDDEN);
+    }
+
+    private Order findOrderByOrderId(UUID orderId) {
+        return orderRepository.findByOrderId(orderId)
+                // FIXME: 에러코드 수정
+                .orElseThrow(() -> new BusinessException(ErrorCode.AI_REQUEST_NOT_FOUND));
     }
 }
