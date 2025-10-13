@@ -1,10 +1,14 @@
 package com.delivery.domain.store.entity;
+//import com.delivery.domain.menu.entity.Menu;
+//import com.delivery.domain.order.entity.Order;
+//import com.delivery.domain.review.entity.Review;
 import com.delivery.domain.user.entity.User;
 import com.delivery.global.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+//import java.util.List;
+//import java.util.ArrayList;
 import java.util.UUID;
 
 @Entity
@@ -50,8 +54,8 @@ public class Store extends Timestamped {
     private User owner;
 
 //    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Menu> menus = new ArrayList<>();
-
+//    private  List<Menu> menus = new ArrayList<>();
+//
 //    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<Review> reviews = new ArrayList<>();
 //
