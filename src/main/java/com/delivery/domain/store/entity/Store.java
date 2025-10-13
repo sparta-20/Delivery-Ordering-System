@@ -1,14 +1,9 @@
 package com.delivery.domain.store.entity;
-//import com.delivery.domain.menu.entity.Menu;
-//import com.delivery.domain.order.entity.Order;
-//import com.delivery.domain.review.entity.Review;
 import com.delivery.domain.user.entity.User;
 import com.delivery.global.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-//import java.util.List;
-//import java.util.ArrayList;
 import java.util.UUID;
 
 @Entity
@@ -17,7 +12,6 @@ import java.util.UUID;
 @Table(name = "p_stores")
 public class Store extends Timestamped {
 
-    // PK를 자동생성: DB생성 방식
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID storeId;
