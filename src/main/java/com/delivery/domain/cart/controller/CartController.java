@@ -1,6 +1,5 @@
 package com.delivery.domain.cart.controller;
 
-
 import com.delivery.domain.cart.dto.CartRequestDto;
 import com.delivery.domain.cart.dto.CartResponseDto;
 import com.delivery.domain.cart.entity.Cart;
@@ -13,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,6 +43,14 @@ public class CartController {
     public ResponseEntity<Void> clearCart(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         cartService.clearCart(user.getUserId());
+        
+    @PatchMapping("/items/{cartItemId}")
+    public ResponseEntity<Void> updateCartItem(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable("cartItemId") UUID cartItemId,
+            @RequestParam Integer quantity) {
+        User user = userDetails.getUser();
+        cartService.updateCartItem(user.getUserId(), cartItemId, quantity);
         return ResponseEntity.noContent().build();
     }
 }
