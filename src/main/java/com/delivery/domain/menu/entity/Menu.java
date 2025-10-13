@@ -10,6 +10,7 @@ import java.util.UUID;
 @Getter
 @Entity
 @Builder
+@Table(name = "p_menu")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Menu extends Timestamped {
