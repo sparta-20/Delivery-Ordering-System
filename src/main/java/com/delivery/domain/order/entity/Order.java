@@ -29,6 +29,9 @@ public class Order extends Timestamped {
     @Column(nullable = false)
     private String address;
 
+    @Column
+    private String canceledReason;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -41,4 +44,9 @@ public class Order extends Timestamped {
 
     @OneToMany(mappedBy = "order")
     private List<OrderMenu> orderMenus = new ArrayList<>();
+
+    public void cancel(String reason) {
+        this.canceledReason = reason;
+        this.status = OrderStatus.CANCELED;
+    }
 }

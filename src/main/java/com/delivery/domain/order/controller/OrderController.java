@@ -42,7 +42,7 @@ public class OrderController {
                                             @PathVariable UUID orderId,
                                             @RequestBody OrderRequestDto.CancelOrderDto dto) {
         User user = userDetails.getUser();
-        orderService.cancelOrder(user.getUserId(), orderId);
+        orderService.cancelOrder(user.getUserId(), orderId, dto);
         return ResponseEntity.noContent().build();
     }
 }
