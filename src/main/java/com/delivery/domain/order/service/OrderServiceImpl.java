@@ -47,7 +47,7 @@ public class OrderServiceImpl implements OrderService {
 
     private Order findOrderByOrderId(UUID orderId) {
         return orderRepository.findByOrderId(orderId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUNT));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
     }
 
     private void validateOrder(Order order, Long userId) {
