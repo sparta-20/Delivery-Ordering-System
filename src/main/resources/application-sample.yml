@@ -29,3 +29,11 @@ logging:
 jwt:
   secret:
     key: "jwt-key"
+
+ai:
+  gemini:
+    api-key: ${GOOGLE_API_KEY}
+    model: gemini-2.5-flash
+    max-output-tokens: 100
+    temperature: 0.7
+    prompt-suffix: " 답변을 최대한 간결하게 50자 이하로"

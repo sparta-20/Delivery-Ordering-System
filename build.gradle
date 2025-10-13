@@ -36,6 +36,8 @@ dependencies {
     compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.13.0'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.13.0'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.13.0'
+    // google-genai
+    implementation 'com.google.genai:google-genai:1.20.0'
     // Test
     testImplementation 'io.rest-assured:spring-mock-mvc'
     testImplementation 'org.springframework.security:spring-security-test'
