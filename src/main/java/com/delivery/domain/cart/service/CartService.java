@@ -7,4 +7,5 @@ import com.delivery.domain.cart.entity.Cart;
 public interface CartService {
     Cart addToCart(Long userId, CartRequestDto.AddCartItemDto dto);
     CartResponseDto.CartListDto getCart(Long userId);
+    void clearCart(Long userId);
 }
