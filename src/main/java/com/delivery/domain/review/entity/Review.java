@@ -27,7 +27,7 @@ public class Review extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // 가게 (N:1) -> TODO: Store 엔티티 생성 전까지 Long으로 보관
+    // 가게 (N:1) -> TODO(#68): Store 엔티티 생성 전까지 Long으로 보관
     @Column(name = "store_id", nullable = false)
     private Long storeId;
 
@@ -47,7 +47,7 @@ public class Review extends Timestamped {
     @Builder
     private Review(User user, Long storeId, Order order, int rating, String content) {
         this.user = user;
-        this.storeId = storeId; // TODO: order 파생으로 교체 예정
+        this.storeId = storeId; // TODO(#68): order 파생으로 교체 예정
         this.order = order;
         this.rating = rating;
         this.content = content;
