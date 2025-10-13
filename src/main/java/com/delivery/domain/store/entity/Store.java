@@ -45,10 +45,6 @@ public class Store extends Timestamped {
     @Column(nullable = false, length = 20)
     private StoreStatusEnum status = StoreStatusEnum.ACTIVE;
 
-    public void changeStatus(StoreStatusEnum newStatus) {
-        this.status = newStatus;
-    }
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "owner_user_id", nullable = false)
     private User owner;

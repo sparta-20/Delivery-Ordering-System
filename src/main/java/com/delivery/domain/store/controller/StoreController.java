@@ -57,20 +57,6 @@ public class StoreController {
         return ResponseEntity.noContent().build();
     }
 
-    // 가게 검색 => 서치 기능에는 10건, 30건, 50건 기준으로 페이지에 노출됨. 기본은 10건, 생성일순
-
-
-    // 전체 가게 목록 조회
-
-
-    // 가게 상세 조회
-
-
-    // 지역별 가게 조회
-
-
-    // 카테고리별 가게 조회
-
 
 }
 

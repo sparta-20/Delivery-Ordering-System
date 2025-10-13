@@ -18,26 +18,6 @@ public interface StoreService {
     StoreRes deleteStore(UUID storeId, User user);
 
 
-    // OWNER, MASTER - 본인 가게 조회
-
-
-    // MASTER - 점주별 가게 조회
-
-
-    // 가게 검색
-
-
-    // 전체 가게 목록 조회
-
-
-
-    // 가게 상세 조회
-
-
-    // 지역별 가게 조회
-
-
-    // 카테고리별 가게 조회
 
 
 
