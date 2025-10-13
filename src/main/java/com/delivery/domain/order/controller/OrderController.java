@@ -46,4 +46,15 @@ public class OrderController {
         orderService.changeStatus(user.getUserId(), orderId, dto);
         return ResponseEntity.noContent().build();
     }
+
+    @PreAuthorize("hasRole('OWNER')")
+    @PatchMapping("/owner/{orderId}/reject")
+    public ResponseEntity<Void> rejectOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                            @PathVariable UUID orderId,
+                                            @RequestBody OrderRequestDto.RejectOrderDto dto) {
+        // TODO
+        User user = userDetails.getUser();
+        orderService.rejectOrder(user.getUserId(), orderId, dto);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -45,6 +45,15 @@ public class OrderServiceImpl implements OrderService {
         order.changeStatus(dto.getStatus());
     }
 
+    @Override
+    @Transactional
+    public void rejectOrder(Long userId, UUID orderId, OrderRequestDto.RejectOrderDto dto) {
+        Order order = findOrderByOrderId(orderId);
+        // TODO
+        validateOwner(userId, dto.getOwnerId());
+        order.rejectOrder(dto.getReason());
+    }
+
     private void validateOwner(Long userId, Long ownerId) {
         if (!userId.equals(ownerId)) throw new BusinessException(ErrorCode.FORBIDDEN);
     }

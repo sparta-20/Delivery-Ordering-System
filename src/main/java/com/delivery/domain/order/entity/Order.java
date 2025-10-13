@@ -29,6 +29,9 @@ public class Order extends Timestamped {
     @Column(nullable = false)
     private String address;
 
+    @Column
+    private String canceledReason;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -44,5 +47,10 @@ public class Order extends Timestamped {
 
     public void changeStatus(OrderStatusEnum status) {
         this.status = status;
+    }
+
+    public void rejectOrder(String reason) {
+        this.status = OrderStatusEnum.REJECTED;
+        this.canceledReason = reason;
     }
 }

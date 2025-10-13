@@ -14,4 +14,12 @@ public class OrderRequestDto {
         private Long ownerId; // TODO: 추후 제거
         private OrderStatusEnum status;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RejectOrderDto {
+        private Long ownerId; // TODO: 추후 제거
+        private String reason;
+    }
 }
