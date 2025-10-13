@@ -41,7 +41,7 @@ public enum ErrorCode {
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "O001", "주문을 찾을 수 없습니다."),
     ORDER_NOT_COMPLETED(HttpStatus.BAD_REQUEST, "O002", "배송이 완료된 주문만 리뷰 작성이 가능합니다."),
     
-    ITEM_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "I001", "해당 상품을 찾을 수 없습니다");
+    ITEM_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "I001", "해당 상품을 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;
