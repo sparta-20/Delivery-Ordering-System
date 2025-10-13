@@ -12,7 +12,7 @@ public enum ErrorCode {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "E003", "인증이 필요합니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "E004", "접근이 거부되었습니다."),
 
-    // 사용자 도메인 예시
+    // 사용자 도메인
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "US001", "사용자를 찾을 수 없습니다."),
     USER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "US002", "접근 권한이 없습니다."),
 
@@ -25,7 +25,8 @@ public enum ErrorCode {
     AI_API_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "AI001", "AI API 호출 중 오류가 발생했습니다."),
     AI_RESPONSE_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "AI002", "AI 응답이 비어있습니다."),
     AI_UNSUPPORTED_REQUEST_TYPE(HttpStatus.BAD_REQUEST, "AI003", "지원하지 않는 요청 타입입니다."),
-    AI_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "AI004", "AI 요청 기록을 찾을 수 없습니다."),
+    AI_NOT_FOUND(HttpStatus.NOT_FOUND, "AI004", "AI 요청 기록을 찾을 수 없습니다."),
+    AI_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "AI005", "AI 요청 기록을 삭제할 권한이 없습니다."),
 
     // 메뉴 도메인
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "M001", "메뉴를 찾을 수 없습니다."),
