@@ -53,24 +53,9 @@ public class Store extends Timestamped {
     @JoinColumn(name = "owner_user_id", nullable = false)
     private User owner;
 
-//    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private  List<Menu> menus = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Review> reviews = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Order> orders = new ArrayList<>();
 
-
-    //가게 비활성화 시 메뉴, 리뷰, 주문도 함께 비활성화됨.
     public void markDeleted() {
         this.status = StoreStatusEnum.INACTIVE;
-        /*
-        if (menus != null) menus.forEach(Menu::markDeleted);
-        if (reviews != null) reviews.forEach(Review::markDeleted);
-        if (orders != null) orders.forEach(Order::markDeleted);
-         */
     }
 
     // 가게 생성 생성자
