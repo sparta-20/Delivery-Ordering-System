@@ -60,7 +60,7 @@ public class StoreController {
         return ResponseEntity.noContent().build();
     }
 
-    // OWNER, MASTER - 본인 가게 조회
+    // OWNER, MASTER, MANAGER - 본인 가게 조회
     @PreAuthorize("hasAnyRole('OWNER', 'MASTER', 'MANAGER')")
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<Page<StoreRes>>> getMyStores(
@@ -71,6 +71,7 @@ public class StoreController {
         Page<StoreRes> result = storeService.getMyStores(user, p);
         return ResponseEntity.ok(ApiResponse.success(result));
     }
+
 }
 
 
