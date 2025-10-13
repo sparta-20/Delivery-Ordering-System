@@ -59,6 +59,8 @@ public class CartServiceImpl implements CartService {
         cart.clearCart();
     }
 
+    @Override
+    @Transactional
     public void updateCartItem(Long userId, UUID itemId, Integer quantity) {
         CartItem item = findCartItem(itemId, userId);
         item.updateQuantity(quantity);
@@ -105,6 +107,6 @@ public class CartServiceImpl implements CartService {
     }
 
     private CartItem findCartItem(UUID cartItemId, Long userId) {
-        return cartItemRepository.findByCartMenuIdAndCart_User_UserId(cartItemId, userId).orElseThrow(() -> new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR));
+        return cartItemRepository.findByCartMenuIdAndCart_User_UserId(cartItemId, userId).orElseThrow(() -> new BusinessException(ErrorCode.ITEM_REQUEST_NOT_FOUND));
     }
 }
