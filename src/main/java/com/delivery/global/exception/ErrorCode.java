@@ -12,8 +12,10 @@ public enum ErrorCode {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "E003", "인증이 필요합니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "E004", "접근이 거부되었습니다."),
 
-    // 사용자 도메인 예시
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U001", "사용자를 찾을 수 없습니다."),
+    // 사용자 도메인
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "US001", "사용자를 찾을 수 없습니다."),
+    USER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "US002", "접근 권한이 없습니다."),
+
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "U002", "이미 가입된 이메일입니다."),
     DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "U003", "이미 사용 중인 닉네임입니다."),
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "E005", "아이디 또는 비밀번호가 올바르지 않습니다."),
@@ -27,6 +29,13 @@ public enum ErrorCode {
     // 주문 도메인
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "O001", "주문을 찾을 수 없습니다."),
     ORDER_NOT_COMPLETED(HttpStatus.BAD_REQUEST, "O002", "배송이 완료된 주문만 리뷰 작성이 가능합니다."),
+
+    // AI 도메인
+    AI_API_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "AI001", "AI API 호출 중 오류가 발생했습니다."),
+    AI_RESPONSE_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "AI002", "AI 응답이 비어있습니다."),
+    AI_UNSUPPORTED_REQUEST_TYPE(HttpStatus.BAD_REQUEST, "AI003", "지원하지 않는 요청 타입입니다."),
+    AI_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "AI004", "AI 요청 기록을 찾을 수 없습니다."),
+  
     ;
 
     private final HttpStatus status;
