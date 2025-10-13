@@ -1,10 +1,10 @@
 package com.delivery.domain.user.service.impl;
 
-import com.delivery.exception.BusinessException;
-import com.delivery.exception.ErrorCode;
-import com.delivery.user.entity.User;
-import com.delivery.user.repository.UserRepository;
+import com.delivery.domain.user.entity.User;
+import com.delivery.domain.user.repository.UserRepository;
 import com.delivery.domain.user.service.UserService;
+import com.delivery.global.exception.BusinessException;
+import com.delivery.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
