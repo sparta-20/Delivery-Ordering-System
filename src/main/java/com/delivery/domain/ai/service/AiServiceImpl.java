@@ -2,8 +2,8 @@ package com.delivery.domain.ai.service;
 
 import com.delivery.domain.ai.client.GeminiAiClient;
 import com.delivery.domain.ai.config.GeminiProperties;
-import com.delivery.domain.ai.dto.AiCreateRequest;
-import com.delivery.domain.ai.dto.AiResponse;
+import com.delivery.domain.ai.dto.AiCreateReq;
+import com.delivery.domain.ai.dto.AiRes;
 import com.delivery.domain.ai.entity.Ai;
 import com.delivery.domain.ai.entity.RequestTypeEnum;
 import com.delivery.domain.ai.repository.AiRepository;
@@ -33,7 +33,7 @@ public class AiServiceImpl implements AiService {
     // AI 설명 생성 및 기록
     @Override
     @Transactional
-    public AiResponse createAiContent(Long userId, AiCreateRequest request) {
+    public AiRes createAiContent(Long userId, AiCreateReq request) {
         log.info("[AI] 생성 시작 - userId: {}, menuId: {}, type: {}",
                 userId, request.getMenuId(), request.getRequestType());
 
@@ -63,7 +63,7 @@ public class AiServiceImpl implements AiService {
         );
 
         log.info("[AI] 생성 완료 - aiId: {}", savedAi.getAiId());
-        return AiResponse.from(savedAi, userId, menu.getMenuId());
+        return AiRes.from(savedAi, userId, menu.getMenuId());
     }
 
     // 프롬프트 가공 (요구사항: 50자 이하 안내 문구 첨부)

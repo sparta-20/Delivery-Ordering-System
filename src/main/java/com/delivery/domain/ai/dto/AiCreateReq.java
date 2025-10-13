@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AiCreateRequest {
+public class AiCreateReq {
 
     @NotNull(message = "메뉴 ID는 필수입니다.")
     private UUID menuId;

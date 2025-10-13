@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Getter
 @Builder
-public class AiResponse {
+public class AiRes {
     private UUID aiId;
     private Long userId;
     private UUID menuId;
@@ -20,8 +20,8 @@ public class AiResponse {
     private LocalDateTime createdAt;
 
     // Entity → DTO 변환
-    public static AiResponse from(Ai ai, Long userId, UUID menuId) {
-        return AiResponse.builder()
+    public static AiRes from(Ai ai, Long userId, UUID menuId) {
+        return AiRes.builder()
                 .aiId(ai.getAiId())
                 .userId(userId)
                 .menuId(menuId)

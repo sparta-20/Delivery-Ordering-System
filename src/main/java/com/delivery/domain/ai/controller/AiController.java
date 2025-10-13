@@ -1,7 +1,7 @@
 package com.delivery.domain.ai.controller;
 
-import com.delivery.domain.ai.dto.AiCreateRequest;
-import com.delivery.domain.ai.dto.AiResponse;
+import com.delivery.domain.ai.dto.AiCreateReq;
+import com.delivery.domain.ai.dto.AiRes;
 import com.delivery.domain.ai.service.AiService;
 import com.delivery.global.common.ApiResponse;
 import com.delivery.global.security.UserDetailsImpl;
@@ -32,11 +32,11 @@ public class AiController {
      */
     @PostMapping
     @PreAuthorize("hasAnyRole('MASTER','MANAGER','OWNER')")
-    public ResponseEntity<ApiResponse<AiResponse>> createAiContent(
+    public ResponseEntity<ApiResponse<AiRes>> createAiContent(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @Valid @RequestBody AiCreateRequest request) {
+            @Valid @RequestBody AiCreateReq request) {
 
-        AiResponse response = aiService.createAiContent(userDetails.getUser().getUserId(), request);
+        AiRes response = aiService.createAiContent(userDetails.getUser().getUserId(), request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
