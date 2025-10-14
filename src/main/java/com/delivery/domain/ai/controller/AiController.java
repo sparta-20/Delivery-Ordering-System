@@ -4,7 +4,7 @@ import com.delivery.domain.ai.dto.AiCreateRequest;
 import com.delivery.domain.ai.dto.AiResponse;
 import com.delivery.domain.ai.service.AiService;
 import com.delivery.global.common.ApiResponse;
-import com.delivery.global.security.UserDetailsImpl;
+import com.delivery.global.security.service.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
