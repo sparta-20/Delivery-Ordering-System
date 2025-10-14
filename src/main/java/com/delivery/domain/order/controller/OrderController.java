@@ -36,6 +36,16 @@ public class OrderController {
     }
 
     @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
+    @GetMapping("/owner/{orderId}")
+    public ResponseEntity<OrderResponseDto.OrderDetailDto> getOwnerOrderDetail(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                 @PathVariable UUID orderId) {
+        User user = userDetails.getUser();
+        OrderResponseDto.OrderDetailDto result = orderService.getOrderDetail(user.getUserId(), orderId);
+        return ResponseEntity.ok(result);
+    }
+
+
+    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
     @PatchMapping("/owner/{orderId}/status")
     public ResponseEntity<Void> changeOrderStatus(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                   @PathVariable UUID orderId,
@@ -63,7 +73,6 @@ public class OrderController {
     public ResponseEntity<?> getAllOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(orderService.getAllList());
     }
-
 
     @PatchMapping("/{orderId}/cancel")
     public ResponseEntity<Void> cancelOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,

@@ -16,6 +16,6 @@ public interface OrderService {
     void changeStatus(Long userId, UUID orderId, OrderRequestDto.ChangeOrderStatusDto dto);
     void rejectOrder(Long userId, UUID orderId, OrderRequestDto.RejectOrderDto dto);
     List<OrderResponseDto.AllOrderListDto> getAllList();
-
     void cancelOrder(Long userId, UUID orderId, OrderRequestDto.CancelOrderDto dto);
+    OrderResponseDto.OrderDetailDto getOrderDetail(Long userId, UUID orderId);
 }

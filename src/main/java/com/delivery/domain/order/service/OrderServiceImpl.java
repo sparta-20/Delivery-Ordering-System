@@ -5,7 +5,9 @@ import com.delivery.domain.order.dto.OrderResponseDto;
 import com.delivery.domain.order.entity.Order;
 import com.delivery.domain.order.entity.OrderStatusEnum;
 import com.delivery.domain.order.repository.OrderRepository;
+import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.entity.UserRoleEnum;
+import com.delivery.domain.user.repository.UserRepository;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -16,12 +18,14 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
 
     public List<OrderResponseDto.OrderListDto> getOrderList(Long userId) {
         List<Order> orders = orderRepository.findByUser_UserId(userId);
@@ -57,10 +61,6 @@ public class OrderServiceImpl implements OrderService {
         if (order.getUser().getRole().equals(UserRoleEnum.OWNER)) validateOwner(userId, dto.getOwnerId());
         order.rejectOrder(dto.getReason());
     }
-
-    private void validateOwner(Long userId, Long ownerId) {
-        if (!userId.equals(ownerId)) throw new BusinessException(ErrorCode.FORBIDDEN);
-    }
   
     public List<OrderResponseDto.AllOrderListDto> getAllList() {
         List<Order> orders = orderRepository.findAll();
@@ -68,12 +68,25 @@ public class OrderServiceImpl implements OrderService {
                 .map(OrderResponseDto.AllOrderListDto::from)
                 .toList();
     }
-    
+
+    @Override
     @Transactional
     public void cancelOrder(Long userId, UUID orderId, OrderRequestDto.CancelOrderDto dto) {
         Order order = findOrderByOrderId(orderId);
         validateOrder(order, userId);
         order.cancel(dto.getReason());
+    }
+
+    @Override
+    public OrderResponseDto.OrderDetailDto getOrderDetail(Long userId, UUID orderId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        Order order = findOrderByOrderId(orderId);
+        // TODO: STORE
+//        Long ownerId = order.get
+//        if (user.getRole().equals(UserRoleEnum.OWNER)) validateOwner(userId, ownerId);
+
+        return OrderResponseDto.OrderDetailDto.from(order, 118L, "000-0000-0000", 2);
     }
 
     private void validateOrder(Order order, Long userId) {
@@ -84,6 +97,10 @@ public class OrderServiceImpl implements OrderService {
         if (Duration.between(order.getCreatedAt(), LocalDateTime.now()).toMinutes() > 5) {
             throw new BusinessException(ErrorCode.ORDER_CANCEL_TIME_EXCEEDED);
         }
+    }
+
+    private void validateOwner(Long userId, Long ownerId) {
+        if (!userId.equals(ownerId)) throw new BusinessException(ErrorCode.FORBIDDEN);
     }
 
     private Order findOrderByOrderId(UUID orderId) {

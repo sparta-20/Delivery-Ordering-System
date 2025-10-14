@@ -5,6 +5,7 @@ import com.delivery.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,15 @@ public class Order extends Timestamped {
 
     @Column
     private String canceledReason;
+
+    @Column
+    private String message;
+
+    @Column
+    private String deliveryMessage;
+
+    @Column
+    private Integer deliveryFee;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

@@ -6,6 +6,7 @@ import com.delivery.domain.order.entity.OrderMenuStatusEnum;
 import com.delivery.domain.order.entity.OrderStatusEnum;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -77,6 +78,44 @@ public class OrderResponseDto {
                     .menus(order.getOrderMenus().stream()
                             .map(OrderMenuDetailDto::from)
                             .toList())
+                    .build();
+        }
+    }
+
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder
+    public static class OrderDetailDto {
+        private Long storeId;
+        private String storeName;
+        private List<OrderMenuDetailDto> menus;
+        private LocalDateTime createdAt;
+        private String payment;
+        private Integer totalPrice;
+        private Integer deliveryFee;
+        private String phoneNumber;
+        private String address;
+        private String message;
+        private String deliveryMessage;
+        private Integer count;
+
+        public static OrderDetailDto from(Order order, Long storeId, String phoneNumber, Integer count) {
+            return OrderDetailDto.builder()
+                    .storeId(storeId) // FIXME: order에 저장된 storeId로
+                    .storeName("임시 가게 이름")
+                    .menus(order.getOrderMenus().stream()
+                            .map(OrderMenuDetailDto::from)
+                            .toList())
+                    .createdAt(order.getCreatedAt())
+                    .payment("CARD")
+                    .totalPrice(order.getTotalPrice())
+                    .deliveryFee(order.getDeliveryFee()) // TODO
+                    .phoneNumber(phoneNumber)
+                    .address(order.getAddress())
+                    .message(order.getMessage())
+                    .deliveryMessage(order.getDeliveryMessage())
+                    .count(count)
                     .build();
         }
     }
