@@ -37,12 +37,12 @@ public class MenuServiceImpl implements MenuService {
         User user = getUserById(userId);
         Store store = getStoreById(req.getStoreId());
 
-        if (user.isMaster() || user.isManager() || ( user.isOwner() && store.isOwnerBy(user.getUserId()))) {
-            Menu menu = menuRepository.save(req.toEntity(store));
-            return MenuRes.from(menu);
+        if (!canManageMenu(user.getUserId(), user, store)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_READ_STORE);
         }
 
-        throw new BusinessException(ErrorCode.FORBIDDEN_READ_STORE);
+        Menu menu = menuRepository.save(req.toEntity(store));
+        return MenuRes.from(menu);
     }
 
     /**
@@ -56,11 +56,14 @@ public class MenuServiceImpl implements MenuService {
         Menu menu = getMenuById(menuId);
         Store store = menu.getStore();
 
-        if (user.isManager() || user.isMaster() || (user.isCustomer() && !menu.isHidden()) || (user.isOwner() && store.isOwnerBy(userId))) {
-            return MenuRes.from(menu);
+        if (!canViewMenu(userId, user, menu, store)) {
+            throw new BusinessException(ErrorCode.MENU_NOT_FOUND);
         }
+        return MenuRes.from(menu);
+    }
 
-        throw new BusinessException(ErrorCode.MENU_NOT_FOUND);
+    private static boolean canViewMenu(Long userId, User user, Menu menu, Store store) {
+        return user.isManager() || user.isMaster() || (user.isCustomer() && !menu.isHidden()) || (user.isOwner() && store.isOwnerBy(userId));
     }
 
     /**
@@ -75,12 +78,11 @@ public class MenuServiceImpl implements MenuService {
         Menu menu = getMenuById(menuId);
         Store store = menu.getStore();
 
-        if (user.isMaster() || user.isManager() || (user.isOwner() && store.isOwnerBy(userId))) {
-            menu.update(req.getQuantity(), req.getName(), req.getPrice(), req.getStatus(), req.getDescription(), req.getImageUrl());
-            return MenuRes.from(menu);
+        if (!canManageMenu(userId, user, store)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_READ_STORE);
         }
-
-        throw new BusinessException(ErrorCode.FORBIDDEN_READ_STORE);
+        menu.update(req.getQuantity(), req.getName(), req.getPrice(), req.getStatus(), req.getDescription(), req.getImageUrl());
+        return MenuRes.from(menu);
     }
 
     /**
@@ -95,11 +97,16 @@ public class MenuServiceImpl implements MenuService {
         Menu menu = getMenuById(menuId);
         Store store = menu.getStore();
 
-        if (user.isMaster() || user.isManager() || (user.isOwner() && store.isOwnerBy(userId))) {
-            menu.markDeleted(userId);
+        if (!canManageMenu(userId, user, store)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_READ_STORE);
         }
+        menu.markDeleted(userId);
+        return MenuRes.from(menu);
 
-        throw new BusinessException(ErrorCode.FORBIDDEN_READ_STORE);
+    }
+
+    private boolean canManageMenu(Long userId, User user, Store store) {
+        return user.isMaster() || user.isManager() || (user.isOwner() && store.isOwnerBy(userId));
     }
 
     @Override
