@@ -4,7 +4,7 @@ import com.delivery.domain.user.dto.UserResponse;
 import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.service.UserService;
 import com.delivery.global.common.ApiResponse;
-import com.delivery.global.security.UserDetailsImpl;
+import com.delivery.global.security.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

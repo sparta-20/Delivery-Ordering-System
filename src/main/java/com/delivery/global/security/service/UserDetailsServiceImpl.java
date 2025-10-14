@@ -1,4 +1,4 @@
-package com.delivery.global.security;
+package com.delivery.global.security.service;
 
 import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.repository.UserRepository;
