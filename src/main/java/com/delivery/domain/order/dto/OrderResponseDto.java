@@ -2,8 +2,8 @@ package com.delivery.domain.order.dto;
 
 import com.delivery.domain.order.entity.Order;
 import com.delivery.domain.order.entity.OrderMenu;
-import com.delivery.domain.order.entity.OrderMenuStatus;
-import com.delivery.domain.order.entity.OrderStatus;
+import com.delivery.domain.order.entity.OrderMenuStatusEnum;
+import com.delivery.domain.order.entity.OrderStatusEnum;
 import lombok.*;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class OrderResponseDto {
         private UUID menuId;
         private Integer quantity;
         private Integer price;
-        private OrderMenuStatus status;
+        private OrderMenuStatusEnum status;
 
         public static OrderMenuDetailDto from(OrderMenu orderMenu) {
             return OrderMenuDetailDto.builder()
@@ -38,7 +38,7 @@ public class OrderResponseDto {
     public static class OrderListDto {
         private UUID orderId;
         private String address;
-        private OrderStatus status;
+        private OrderStatusEnum status;
         private Integer totalPrice;
         private List<OrderMenuDetailDto> menus;
 
