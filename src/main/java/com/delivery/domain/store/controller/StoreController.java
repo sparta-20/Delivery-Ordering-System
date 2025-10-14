@@ -3,7 +3,7 @@ import com.delivery.domain.store.dto.StoreUpdateReq;
 import com.delivery.domain.store.service.StoreService;
 import com.delivery.domain.user.entity.User;
 import com.delivery.global.common.ApiResponse;
-import com.delivery.global.security.UserDetailsImpl;
+import com.delivery.global.security.service.UserDetailsImpl;
 import com.delivery.domain.store.dto.StoreCreateReq;
 import com.delivery.domain.store.dto.StoreRes;
 import jakarta.validation.Valid;
