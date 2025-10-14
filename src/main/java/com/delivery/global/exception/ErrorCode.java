@@ -51,6 +51,7 @@ public enum ErrorCode {
     INVALID_ORDER_STATUS(HttpStatus.BAD_REQUEST, "O003", "주문이 진행중이지 않습니다."),
     ORDER_CANCEL_TIME_EXCEEDED(HttpStatus.BAD_REQUEST, "O004", "주문 취소 가능 시간이 지났습니다.");
 
+
     private final HttpStatus status;
     private final String code;
     private final String message;
