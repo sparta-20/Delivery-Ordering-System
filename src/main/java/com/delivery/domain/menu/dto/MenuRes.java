@@ -5,6 +5,7 @@ import com.delivery.domain.menu.entity.MenuStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -17,7 +18,7 @@ public class MenuRes {
     private Integer price;
     private Integer quantity;
     private MenuStatus status;
-
+    private LocalDateTime createdAt;
 
     public static MenuRes from(Menu menu) {
         return new MenuRes(
@@ -27,7 +28,8 @@ public class MenuRes {
                 menu.getDescription(),
                 menu.getPrice(),
                 menu.getQuantity(),
-                menu.getStatus()
+                menu.getStatus(),
+                menu.getCreatedAt()
         );
     }
 }
