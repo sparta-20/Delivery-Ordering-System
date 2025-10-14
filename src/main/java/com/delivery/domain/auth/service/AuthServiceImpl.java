@@ -50,11 +50,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public void saveOrUpdateRefreshToken(Long userId, String refreshToken) {
-        refreshTokenRepository.findByUserId(userId)
+    public void saveOrUpdateRefreshToken(User user, String refreshToken) {
+        refreshTokenRepository.findByUser(user)
                 .ifPresentOrElse(
                         existRefreshToken -> existRefreshToken.updateToken(refreshToken),
-                        () -> refreshTokenRepository.save(new RefreshToken(userId, refreshToken))
+                        () -> refreshTokenRepository.save(new RefreshToken(refreshToken, user))
                 );
     }
 
@@ -62,8 +62,9 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public void updateRefreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
         Long userId = extractUserIdFromCookie(request);
-        RefreshToken refreshToken = findValidRefreshToken(userId);
         User user = findUserById(userId);
+        RefreshToken refreshToken = findValidRefreshToken(user);
+
 
         String newAccessToken = jwtUtil.createAccessToken(user.getUserId(), user.getNickname(), user.getRole());
         String newRefreshToken = jwtUtil.createRefreshToken(user.getUserId(), user.getNickname(), user.getRole());
@@ -92,7 +93,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
         tokenBlackListRepository.save(blacklist);
 
-        refreshTokenRepository.deleteByUserId(userId);
+        refreshTokenRepository.deleteByUser(user);
     }
 
     @Override
@@ -109,8 +110,8 @@ public class AuthServiceImpl implements AuthService {
         return jwtUtil.getUserIdFromExpiredToken(accessToken);
     }
 
-    private RefreshToken findValidRefreshToken(Long userId) {
-        RefreshToken refreshToken = refreshTokenRepository.findByUserId(userId)
+    private RefreshToken findValidRefreshToken(User user) {
+        RefreshToken refreshToken = refreshTokenRepository.findByUser(user)
                 .orElseThrow(() -> new BusinessException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
 
         if (!jwtUtil.validateToken(refreshToken.getToken())) {

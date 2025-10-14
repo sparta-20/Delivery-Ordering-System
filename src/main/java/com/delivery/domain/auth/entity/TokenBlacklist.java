@@ -28,8 +28,7 @@ public class TokenBlacklist {
     private User user;
 
     @Builder
-    public TokenBlacklist(UUID id, String accessToken, LocalDateTime expiredAt, User user) {
-        this.id = id;
+    public TokenBlacklist(String accessToken, LocalDateTime expiredAt, User user) {
         this.accessToken = accessToken;
         this.expiredAt = expiredAt;
         this.user = user;

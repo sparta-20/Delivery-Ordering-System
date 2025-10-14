@@ -2,6 +2,7 @@ package com.delivery.global.security.filter;
 
 import com.delivery.domain.auth.dto.LoginRequestDto;
 import com.delivery.domain.auth.service.AuthService;
+import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.entity.UserRoleEnum;
 import com.delivery.global.common.FilterResponseUtil;
 import com.delivery.global.exception.ErrorCode;
@@ -58,6 +59,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
         UserDetailsImpl userDetails = (UserDetailsImpl) authResult.getPrincipal();
 
+        User user = userDetails.getUser();
         Long userId = userDetails.getUserId();
         String nickname = userDetails.getUsername();
         UserRoleEnum role = userDetails.getRole();
@@ -66,7 +68,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String refreshToken = jwtUtil.createRefreshToken(userId, nickname, role);
 
         jwtUtil.addAccessTokenToCookie(response, accessToken);
-        authService.saveOrUpdateRefreshToken(userId, refreshToken);
+        authService.saveOrUpdateRefreshToken(user, refreshToken);
 
         Map<String, Object> data = new HashMap<>();
         data.put("userId", userId);
