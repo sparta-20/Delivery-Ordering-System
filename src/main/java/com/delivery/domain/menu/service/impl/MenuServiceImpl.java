@@ -111,7 +111,7 @@ public class MenuServiceImpl implements MenuService {
         return user.isMaster() || user.isManager() || (user.isOwner() && store.isOwnerBy(userId));
     }
 
-    private static boolean canViewMenu(Long userId, User user, Menu menu, Store store) {
+    private boolean canViewMenu(Long userId, User user, Menu menu, Store store) {
         return user.isManager() || user.isMaster() || (user.isCustomer() && !menu.isHidden()) || (user.isOwner() && store.isOwnerBy(userId));
     }
 
