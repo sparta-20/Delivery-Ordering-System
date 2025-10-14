@@ -31,7 +31,7 @@ public class StoreUpdateReq {
     private Integer minPrice;
 
     @NotNull(message = "카테고리는 필수입니다.")
-    private UUID categoryId;
+    private String categoryName;
 
     @NotNull(message = "상태값은 필수입니다.")
     private StoreStatusEnum status;

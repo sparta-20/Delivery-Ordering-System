@@ -42,7 +42,7 @@ public class StoreServiceImpl implements StoreService {
             throw new BusinessException(ErrorCode.FORBIDDEN_CREATE_STORE);
         }
 
-        StoreCategory category = storeCategoryRepository.findById(requestDto.getCategoryId()).orElseThrow(
+        StoreCategory category = storeCategoryRepository.findByCategoryNameAndIsActiveTrue(requestDto.getCategoryName().trim()).orElseThrow(
                 ()-> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND));
 
         Store store = new Store(
@@ -74,7 +74,7 @@ public class StoreServiceImpl implements StoreService {
             throw new BusinessException(ErrorCode.FORBIDDEN_UPDATE_STORE);
         }
 
-        StoreCategory category = storeCategoryRepository.findById(requestDto.getCategoryId()).orElseThrow(
+        StoreCategory category = storeCategoryRepository.findByCategoryNameAndIsActiveTrue(requestDto.getCategoryName().trim()).orElseThrow(
                 ()-> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND));
 
         store.update(
