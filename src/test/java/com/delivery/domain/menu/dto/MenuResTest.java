@@ -1,6 +1,7 @@
 package com.delivery.domain.menu.dto;
 
 import com.delivery.domain.menu.entity.Menu;
+import com.delivery.domain.menu.entity.MenuStatus;
 import com.delivery.domain.store.entity.Store;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ class MenuResTest {
                 .menuId(UUID.randomUUID())
                 .name("name")
                 .price(10000)
+                .status(MenuStatus.AVAILABLE)
                 .imageUrl("ImageUrl")
                 .store(Store.builder().storeId(storeId).build())
                 .quantity(2)
@@ -36,5 +38,6 @@ class MenuResTest {
         assertThat(res.getImageUrl()).isEqualTo("ImageUrl");
         assertThat(res.getDescription()).isEqualTo("description");
         assertThat(res.getStoreId()).isEqualTo(storeId);
+        assertThat(res.getStatus()).isEqualTo(MenuStatus.AVAILABLE);
     }
 }
