@@ -1,14 +1,14 @@
 package com.delivery.domain.auth.controller;
 
-import com.delivery.domain.auth.dto.SignUpRequestDto;
+import com.delivery.domain.auth.dto.SignUpReq;
 import com.delivery.domain.auth.service.AuthServiceImpl;
 import com.delivery.global.common.ApiResponse;
 import com.delivery.global.jwt.JwtUtil;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,8 +20,8 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<Void>> signup(@RequestBody SignUpRequestDto signUpRequestDto) {
-        authService.signup(signUpRequestDto);
+    public ResponseEntity<ApiResponse<Void>> signup(@Validated @RequestBody SignUpReq signUpReq) {
+        authService.signup(signUpReq);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 

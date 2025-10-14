@@ -1,6 +1,6 @@
 package com.delivery.domain.auth.service;
 
-import com.delivery.domain.auth.dto.SignUpRequestDto;
+import com.delivery.domain.auth.dto.SignUpReq;
 import com.delivery.domain.auth.entity.RefreshToken;
 import com.delivery.domain.auth.entity.TokenBlacklist;
 import com.delivery.domain.auth.repository.RefreshTokenRepository;
@@ -33,18 +33,18 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public void signup(SignUpRequestDto signUpRequestDto) {
-        if(userRepository.existsByNickname(signUpRequestDto.getNickname())){
+    public void signup(SignUpReq signUpReq) {
+        if(userRepository.existsByNickname(signUpReq.getNickname())){
             throw new BusinessException(ErrorCode.DUPLICATE_NICKNAME);
         }
 
-        if (userRepository.existsByEmail(signUpRequestDto.getEmail())) {
+        if (userRepository.existsByEmail(signUpReq.getEmail())) {
             throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
         }
 
-        String encodedPassword = passwordEncoder.encode(signUpRequestDto.getPassword());
+        String encodedPassword = passwordEncoder.encode(signUpReq.getPassword());
 
-        User user = new User(signUpRequestDto.getNickname(), signUpRequestDto.getEmail(), encodedPassword);
+        User user = new User(signUpReq.getNickname(), signUpReq.getEmail(), encodedPassword);
         userRepository.save(user);
     }
 

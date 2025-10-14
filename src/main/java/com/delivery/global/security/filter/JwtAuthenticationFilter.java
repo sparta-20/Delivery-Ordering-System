@@ -1,6 +1,6 @@
 package com.delivery.global.security.filter;
 
-import com.delivery.domain.auth.dto.LoginRequestDto;
+import com.delivery.domain.auth.dto.LoginReq;
 import com.delivery.domain.auth.service.AuthService;
 import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.entity.UserRoleEnum;
@@ -39,7 +39,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
-            LoginRequestDto requestDto = objectMapper.readValue(request.getInputStream(), LoginRequestDto.class);
+            LoginReq requestDto = objectMapper.readValue(request.getInputStream(), LoginReq.class);
 
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(
