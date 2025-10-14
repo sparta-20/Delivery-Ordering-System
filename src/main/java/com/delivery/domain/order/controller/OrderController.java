@@ -4,7 +4,7 @@ import com.delivery.domain.order.dto.OrderRequestDto;
 import com.delivery.domain.order.dto.OrderResponseDto;
 import com.delivery.domain.order.service.OrderService;
 import com.delivery.domain.user.entity.User;
-import com.delivery.global.security.UserDetailsImpl;
+import com.delivery.global.security.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -55,6 +55,22 @@ public class OrderController {
         // TODO
         User user = userDetails.getUser();
         orderService.rejectOrder(user.getUserId(), orderId, dto);
+        return ResponseEntity.noContent().build();
+    }
+      
+    @PreAuthorize("hasAnyRole('MANAGER', 'MASTER')")
+    @GetMapping("/admin")
+    public ResponseEntity<?> getAllOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(orderService.getAllList());
+    }
+
+
+    @PatchMapping("/{orderId}/cancel")
+    public ResponseEntity<Void> cancelOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                            @PathVariable UUID orderId,
+                                            @RequestBody OrderRequestDto.CancelOrderDto dto) {
+        User user = userDetails.getUser();
+        orderService.cancelOrder(user.getUserId(), orderId, dto);
         return ResponseEntity.noContent().build();
     }
 }

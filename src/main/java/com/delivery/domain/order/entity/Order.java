@@ -53,4 +53,9 @@ public class Order extends Timestamped {
         this.status = OrderStatusEnum.REJECTED;
         this.canceledReason = reason;
     }
+  
+    public void cancel(String reason) {
+        this.canceledReason = reason;
+        this.status = OrderStatusEnum.CANCELED;
+    }
 }

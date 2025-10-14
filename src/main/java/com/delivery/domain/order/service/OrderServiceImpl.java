@@ -3,6 +3,7 @@ package com.delivery.domain.order.service;
 import com.delivery.domain.order.dto.OrderRequestDto;
 import com.delivery.domain.order.dto.OrderResponseDto;
 import com.delivery.domain.order.entity.Order;
+import com.delivery.domain.order.entity.OrderStatusEnum;
 import com.delivery.domain.order.repository.OrderRepository;
 import com.delivery.domain.user.entity.UserRoleEnum;
 import com.delivery.global.exception.BusinessException;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -57,6 +60,20 @@ public class OrderServiceImpl implements OrderService {
 
     private void validateOwner(Long userId, Long ownerId) {
         if (!userId.equals(ownerId)) throw new BusinessException(ErrorCode.FORBIDDEN);
+    }
+  
+    public List<OrderResponseDto.AllOrderListDto> getAllList() {
+        List<Order> orders = orderRepository.findAll();
+        return orders.stream()
+                .map(OrderResponseDto.AllOrderListDto::from)
+                .toList();
+    }
+    
+    @Transactional
+    public void cancelOrder(Long userId, UUID orderId, OrderRequestDto.CancelOrderDto dto) {
+        Order order = findOrderByOrderId(orderId);
+        validateOrder(order, userId);
+        order.cancel(dto.getReason());
     }
 
     private Order findOrderByOrderId(UUID orderId) {

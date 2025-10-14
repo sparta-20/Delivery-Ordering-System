@@ -22,4 +22,11 @@ public class OrderRequestDto {
         private Long ownerId; // TODO: 추후 제거
         private String reason;
     }
+  
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CancelOrderDto {
+        private String reason;
+    }
 }
