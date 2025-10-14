@@ -1,8 +1,10 @@
 package com.delivery.domain.auth.controller;
 
 import com.delivery.domain.auth.dto.SignUpRequestDto;
-import com.delivery.domain.auth.service.AuthService;
+import com.delivery.domain.auth.service.AuthServiceImpl;
 import com.delivery.global.common.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,11 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthService authService;
+    private final AuthServiceImpl authService;
 
     @PostMapping("/signup")
-    public ResponseEntity signup(@RequestBody SignUpRequestDto signUpRequestDto) {
+    public ResponseEntity<ApiResponse<Void>> signup(@RequestBody SignUpRequestDto signUpRequestDto) {
         authService.signup(signUpRequestDto);
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<Void>> refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
+        authService.updateRefreshAccessToken(request, response);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 }

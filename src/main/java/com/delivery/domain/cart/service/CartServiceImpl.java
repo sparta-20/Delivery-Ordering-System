@@ -4,7 +4,7 @@ import com.delivery.domain.cart.dto.CartRequestDto;
 import com.delivery.domain.cart.dto.CartResponseDto;
 import com.delivery.domain.cart.entity.Cart;
 import com.delivery.domain.cart.entity.CartItem;
-import com.delivery.domain.cart.entity.CartStatus;
+import com.delivery.domain.cart.entity.CartStatusEnum;
 import com.delivery.domain.cart.repository.CartItemRepository;
 import com.delivery.domain.cart.repository.CartRepository;
 import com.delivery.domain.user.entity.User;
@@ -50,13 +50,21 @@ public class CartServiceImpl implements CartService {
                 .build();
     }
 
+    @Override
+    @Transactional
+    public void clearCart(Long userId) {
+        Cart cart = cartRepository.findByUser_UserIdAndStatus(userId, CartStatusEnum.CART)
+                .orElseThrow(() -> new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR));
+        cart.clearCart();
+    }
+
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
     }
 
     private Cart getOrCreateCart(User user) {
-        return cartRepository.findByUser_UserIdAndStatus(user.getUserId(), CartStatus.CART)
+        return cartRepository.findByUser_UserIdAndStatus(user.getUserId(), CartStatusEnum.CART)
                 .orElseGet(() -> cartRepository.save(Cart.builder().user(user).build()));
     }
 

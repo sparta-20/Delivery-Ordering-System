@@ -26,13 +26,13 @@ public class Ai extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // 메뉴 (N:1) -> Menu 엔티티 생성 전까지 UUID로 보관
+    // 메뉴 (N:1) -> Menu 엔티티 생성 전까지 Long 보관
     @Column(name = "menu_id", nullable = false)
-    private UUID menuId;
+    private Long menuId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "request_type", nullable = false)
-    private RequestTypeEnum requestType = RequestTypeEnum.MENU_DESCRIPTION;
+    private RequestTypeEnum requestType;
 
     @Column(name = "prompt", nullable = false, length = 500)
     private String prompt;
@@ -41,9 +41,10 @@ public class Ai extends Timestamped {
     private String response;
 
     @Builder
-    public Ai(User user, UUID menuId, String prompt, String response) {
+    public Ai(User user, Long menuId, RequestTypeEnum requestType, String prompt, String response) {
         this.user = user;
         this.menuId = menuId;
+        this.requestType = requestType;
         this.prompt = prompt;
         this.response = response;
     }
