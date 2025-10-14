@@ -4,7 +4,7 @@ import com.delivery.domain.review.dto.ReviewCreateReq;
 import com.delivery.domain.review.dto.ReviewRes;
 import com.delivery.domain.review.service.ReviewService;
 import com.delivery.global.common.ApiResponse;
-import com.delivery.global.security.UserDetailsImpl;
+import com.delivery.global.security.service.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
