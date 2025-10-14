@@ -8,4 +8,6 @@ public interface AuthService {
     void signup(SignUpRequestDto signUpRequestDto);
     void saveOrUpdateRefreshToken(Long userId, String refreshToken);
     void updateRefreshAccessToken(HttpServletRequest request, HttpServletResponse response);
+    void logout(String accessToken);
+    boolean isBlacklisted(String accessToken);
 }

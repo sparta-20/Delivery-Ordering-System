@@ -18,6 +18,9 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
 
@@ -119,5 +122,22 @@ public class JwtUtil {
                 .expiration(new Date(now.getTime() + expireTime))
                 .signWith(key)
                 .compact();
+    }
+
+    public void expireCookie(HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from("accessToken", null)
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Lax")
+                .maxAge(0)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+    }
+
+    public LocalDateTime getTokenExpiredAt(String token) {
+        Claims claims = getUserInfoFromToken(token);
+        return LocalDateTime.ofInstant(claims.getExpiration().toInstant(), ZoneId.systemDefault());
     }
 }

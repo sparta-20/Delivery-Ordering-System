@@ -2,7 +2,9 @@ package com.delivery.domain.auth.service;
 
 import com.delivery.domain.auth.dto.SignUpRequestDto;
 import com.delivery.domain.auth.entity.RefreshToken;
+import com.delivery.domain.auth.entity.TokenBlacklist;
 import com.delivery.domain.auth.repository.RefreshTokenRepository;
+import com.delivery.domain.auth.repository.TokenBlackListRepository;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import com.delivery.domain.user.entity.User;
@@ -16,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -24,6 +28,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final TokenBlackListRepository tokenBlackListRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -65,6 +70,34 @@ public class AuthServiceImpl implements AuthService {
 
         jwtUtil.addAccessTokenToCookie(response, newAccessToken);
         refreshToken.updateToken(newRefreshToken);
+    }
+
+    @Override
+    @Transactional
+    public void logout(String accessToken) {
+        if (accessToken == null) {
+            throw new BusinessException(ErrorCode.TOKEN_NOT_FOUND);
+        }
+
+        Claims claims = jwtUtil.getUserInfoFromToken(accessToken);
+        Long userId = Long.valueOf(claims.getSubject());
+        User user = findUserById(userId);
+
+        LocalDateTime expiredAt = jwtUtil.getTokenExpiredAt(accessToken);
+
+        TokenBlacklist blacklist = TokenBlacklist.builder()
+                .accessToken(accessToken)
+                .expiredAt(expiredAt)
+                .user(user)
+                .build();
+        tokenBlackListRepository.save(blacklist);
+
+        refreshTokenRepository.deleteByUserId(userId);
+    }
+
+    @Override
+    public boolean isBlacklisted(String accessToken) {
+        return tokenBlackListRepository.existsByAccessToken(accessToken);
     }
 
     private Long extractUserIdFromCookie(HttpServletRequest request) {
