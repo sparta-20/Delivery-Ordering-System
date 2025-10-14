@@ -3,6 +3,7 @@ package com.delivery.domain.order.service;
 import com.delivery.domain.order.dto.OrderRequestDto;
 import com.delivery.domain.order.dto.OrderResponseDto;
 import com.delivery.domain.order.entity.Order;
+import com.delivery.domain.order.entity.OrderStatusEnum;
 import com.delivery.domain.order.repository.OrderRepository;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
@@ -55,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
         if (order.getStatus() != OrderStatusEnum.PENDING)
             throw new BusinessException(ErrorCode.INVALID_ORDER_STATUS);
         if (Duration.between(order.getCreatedAt(), LocalDateTime.now()).toMinutes() > 5) {
-            throw new BusinessException(ErrorCode.TIME_EXCEED);
+            throw new BusinessException(ErrorCode.ORDER_CANCEL_TIME_EXCEEDED);
         }
     }
 }
