@@ -51,6 +51,7 @@ public class CartServiceImpl implements CartService {
         return CartResponseDto.CartListDto.builder()
                 .cartId(cart.getCartId())
                 .storeId(cart.getStore().getStoreId())
+                .storeName(cart.getStore().getName())
                 .totalPrice(totalPrice)
                 .items(items)
                 .build();

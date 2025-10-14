@@ -50,7 +50,6 @@ public class OrderController {
                                                   @PathVariable UUID orderId,
                                                   @RequestBody OrderRequestDto.ChangeOrderStatusDto dto) {
         // TODO: ApiResponse 사용해서 수정
-        // TODO: store 이용해서 수정
         User user = userDetails.getUser();
         orderService.changeStatus(user.getUserId(), orderId, dto);
         return ResponseEntity.noContent().build();

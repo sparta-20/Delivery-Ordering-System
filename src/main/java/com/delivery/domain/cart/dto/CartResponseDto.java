@@ -14,6 +14,7 @@ public class CartResponseDto {
     public static class CartListDto {
         private UUID cartId;
         private UUID storeId;
+        private String storeName;
         private Integer totalPrice;
         List<CartItemDetailDto> items;
     }

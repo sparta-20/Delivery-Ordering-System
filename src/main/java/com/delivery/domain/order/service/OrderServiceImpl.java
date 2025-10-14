@@ -91,7 +91,7 @@ public class OrderServiceImpl implements OrderService {
 
     private int calculateOrder(User user, Order order) {
         LocalDateTime six = LocalDateTime.now().minusMonths(6);
-        return orderRepository.countByUserAndStoreSince(
+        return orderRepository.countByUserAndStore(
                 user.getUserId(),
                 order.getStore().getStoreId(),
                 six

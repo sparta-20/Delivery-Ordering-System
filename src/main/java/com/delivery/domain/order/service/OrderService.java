@@ -12,7 +12,6 @@ public interface OrderService {
     List<OrderResponseDto.OrderListDto> getOrderList(Long userId);
     // 수정 필요
     List<OrderResponseDto.OrderListDto> getOrdersByOwner(Long ownerUserId);
-    // TODO
     void changeStatus(Long userId, UUID orderId, OrderRequestDto.ChangeOrderStatusDto dto);
     void rejectOrder(Long userId, UUID orderId, OrderRequestDto.RejectOrderDto dto);
     List<OrderResponseDto.AllOrderListDto> getAllList();
