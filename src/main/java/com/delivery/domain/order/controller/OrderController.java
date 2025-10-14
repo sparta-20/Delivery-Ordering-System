@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,6 +37,14 @@ public class OrderController {
         // 추후 store -> 수정 (현재는 사장이 로그인했다고 가정하고 ID로 찾음)
         return ResponseEntity.ok(orderService.getOrdersByOwner(user.getUserId()));
     }
+
+    @PreAuthorize("hasAnyRole('MANAGER', 'MASTER')")
+    @GetMapping("/admin")
+    public ResponseEntity<?> getAllOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(orderService.getAllList());
+    }
+
+
     @PatchMapping("/{orderId}/cancel")
     public ResponseEntity<Void> cancelOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                             @PathVariable UUID orderId,

@@ -54,4 +54,30 @@ public class OrderResponseDto {
                     .build();
         }
     }
+
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder
+    public static class AllOrderListDto {
+        private UUID orderId;
+        private String storeName; // TODO: 추후 store 수정
+        private String address;
+        private OrderStatusEnum status;
+        private Integer totalPrice;
+        private List<OrderMenuDetailDto> menus;
+
+        public static AllOrderListDto from(Order order) {
+            return AllOrderListDto.builder()
+                    .orderId(order.getOrderId())
+                    .storeName("임시 가게 이름")
+                    .address(order.getAddress())
+                    .status(order.getStatus())
+                    .totalPrice(order.getTotalPrice())
+                    .menus(order.getOrderMenus().stream()
+                            .map(OrderMenuDetailDto::from)
+                            .toList())
+                    .build();
+        }
+    }
 }

@@ -37,6 +37,14 @@ public class OrderServiceImpl implements OrderService {
                 .map(OrderResponseDto.OrderListDto::from)
                 .toList();
     }
+
+    @Override
+    public List<OrderResponseDto.AllOrderListDto> getAllList() {
+        List<Order> orders = orderRepository.findAll();
+        return orders.stream()
+                .map(OrderResponseDto.AllOrderListDto::from)
+                .toList();
+    }
     
     @Transactional
     public void cancelOrder(Long userId, UUID orderId, OrderRequestDto.CancelOrderDto dto) {
