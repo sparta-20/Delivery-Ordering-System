@@ -120,7 +120,9 @@ class UserServiceTest {
         UpdateUserPasswordReq req = new UpdateUserPasswordReq(currentPassword, newPassword, newPassword);
         when(userRepository.findByUserIdAndDeletedAtIsNull(userId)).thenReturn(Optional.of(user));
 
-        userService.updateUserPassword(userId, req);
+        UserRes userRes = userService.updateUserPassword(userId, req);
+
+        assertNotNull(userRes);
     }
 
     @Test
