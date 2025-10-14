@@ -1,7 +1,7 @@
 package com.delivery.domain.cart.entity;
 
-import com.delivery.global.common.entity.Timestamped;
 import com.delivery.domain.user.entity.User;
+import com.delivery.global.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
