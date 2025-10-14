@@ -8,12 +8,14 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AiCreateRequest {
+public class AiCreateReq {
 
     @NotNull(message = "메뉴 ID는 필수입니다.")
-    private Long menuId;
+    private UUID menuId;
 
     @NotBlank(message = "프롬프트는 필수입니다.")
     @Size(max = 500, message = "프롬프트는 최대 500자까지 입력 가능합니다.")

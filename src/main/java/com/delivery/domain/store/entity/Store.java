@@ -1,4 +1,5 @@
 package com.delivery.domain.store.entity;
+
 import com.delivery.domain.user.entity.User;
 import com.delivery.global.common.entity.Timestamped;
 import jakarta.persistence.*;
@@ -84,5 +85,4 @@ public class Store extends Timestamped {
         if (minPrice != null) this.minPrice = minPrice;
         if (status != null) this.status = status;
     }
-
 }
