@@ -2,7 +2,7 @@ package com.delivery.domain.menu.controller;
 
 import com.delivery.domain.menu.dto.CreateMenuReq;
 import com.delivery.domain.menu.dto.MenuRes;
-import com.delivery.domain.menu.service.impl.MenuServiceImpl;
+import com.delivery.domain.menu.service.MenuService;
 import com.delivery.domain.user.entity.User;
 import com.delivery.global.common.ApiResponse;
 import com.delivery.global.security.service.UserDetailsImpl;
@@ -23,7 +23,7 @@ import java.net.URI;
 @RequestMapping("api/v1/menus")
 public class MenuController {
 
-    private final MenuServiceImpl menuServiceImpl;
+    private final MenuService menuService;
 
     @PostMapping
     @PreAuthorize("hasAnyRole('OWNER', 'MASTER', 'MANAGER')")
@@ -32,7 +32,7 @@ public class MenuController {
             @Valid @RequestBody CreateMenuReq req
     ) {
         User user = userDetails.getUser();
-        MenuRes menuRes = menuServiceImpl.create(user.getUserId(), req);
+        MenuRes menuRes = menuService.create(user.getUserId(), req);
         return ResponseEntity
                 .created(URI.create("api/v1/menus/" + menuRes.getMenuId()))
                 .body(ApiResponse.success(menuRes));
