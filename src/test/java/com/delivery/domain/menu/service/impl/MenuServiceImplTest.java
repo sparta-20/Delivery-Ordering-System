@@ -31,14 +31,10 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 class MenuServiceImplTest {
 
-    @Autowired
-    private MenuService menuService;
-    @MockitoBean
-    private UserService userService;
-    @MockitoBean
-    private StoreRepository storeRepository;
-    @MockitoBean
-    private MenuRepository menuRepository;
+    @Autowired private MenuService menuService;
+    @MockitoBean private UserService userService;
+    @MockitoBean private StoreRepository storeRepository;
+    @MockitoBean private MenuRepository menuRepository;
 
     @Test
     @DisplayName("메뉴를 생성할 수 있다.")
