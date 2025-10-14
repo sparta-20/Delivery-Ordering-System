@@ -1,5 +1,5 @@
 package com.delivery.domain.cart.entity;
 
-public enum CartStatus {
+public enum CartStatusEnum {
     CART, CART_CANCEL
 }

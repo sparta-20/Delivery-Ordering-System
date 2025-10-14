@@ -1,5 +1,6 @@
 package com.delivery.domain.order.controller;
 
+import com.delivery.domain.order.dto.OrderRequestDto;
 import com.delivery.domain.order.dto.OrderResponseDto;
 import com.delivery.domain.order.service.OrderService;
 import com.delivery.domain.user.entity.User;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,4 +44,12 @@ public class OrderController {
     }
 
 
+    @PatchMapping("/{orderId}/cancel")
+    public ResponseEntity<Void> cancelOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                            @PathVariable UUID orderId,
+                                            @RequestBody OrderRequestDto.CancelOrderDto dto) {
+        User user = userDetails.getUser();
+        orderService.cancelOrder(user.getUserId(), orderId, dto);
+        return ResponseEntity.noContent().build();
+    }
 }
