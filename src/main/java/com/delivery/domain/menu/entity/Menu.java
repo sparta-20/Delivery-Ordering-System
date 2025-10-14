@@ -39,8 +39,9 @@ public class Menu extends Timestamped {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    public Menu(String name, String description, Integer price, Integer quantity, MenuStatusEnum status, Store store) {
+    public Menu(String name, String imageUrl, String description, Integer price, Integer quantity, MenuStatusEnum status, Store store) {
         this.name = name;
+        this.imageUrl = imageUrl;
         this.description = description;
         this.price = price;
         this.quantity = quantity;
@@ -50,5 +51,13 @@ public class Menu extends Timestamped {
 
     public boolean isHidden() {
         return MenuStatusEnum.HIDDEN.equals(this.status);
+    }
+
+    public void update(Integer quantity, String name, Integer price, MenuStatusEnum status, String description, String imageUrl) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.quantity = quantity;
+        this.status = status;
     }
 }

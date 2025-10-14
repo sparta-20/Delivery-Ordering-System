@@ -46,4 +46,12 @@ public class User extends Timestamped {
     public boolean isMaster() {
         return UserRoleEnum.MASTER.equals(this.role);
     }
+
+    public boolean isOwner() {
+        return UserRoleEnum.OWNER.equals(this.role);
+    }
+
+    public boolean isManager() {
+        return UserRoleEnum.MANAGER.equals(this.role);
+    }
 }

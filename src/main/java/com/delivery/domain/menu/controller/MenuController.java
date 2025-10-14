@@ -2,6 +2,7 @@ package com.delivery.domain.menu.controller;
 
 import com.delivery.domain.menu.dto.CreateMenuReq;
 import com.delivery.domain.menu.dto.MenuRes;
+import com.delivery.domain.menu.dto.UpdateMenuReq;
 import com.delivery.domain.menu.service.MenuService;
 import com.delivery.domain.user.entity.User;
 import com.delivery.global.common.ApiResponse;
@@ -38,19 +39,40 @@ public class MenuController {
 
     //메뉴 상세 조회
     @PostMapping("/{menuId}")
-    @PreAuthorize("hasAnyRole('OWNER', 'MASTER', 'MANAGER')")
-    public ResponseEntity<?> createMenu(
+    public ResponseEntity<?> getMenu(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable(value = "menuId") UUID menuId
     ) {
         User user = userDetails.getUser();
-        MenuRes menuRes = menuService.getMenuResById(user.getUserId(), menuId);
+        MenuRes menuRes = menuService.findMenuResById(user.getUserId(), menuId);
         return ResponseEntity.ok(ApiResponse.success(menuRes));
+    }
+
+    //메뉴 수정
+    @PutMapping("/{menuId}")
+    @PreAuthorize("hasAnyRole('OWNER', 'MASTER', 'MANAGER')")
+    public ResponseEntity<?> updateMenu(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable(value = "menuId") UUID menuId,
+            @RequestBody UpdateMenuReq req
+    ) {
+        User user = userDetails.getUser();
+        MenuRes menuRes = menuService.update(req, user.getUserId(), menuId);
+        return ResponseEntity.ok(ApiResponse.success(menuRes));
+    }
+
+    //메뉴 삭제
+    @DeleteMapping("/{menuId}")
+    @PreAuthorize("hasAnyRole('OWNER', 'MASTER', 'MANAGER')")
+    public ResponseEntity<?> deleteMenu(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable(value = "menuId") UUID menuId
+    ) {
+        User user = userDetails.getUser();
+        menuService.delete(user.getUserId(), menuId);
+        return ResponseEntity.noContent().build();
     }
 
     //메뉴 목록 조회
 
-    //메뉴 수정
-
-    //메뉴 삭제
 }

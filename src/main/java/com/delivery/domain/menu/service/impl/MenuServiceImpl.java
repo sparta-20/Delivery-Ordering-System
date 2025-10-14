@@ -2,6 +2,7 @@ package com.delivery.domain.menu.service.impl;
 
 import com.delivery.domain.menu.dto.CreateMenuReq;
 import com.delivery.domain.menu.dto.MenuRes;
+import com.delivery.domain.menu.dto.UpdateMenuReq;
 import com.delivery.domain.menu.entity.Menu;
 import com.delivery.domain.menu.repository.MenuRepository;
 import com.delivery.domain.menu.service.MenuService;
@@ -36,29 +37,69 @@ public class MenuServiceImpl implements MenuService {
         User user = getUserById(userId);
         Store store = getStoreById(req.getStoreId());
 
-        if(user.isCustomer() && !store.isOwnerBy(user.getUserId())){
-            throw new BusinessException(ErrorCode.FORBIDDEN_READ_STORE);
+        if (user.isMaster() || user.isManager() || ( user.isOwner() && store.isOwnerBy(user.getUserId()))) {
+            Menu menu = menuRepository.save(req.toEntity(store));
+            return MenuRes.from(menu);
         }
 
-        Menu menu = menuRepository.save(req.toEntity(store));
-        return MenuRes.from(menu);
+        throw new BusinessException(ErrorCode.FORBIDDEN_READ_STORE);
     }
 
     /**
-     CUSTOMER: 공개 상태 메뉴만 조회 가능
-     OWNER: 자기 가게 메뉴 상세 조회 가능 (숨김 포함)
-     MANAGER / MASTER: 전체 메뉴 상세 조회 가능
+     * CUSTOMER: 공개 상태 메뉴만 조회 가능
+     * OWNER: 자기 가게 메뉴 상세 조회 가능 (숨김 포함)
+     * MANAGER / MASTER: 전체 메뉴 상세 조회 가능
      */
     @Override
-    public MenuRes getMenuResById(Long userId, UUID menuId) {
+    public MenuRes findMenuResById(Long userId, UUID menuId) {
         User user = getUserById(userId);
         Menu menu = getMenuById(menuId);
         Store store = menu.getStore();
 
-        if(menu.isHidden() && user.isCustomer() && !store.isOwnerBy(user.getUserId())){
-            throw new BusinessException(ErrorCode.MENU_NOT_FOUND);
+        if (user.isManager() || user.isMaster() || (user.isCustomer() && !menu.isHidden()) || (user.isOwner() && store.isOwnerBy(userId))) {
+            return MenuRes.from(menu);
         }
-        return MenuRes.from(menu);
+
+        throw new BusinessException(ErrorCode.MENU_NOT_FOUND);
+    }
+
+    /**
+     * OWNER: 자기 가게 메뉴만 수정 가능
+     * MANAGER / MASTER: 전체 메뉴 수정 가능
+     * CUSTOMER: 불가 preAuthorize
+     */
+    @Override
+    @Transactional
+    public MenuRes update(UpdateMenuReq req, Long userId, UUID menuId) {
+        User user = getUserById(userId);
+        Menu menu = getMenuById(menuId);
+        Store store = menu.getStore();
+
+        if (user.isMaster() || user.isManager() || (user.isOwner() && store.isOwnerBy(userId))) {
+            menu.update(req.getQuantity(), req.getName(), req.getPrice(), req.getStatus(), req.getDescription(), req.getImageUrl());
+            return MenuRes.from(menu);
+        }
+
+        throw new BusinessException(ErrorCode.FORBIDDEN_READ_STORE);
+    }
+
+    /**
+     * OWNER: 자기 가게 메뉴 삭제 가능 (soft delete)
+     * MANAGER / MASTER: 전체 메뉴 삭제 가능
+     * CUSTOMER: 불가 preAuthorize
+     */
+    @Override
+    @Transactional
+    public MenuRes delete(Long userId, UUID menuId) {
+        User user = getUserById(userId);
+        Menu menu = getMenuById(menuId);
+        Store store = menu.getStore();
+
+        if (user.isMaster() || user.isManager() || (user.isOwner() && store.isOwnerBy(userId))) {
+            menu.markDeleted(userId);
+        }
+
+        throw new BusinessException(ErrorCode.FORBIDDEN_READ_STORE);
     }
 
     @Override
