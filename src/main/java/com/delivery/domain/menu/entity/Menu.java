@@ -1,6 +1,6 @@
 package com.delivery.domain.menu.entity;
 
-import com.delivery.domain.order.entity.Order;
+import com.delivery.domain.store.entity.Store;
 import com.delivery.global.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,12 +10,14 @@ import java.util.UUID;
 @Getter
 @Entity
 @Builder
+@Table(name = "p_menu")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Menu extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID menuId;
+
     @Column(nullable = false)
     private String name;
 
@@ -33,15 +35,15 @@ public class Menu extends Timestamped {
     private MenuStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false)
-    private Order order;
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
 
-    public Menu(String name, String description, Integer price, Integer quantity, MenuStatus status, Order order) {
+    public Menu(String name, String description, Integer price, Integer quantity, MenuStatus status, Store store) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.quantity = quantity;
         this.status = status;
-        this.order = order;
+        this.store = store;
     }
 }

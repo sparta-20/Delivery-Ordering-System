@@ -1,5 +1,6 @@
 package com.delivery.domain.ai.entity;
 
+import com.delivery.domain.menu.entity.Menu;
 import com.delivery.domain.user.entity.User;
 import com.delivery.global.common.entity.Timestamped;
 import jakarta.persistence.*;
@@ -26,9 +27,10 @@ public class Ai extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // 메뉴 (N:1) -> Menu 엔티티 생성 전까지 Long 보관
-    @Column(name = "menu_id", nullable = false)
-    private Long menuId;
+    // 메뉴 (N:1)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "menu_id", nullable = false)
+    private Menu menu;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "request_type", nullable = false)
@@ -41,9 +43,9 @@ public class Ai extends Timestamped {
     private String response;
 
     @Builder
-    public Ai(User user, Long menuId, RequestTypeEnum requestType, String prompt, String response) {
+    public Ai(User user, Menu menu, RequestTypeEnum requestType, String prompt, String response) {
         this.user = user;
-        this.menuId = menuId;
+        this.menu = menu;
         this.requestType = requestType;
         this.prompt = prompt;
         this.response = response;
