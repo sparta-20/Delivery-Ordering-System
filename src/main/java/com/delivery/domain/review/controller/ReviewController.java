@@ -13,6 +13,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/reviews")
 @RequiredArgsConstructor
@@ -32,8 +34,24 @@ public class ReviewController {
             @Valid @RequestBody ReviewCreateReq request,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        ReviewRes response = reviewService.createReview(userDetails.getUser().getUserId(), request);
+        ReviewRes response = reviewService.createReview(userDetails.getUserId(), request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
+    }
+
+    /**
+     * 리뷰 삭제 (Soft Delete)
+     * - CUSTOMER: 본인이 작성한 리뷰만 삭제 가능
+     * - MANAGER/MASTER: 모든 리뷰 삭제 가능
+     */
+    @DeleteMapping("/{reviewId}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'MANAGER', 'MASTER')")
+    public ResponseEntity<Void> deleteReview(
+            @PathVariable UUID reviewId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        reviewService.deleteReview(userDetails.getUserId(), userDetails.getRole(), reviewId);
+
+        return ResponseEntity.noContent().build();
     }
 }

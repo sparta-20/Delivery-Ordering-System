@@ -8,7 +8,9 @@ import com.delivery.domain.review.dto.ReviewRes;
 import com.delivery.domain.review.entity.Review;
 import com.delivery.domain.review.repository.ReviewRepository;
 import com.delivery.domain.user.entity.User;
+import com.delivery.domain.user.entity.UserRoleEnum;
 import com.delivery.domain.user.repository.UserRepository;
+import com.delivery.domain.user.service.UserService;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;  // TODO(#68): OrderService로 교체
     private final UserRepository userRepository;    // TODO(#68): UserService로 교체
+    private final UserService userService;
 
     // 리뷰 생성
     @Override
@@ -65,6 +68,65 @@ public class ReviewServiceImpl implements ReviewService{
                 user.getNickname()
         );
     }
+
+    // 리뷰 삭제 (Soft Delete)
+    @Override
+    @Transactional
+    public void deleteReview(Long userId, UserRoleEnum role, UUID reviewId) {
+        log.info("[REVIEW] 삭제 요청 - userId: {}, role: {}, reviewId: {}", userId, role, reviewId);
+
+        // 리뷰 조회 (User 정보와 함께 조회 (JOIN FETCH))
+        Review review = getReviewWithUser(reviewId);
+
+        // 권한 검증
+        validateDeletePermission(userId, role, review);
+
+        // Soft Delete 처리
+        review.markDeleted(userId);
+
+        log.info("[REVIEW] 삭제 완료 - reviewId: {}, deletedBy: {}", reviewId, userId);
+    }
+
+    // 리뷰 조회 (삭제되지 않은 리뷰만, User 정보 함께 조회)
+    private Review getReviewWithUser(UUID reviewId) {
+        return reviewRepository.findByReviewIdWithUser(reviewId)
+                .orElseThrow(() -> {
+                    log.warn("[REVIEW] 리뷰 조회 실패 - reviewId: {}", reviewId);
+                    return new BusinessException(ErrorCode.REVIEW_NOT_FOUND);
+                });
+    }
+
+    // 리뷰 조회 (삭제되지 않은 리뷰만)
+    private Review getReviewById(UUID reviewId) {
+        return reviewRepository.findByReviewIdAndDeletedAtIsNull(reviewId)
+                .orElseThrow(() -> {
+                    log.warn("[REVIEW] 리뷰 조회 실패 - reviewId: {}", reviewId);
+                    return new BusinessException(ErrorCode.REVIEW_NOT_FOUND);
+                });
+    }
+
+    /**
+     * 삭제 권한 검증
+     * - MANAGER/MASTER: 모든 리뷰 삭제 가능
+     * - CUSTOMER: 본인 리뷰만 삭제 가능
+     */
+    private void validateDeletePermission(Long userId, UserRoleEnum role, Review review) {
+        // 관리자는 모든 리뷰 삭제 가능
+        if (role == UserRoleEnum.MANAGER || role == UserRoleEnum.MASTER) {
+            log.debug("[REVIEW] 관리자 권한으로 삭제 - userId: {}, role: {}", userId, role);
+            return;
+        }
+
+        // 일반 사용자는 본인 리뷰만 삭제 가능
+        if (!review.getUser().getUserId().equals(userId)) {
+            log.warn("[REVIEW] 권한 없음 - userId: {}, reviewOwnerId: {}",
+                    userId, review.getUser().getUserId());
+            throw new BusinessException(ErrorCode.REVIEW_DELETE_FORBIDDEN);
+        }
+
+        log.debug("[REVIEW] 본인 리뷰 삭제 - userId: {}", userId);
+    }
+
 
     // 리뷰 저장
     private Review saveReview(User user, Order order, Long storeId, int rating, String content) {
