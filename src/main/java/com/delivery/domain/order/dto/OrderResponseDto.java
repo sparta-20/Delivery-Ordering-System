@@ -62,7 +62,7 @@ public class OrderResponseDto {
     @Builder
     public static class AllOrderListDto {
         private UUID orderId;
-        private String storeName; // TODO: 추후 store 수정
+        private String storeName;
         private String address;
         private OrderStatusEnum status;
         private Integer totalPrice;
@@ -71,7 +71,7 @@ public class OrderResponseDto {
         public static AllOrderListDto from(Order order) {
             return AllOrderListDto.builder()
                     .orderId(order.getOrderId())
-                    .storeName("임시 가게 이름")
+                    .storeName(order.getStore().getName())
                     .address(order.getAddress())
                     .status(order.getStatus())
                     .totalPrice(order.getTotalPrice())
@@ -87,7 +87,7 @@ public class OrderResponseDto {
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @Builder
     public static class OrderDetailDto {
-        private Long storeId;
+        private UUID storeId;
         private String storeName;
         private List<OrderMenuDetailDto> menus;
         private LocalDateTime createdAt;
@@ -100,18 +100,18 @@ public class OrderResponseDto {
         private String deliveryMessage;
         private Integer count;
 
-        public static OrderDetailDto from(Order order, Long storeId, String phoneNumber, Integer count) {
+        public static OrderDetailDto from(Order order, Integer count) {
             return OrderDetailDto.builder()
-                    .storeId(storeId) // FIXME: order에 저장된 storeId로
-                    .storeName("임시 가게 이름")
+                    .storeId(order.getStore().getStoreId())
+                    .storeName(order.getStore().getName())
                     .menus(order.getOrderMenus().stream()
                             .map(OrderMenuDetailDto::from)
                             .toList())
                     .createdAt(order.getCreatedAt())
                     .payment("CARD")
                     .totalPrice(order.getTotalPrice())
-                    .deliveryFee(order.getDeliveryFee()) // TODO
-                    .phoneNumber(phoneNumber)
+                    .deliveryFee(order.getDeliveryFee())
+                    .phoneNumber(order.getPhoneNumber())
                     .address(order.getAddress())
                     .message(order.getMessage())
                     .deliveryMessage(order.getDeliveryMessage())

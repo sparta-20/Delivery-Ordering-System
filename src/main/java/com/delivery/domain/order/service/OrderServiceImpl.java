@@ -17,8 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -27,6 +25,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
 
+    @Override
     public List<OrderResponseDto.OrderListDto> getOrderList(Long userId) {
         List<Order> orders = orderRepository.findByUser_UserId(userId);
 
@@ -36,9 +35,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponseDto.OrderListDto> getOrdersByOwner(Long ownerId) {
-        // 수정 필요
-        List<Order> orders = orderRepository.findByOwnerId(ownerId);
+    public List<OrderResponseDto.OrderListDto> getOrdersByOwner(Long ownerUserId) {
+        List<Order> orders = orderRepository.findByStore_Owner_UserId(ownerUserId);
         return orders.stream()
                 .map(OrderResponseDto.OrderListDto::from)
                 .toList();
@@ -48,20 +46,19 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void changeStatus(Long userId, UUID orderId, OrderRequestDto.ChangeOrderStatusDto dto) {
         Order order = findOrderByOrderId(orderId);
-        // TODO: orderId 이용해서 Store 정보 -> 가게 주인 확인 후 현재 로그인한 유저랑 일치하는지 확인
-        if (order.getUser().getRole().equals(UserRoleEnum.OWNER)) validateOwner(userId, dto.getOwnerId());
-        order.changeStatus(dto.getStatus());
+        if (order.getStore().getOwner().getUserId().equals(userId)) order.changeStatus(dto.getStatus());
+        else throw new BusinessException(ErrorCode.FORBIDDEN);
     }
 
     @Override
     @Transactional
     public void rejectOrder(Long userId, UUID orderId, OrderRequestDto.RejectOrderDto dto) {
         Order order = findOrderByOrderId(orderId);
-        // TODO
-        if (order.getUser().getRole().equals(UserRoleEnum.OWNER)) validateOwner(userId, dto.getOwnerId());
-        order.rejectOrder(dto.getReason());
+        if (order.getStore().getOwner().getUserId().equals(userId)) order.rejectOrder(dto.getReason());
+        else throw new BusinessException(ErrorCode.FORBIDDEN);
     }
-  
+
+    @Override
     public List<OrderResponseDto.AllOrderListDto> getAllList() {
         List<Order> orders = orderRepository.findAll();
         return orders.stream()
@@ -82,11 +79,22 @@ public class OrderServiceImpl implements OrderService {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
         Order order = findOrderByOrderId(orderId);
-        // TODO: STORE
-//        Long ownerId = order.get
-//        if (user.getRole().equals(UserRoleEnum.OWNER)) validateOwner(userId, ownerId);
+        if (user.getRole().equals(UserRoleEnum.OWNER)) {
+            if (!order.getStore().getOwner().getUserId().equals(userId)) {
+                throw new BusinessException(ErrorCode.FORBIDDEN);
+            }
+        }
+        int recentOrderCount = calculateOrder(user, order);
+        return OrderResponseDto.OrderDetailDto.from(order, recentOrderCount);
+    }
 
-        return OrderResponseDto.OrderDetailDto.from(order, 118L, "000-0000-0000", 2);
+    private int calculateOrder(User user, Order order) {
+        LocalDateTime six = LocalDateTime.now().minusMonths(6);
+        return orderRepository.countByUserAndStoreSince(
+                user.getUserId(),
+                order.getStore().getStoreId(),
+                six
+        );
     }
 
     private void validateOrder(Order order, Long userId) {
@@ -99,13 +107,8 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private void validateOwner(Long userId, Long ownerId) {
-        if (!userId.equals(ownerId)) throw new BusinessException(ErrorCode.FORBIDDEN);
-    }
-
     private Order findOrderByOrderId(UUID orderId) {
         return orderRepository.findByOrderId(orderId)
-                // FIXME: 에러코드 수정
-                .orElseThrow(() -> new BusinessException(ErrorCode.AI_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
     }
 }

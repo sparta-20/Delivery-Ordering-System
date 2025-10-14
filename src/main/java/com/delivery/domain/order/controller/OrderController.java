@@ -31,7 +31,6 @@ public class OrderController {
     @GetMapping("/owner")
     public ResponseEntity<?> getOwnerOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
-        // 추후 store -> 수정 (현재는 사장이 로그인했다고 가정하고 ID로 찾음)
         return ResponseEntity.ok(orderService.getOrdersByOwner(user.getUserId()));
     }
 
@@ -62,7 +61,6 @@ public class OrderController {
     public ResponseEntity<Void> rejectOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                             @PathVariable UUID orderId,
                                             @RequestBody OrderRequestDto.RejectOrderDto dto) {
-        // TODO
         User user = userDetails.getUser();
         orderService.rejectOrder(user.getUserId(), orderId, dto);
         return ResponseEntity.noContent().build();
