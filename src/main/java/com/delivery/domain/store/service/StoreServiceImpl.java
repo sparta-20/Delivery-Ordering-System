@@ -185,7 +185,7 @@ public class StoreServiceImpl implements StoreService {
             return null;
         }
         String like = "%" + q.trim().toLowerCase() + "%";
-        return (root, query, cb) -> cb.like(cb.lower(root.get("keyword")), like);
+        return (root, query, cb) -> cb.like(cb.lower(root.get("name")), like);
     }
 
     // 도시(시) 검색
