@@ -45,6 +45,15 @@ public class Order extends Timestamped {
     @OneToMany(mappedBy = "order")
     private List<OrderMenu> orderMenus = new ArrayList<>();
 
+    public void changeStatus(OrderStatusEnum status) {
+        this.status = status;
+    }
+
+    public void rejectOrder(String reason) {
+        this.status = OrderStatusEnum.REJECTED;
+        this.canceledReason = reason;
+    }
+  
     public void cancel(String reason) {
         this.canceledReason = reason;
         this.status = OrderStatusEnum.CANCELED;
