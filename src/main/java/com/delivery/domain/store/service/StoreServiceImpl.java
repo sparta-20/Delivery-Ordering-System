@@ -117,6 +117,20 @@ public class StoreServiceImpl implements StoreService {
         return stores.map(StoreRes::from);
     }
 
+    // MASTER, MANAGER - 점주별 가게 조회
+    @Override
+    public Page<StoreRes> getOwnerStores(Long ownerUserId, User user, Pageable pageable){
+        if(user.getRole() != UserRoleEnum.MASTER && user.getRole() != UserRoleEnum.MANAGER){
+            throw new BusinessException(ErrorCode.FORBIDDEN_READ_STORE);
+        }
 
+        Page<Store> stores = storeRepository.findAllByOwnerUserIdAndStatus(ownerUserId, StoreStatusEnum.ACTIVE,pageable);
+
+        if(stores.isEmpty()){
+            throw new BusinessException(ErrorCode.STORE_NOT_FOUND);
+        }
+
+        return stores.map(StoreRes::from);
+    }
 
 }

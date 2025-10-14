@@ -23,6 +23,11 @@ public interface StoreService {
     // OWNER, MASTER - 본인 가게 조회
     Page<StoreRes> getMyStores(User user, Pageable pageable);
 
+    // MASTER - 점주별 가게 조회
+    Page<StoreRes> getOwnerStores(Long ownerUserId, User user, Pageable pageable);
+
+
+
 
 
 

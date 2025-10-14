@@ -72,6 +72,20 @@ public class StoreController {
         return ResponseEntity.ok(ApiResponse.success(result));
     }
 
+    // MASTER, MANAGER - 점주별 가게 조회
+    @PreAuthorize("hasAnyRole('MASTER', 'MANAGER')")
+    @GetMapping("/masters/{ownerUserId}")
+    public ResponseEntity<ApiResponse<Page<StoreRes>>> getOwnerStores(
+            @PathVariable Long ownerUserId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            Pageable pageable){
+        Pageable p = PageableUtils.enforce(pageable);
+        User user = userDetails.getUser();
+        Page<StoreRes> result = storeService.getOwnerStores(ownerUserId, user, p);
+        return ResponseEntity.ok(ApiResponse.success(result));
+    }
+
+
 
 
 
