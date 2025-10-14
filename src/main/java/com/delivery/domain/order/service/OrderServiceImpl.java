@@ -65,5 +65,6 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException(ErrorCode.INVALID_ORDER_STATUS);
         if (Duration.between(order.getCreatedAt(), LocalDateTime.now()).toMinutes() > 5) {
             throw new BusinessException(ErrorCode.ORDER_CANCEL_TIME_EXCEEDED);
+        }
     }
 }
