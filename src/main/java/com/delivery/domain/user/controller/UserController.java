@@ -25,8 +25,8 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<?> getUserMe(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User requester = userDetails.getUser();
-        User user = userService.getUserById(requester.getUserId());
-        return ResponseEntity.ok(ApiResponse.success(UserRes.from(user)));
+        UserRes userRes = userService.getUserResById(requester.getUserId());
+        return ResponseEntity.ok(ApiResponse.success(userRes));
     }
 
     @PutMapping("/me")
@@ -35,8 +35,8 @@ public class UserController {
             @Valid @RequestBody UpdateUserReq request)
     {
         User requester = userDetails.getUser();
-        User user = userService.updateUser(requester.getUserId(), request);
-        return ResponseEntity.ok(ApiResponse.success(UserRes.from(user)));
+        UserRes userRes = userService.updateUser(requester.getUserId(), request);
+        return ResponseEntity.ok(ApiResponse.success(userRes));
     }
 
     @PostMapping("/me/password")

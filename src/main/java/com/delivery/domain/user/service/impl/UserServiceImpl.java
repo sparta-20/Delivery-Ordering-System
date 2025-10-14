@@ -2,6 +2,7 @@ package com.delivery.domain.user.service.impl;
 
 import com.delivery.domain.user.dto.UpdateUserPasswordReq;
 import com.delivery.domain.user.dto.UpdateUserReq;
+import com.delivery.domain.user.dto.UserRes;
 import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.repository.UserRepository;
 import com.delivery.domain.user.service.UserService;
@@ -29,8 +30,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserRes getUserResById(Long userId) {
+        User user = getUserById(userId);
+        return UserRes.from(user);
+    }
+
+    @Override
     @Transactional
-    public User updateUser(Long userId, UpdateUserReq request) {
+    public UserRes updateUser(Long userId, UpdateUserReq request) {
         request.trim();
         User user = getUserById(userId);
 
@@ -43,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User updateUserPassword(Long userId, UpdateUserPasswordReq request) {
+    public UserRes updateUserPassword(Long userId, UpdateUserPasswordReq request) {
         User user = getUserById(userId);
         validateConfirmNewPassword(request.getNewPassword(), request.getConfirmNewPassword());
         validatePassword(request.getCurrentPassword(), user.getPassword());
@@ -54,7 +61,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User delete(Long requestUserId, Long userId) {
+    public UserRes delete(Long requestUserId, Long userId) {
         User user = getUserById(userId);
         user.markDeleted(requestUserId);
         return user;
