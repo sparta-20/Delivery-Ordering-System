@@ -185,7 +185,7 @@ public class StoreServiceImpl implements StoreService {
             return null;
         }
         String like = "%" + q.trim().toLowerCase() + "%";
-        return (root, query, cb) -> cb.like(cb.lower(root.get("name")), like);
+        return (root, query, cb) -> cb.like(cb.lower(root.get("keyword")), like);
     }
 
     // 도시(시) 검색
@@ -201,7 +201,7 @@ public class StoreServiceImpl implements StoreService {
         if(district==null || district.isBlank()){
             return null;
         }
-        return (root, query, cb) -> cb.equal(root.get("city"), district);
+        return (root, query, cb) -> cb.equal(root.get("district"), district);
     }
 
     // 동 검색
@@ -209,7 +209,7 @@ public class StoreServiceImpl implements StoreService {
         if(dong==null || dong.isBlank()){
             return null;
         }
-        return (root, query, cb) -> cb.equal(root.get("city"), dong);
+        return (root, query, cb) -> cb.equal(root.get("dong"), dong);
     }
 
     // 카테고리 검색
