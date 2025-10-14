@@ -1,0 +1,47 @@
+package com.delivery.domain.menu.controller;
+
+import com.delivery.domain.menu.dto.CreateMenuReq;
+import com.delivery.domain.menu.dto.MenuRes;
+import com.delivery.domain.menu.service.impl.MenuServiceImpl;
+import com.delivery.domain.user.entity.User;
+import com.delivery.global.common.ApiResponse;
+import com.delivery.global.security.service.UserDetailsImpl;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.net.URI;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("api/v1/menus")
+public class MenuController {
+
+    private final MenuServiceImpl menuServiceImpl;
+
+    @PostMapping
+    @PreAuthorize("hasAnyRole('OWNER', 'MASTER', 'MANAGER')")
+    public ResponseEntity<?> createMenu(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Valid @RequestBody CreateMenuReq req
+    ) {
+        User user = userDetails.getUser();
+        MenuRes menuRes = menuServiceImpl.create(user.getUserId(), req);
+        return ResponseEntity
+                .created(URI.create("api/v1/menus/" + menuRes.getMenuId()))
+                .body(ApiResponse.success(menuRes));
+    }
+    //메뉴 목록 조회
+
+    //메뉴 상세 조회
+
+    //메뉴 수정
+
+    //메뉴 삭제
+}
