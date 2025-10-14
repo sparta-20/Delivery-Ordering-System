@@ -1,6 +1,8 @@
 package com.delivery.domain.order.repository;
 
 import com.delivery.domain.order.entity.Order;
+import org.aspectj.weaver.ast.Or;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

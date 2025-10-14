@@ -11,6 +11,7 @@ import com.delivery.domain.user.repository.UserRepository;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +26,10 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
     @Override
     public List<OrderResponseDto.OrderListDto> getOrderList(Long userId) {
         List<Order> orders = orderRepository.findByUser_UserId(userId);
-
         return orders.stream()
                 .map(OrderResponseDto.OrderListDto::from)
                 .toList();

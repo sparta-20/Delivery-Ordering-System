@@ -18,6 +18,7 @@ public class OrderResponseDto {
     @Builder
     public static class OrderMenuDetailDto {
         private UUID menuId;
+        private String menuName;
         private Integer quantity;
         private Integer price;
         private OrderMenuStatusEnum status;
@@ -25,6 +26,7 @@ public class OrderResponseDto {
         public static OrderMenuDetailDto from(OrderMenu orderMenu) {
             return OrderMenuDetailDto.builder()
                     .menuId(orderMenu.getMenu().getMenuId())
+                    .menuName(orderMenu.getMenu().getName())
                     .quantity(orderMenu.getQuantity())
                     .price(orderMenu.getPrice())
                     .status(orderMenu.getStatus())
@@ -39,6 +41,7 @@ public class OrderResponseDto {
     public static class OrderListDto {
         private UUID orderId;
         private String address;
+        private String storeName;
         private OrderStatusEnum status;
         private Integer totalPrice;
         private List<OrderMenuDetailDto> menus;
@@ -47,6 +50,7 @@ public class OrderResponseDto {
             return OrderListDto.builder()
                     .orderId(order.getOrderId())
                     .address(order.getAddress())
+                    .storeName(order.getStore().getName())
                     .status(order.getStatus())
                     .totalPrice(order.getTotalPrice())
                     .menus(order.getOrderMenus().stream()
