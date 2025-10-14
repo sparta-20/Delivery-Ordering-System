@@ -89,6 +89,6 @@ public class OrderServiceImpl implements OrderService {
     private Order findOrderByOrderId(UUID orderId) {
         return orderRepository.findByOrderId(orderId)
                 // FIXME: 에러코드 수정
-                .orElseThrow(() -> new BusinessException(ErrorCode.AI_REQUEST_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.AI_NOT_FOUND));
     }
 }
