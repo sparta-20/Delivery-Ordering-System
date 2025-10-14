@@ -20,6 +20,7 @@ public class UserRes {
     private PublicStatus isPublic;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private LocalDateTime deletedAt;
 
     public static UserRes from(User user) {
         return new UserRes(
@@ -29,7 +30,8 @@ public class UserRes {
                 user.getRole(),
                 user.getPublicStatus(),
                 user.getCreatedAt(),
-                user.getModifiedAt()
+                user.getModifiedAt(),
+                user.getDeletedAt()
         );
     }
 }

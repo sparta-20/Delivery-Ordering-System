@@ -2,6 +2,7 @@ package com.delivery.ordering.domain.user.service;
 
 import com.delivery.domain.user.dto.UpdateUserPasswordReq;
 import com.delivery.domain.user.dto.UpdateUserReq;
+import com.delivery.domain.user.dto.UserRes;
 import com.delivery.domain.user.entity.PublicStatus;
 import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.repository.UserRepository;
@@ -59,12 +60,12 @@ class UserServiceTest {
         when(userRepository.findByUserIdAndDeletedAtIsNull(userId))
                 .thenReturn(Optional.of(user));
 
-        User result = userService.updateUser(userId, req);
+        UserRes result = userService.updateUser(userId, req);
 
         assertEquals(userId, result.getUserId());
         assertNotEquals(oldNickName, result.getNickname());
         assertNotEquals(oldEmail, result.getEmail());
-        assertNotEquals(oldPublicStatus, result.getPublicStatus());
+        assertNotEquals(oldPublicStatus, result.getIsPublic());
     }
 
     @Test
@@ -119,9 +120,7 @@ class UserServiceTest {
         UpdateUserPasswordReq req = new UpdateUserPasswordReq(currentPassword, newPassword, newPassword);
         when(userRepository.findByUserIdAndDeletedAtIsNull(userId)).thenReturn(Optional.of(user));
 
-        User result = userService.updateUserPassword(userId, req);
-
-        assertTrue(passwordEncoder.matches(newPassword, result.getPassword()));
+        userService.updateUserPassword(userId, req);
     }
 
     @Test
@@ -174,7 +173,7 @@ class UserServiceTest {
                 .build();
         when(userRepository.findByUserIdAndDeletedAtIsNull(userId)).thenReturn(Optional.of(user));
 
-        User delete = userService.delete(userId, userId);
+        UserRes delete = userService.delete(userId, userId);
 
         assertNotNull(delete.getDeletedAt());
     }

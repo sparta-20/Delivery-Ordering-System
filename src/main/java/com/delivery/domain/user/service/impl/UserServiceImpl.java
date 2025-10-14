@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
         validateEmail(user.getEmail(), request.getEmail());
 
         user.update(request.getNickname(), request.getEmail(), request.getPublicStatus());
-        return user;
+        return UserRes.from(user);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
         validatePassword(request.getCurrentPassword(), user.getPassword());
 
         user.updatePassword(passwordEncoder.encode(request.getNewPassword()));
-        return user;
+        return UserRes.from(user);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
     public UserRes delete(Long requestUserId, Long userId) {
         User user = getUserById(userId);
         user.markDeleted(requestUserId);
-        return user;
+        return UserRes.from(user);
     }
 
     private void validatePassword(String requestPassword, String useerPassword) {
