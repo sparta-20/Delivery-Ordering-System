@@ -76,6 +76,16 @@ public class OrderServiceImpl implements OrderService {
         order.cancel(dto.getReason());
     }
 
+    private void validateOrder(Order order, Long userId) {
+        if (!order.getUser().getUserId().equals(userId))
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        if (order.getStatus() != OrderStatusEnum.PENDING)
+            throw new BusinessException(ErrorCode.INVALID_ORDER_STATUS);
+        if (Duration.between(order.getCreatedAt(), LocalDateTime.now()).toMinutes() > 5) {
+            throw new BusinessException(ErrorCode.ORDER_CANCEL_TIME_EXCEEDED);
+        }
+    }
+
     private Order findOrderByOrderId(UUID orderId) {
         return orderRepository.findByOrderId(orderId)
                 // FIXME: 에러코드 수정
