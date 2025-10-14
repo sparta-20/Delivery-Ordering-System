@@ -15,4 +15,11 @@ public class CartRequestDto {
         private UUID menuId;
         private Integer quantity;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateCartItemDto {
+        private Integer quantity;
+    }
 }
