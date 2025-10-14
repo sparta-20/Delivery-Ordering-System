@@ -1,7 +1,7 @@
 package com.delivery.domain.review.service;
 
 import com.delivery.domain.order.entity.Order;
-import com.delivery.domain.order.entity.OrderStatus;
+import com.delivery.domain.order.entity.OrderStatusEnum;
 import com.delivery.domain.order.repository.OrderRepository;
 import com.delivery.domain.review.dto.ReviewCreateReq;
 import com.delivery.domain.review.dto.ReviewRes;
@@ -100,7 +100,7 @@ public class ReviewServiceImpl implements ReviewService{
     // 주문 상태 검증 (배송 완료 여부)
     private void validateOrderStatus(Order order) {
         // TODO(#68): 실제 완료 상태 확정 시(DELIVERED/COMPLETED)로 변경
-        if (order.getStatus() != OrderStatus.ACCEPTED) {
+        if (order.getStatus() != OrderStatusEnum.DONE) {
             log.warn("[REVIEW] 주문 상태 불일치 - orderId: {}, status: {}, required: DELIVERED|COMPLETED",
                     order.getOrderId(), order.getStatus());
             throw new BusinessException(ErrorCode.ORDER_NOT_COMPLETED);

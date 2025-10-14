@@ -10,4 +10,5 @@ public interface OrderService {
     List<OrderResponseDto.OrderListDto> getOrderList(Long userId);
     // 수정 필요
     List<OrderResponseDto.OrderListDto> getOrdersByOwner(Long ownerId);
+    List<OrderResponseDto.AllOrderListDto> getAllList();
 }

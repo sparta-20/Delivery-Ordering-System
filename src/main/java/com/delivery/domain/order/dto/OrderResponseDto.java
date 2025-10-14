@@ -2,8 +2,8 @@ package com.delivery.domain.order.dto;
 
 import com.delivery.domain.order.entity.Order;
 import com.delivery.domain.order.entity.OrderMenu;
-import com.delivery.domain.order.entity.OrderMenuStatus;
-import com.delivery.domain.order.entity.OrderStatus;
+import com.delivery.domain.order.entity.OrderMenuStatusEnum;
+import com.delivery.domain.order.entity.OrderStatusEnum;
 import lombok.*;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class OrderResponseDto {
         private UUID menuId;
         private Integer quantity;
         private Integer price;
-        private OrderMenuStatus status;
+        private OrderMenuStatusEnum status;
 
         public static OrderMenuDetailDto from(OrderMenu orderMenu) {
             return OrderMenuDetailDto.builder()
@@ -38,13 +38,39 @@ public class OrderResponseDto {
     public static class OrderListDto {
         private UUID orderId;
         private String address;
-        private OrderStatus status;
+        private OrderStatusEnum status;
         private Integer totalPrice;
         private List<OrderMenuDetailDto> menus;
 
         public static OrderListDto from(Order order) {
             return OrderListDto.builder()
                     .orderId(order.getOrderId())
+                    .address(order.getAddress())
+                    .status(order.getStatus())
+                    .totalPrice(order.getTotalPrice())
+                    .menus(order.getOrderMenus().stream()
+                            .map(OrderMenuDetailDto::from)
+                            .toList())
+                    .build();
+        }
+    }
+
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder
+    public static class AllOrderListDto {
+        private UUID orderId;
+        private String storeName; // TODO: 추후 store 수정
+        private String address;
+        private OrderStatusEnum status;
+        private Integer totalPrice;
+        private List<OrderMenuDetailDto> menus;
+
+        public static AllOrderListDto from(Order order) {
+            return AllOrderListDto.builder()
+                    .orderId(order.getOrderId())
+                    .storeName("임시 가게 이름")
                     .address(order.getAddress())
                     .status(order.getStatus())
                     .totalPrice(order.getTotalPrice())

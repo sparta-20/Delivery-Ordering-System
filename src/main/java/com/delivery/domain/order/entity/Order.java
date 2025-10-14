@@ -21,7 +21,7 @@ public class Order extends Timestamped {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private OrderStatus status = OrderStatus.PENDING;
+    private OrderStatusEnum status = OrderStatusEnum.PENDING;
 
     @Column(nullable = false)
     private Integer totalPrice;

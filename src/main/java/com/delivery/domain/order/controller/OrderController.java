@@ -34,4 +34,12 @@ public class OrderController {
         // 추후 store -> 수정 (현재는 사장이 로그인했다고 가정하고 ID로 찾음)
         return ResponseEntity.ok(orderService.getOrdersByOwner(user.getUserId()));
     }
+
+    @PreAuthorize("hasAnyRole('MANAGER', 'MASTER')")
+    @GetMapping("/admin")
+    public ResponseEntity<?> getAllOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(orderService.getAllList());
+    }
+
+
 }
