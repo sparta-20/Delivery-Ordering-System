@@ -6,7 +6,7 @@ import com.delivery.domain.cart.dto.CartResponseDto;
 import com.delivery.domain.cart.entity.Cart;
 import com.delivery.domain.cart.service.CartService;
 import com.delivery.domain.user.entity.User;
-import com.delivery.global.security.UserDetailsImpl;
+import com.delivery.global.security.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
