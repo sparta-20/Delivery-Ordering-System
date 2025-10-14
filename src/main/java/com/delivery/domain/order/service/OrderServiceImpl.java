@@ -4,6 +4,7 @@ import com.delivery.domain.order.dto.OrderRequestDto;
 import com.delivery.domain.order.dto.OrderResponseDto;
 import com.delivery.domain.order.entity.Order;
 import com.delivery.domain.order.repository.OrderRepository;
+import com.delivery.domain.user.entity.UserRoleEnum;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,7 @@ public class OrderServiceImpl implements OrderService {
     public void changeStatus(Long userId, UUID orderId, OrderRequestDto.ChangeOrderStatusDto dto) {
         Order order = findOrderByOrderId(orderId);
         // TODO: orderId 이용해서 Store 정보 -> 가게 주인 확인 후 현재 로그인한 유저랑 일치하는지 확인
-        validateOwner(userId, dto.getOwnerId());
+        if (order.getUser().getRole().equals(UserRoleEnum.OWNER)) validateOwner(userId, dto.getOwnerId());
         order.changeStatus(dto.getStatus());
     }
 
@@ -50,7 +51,7 @@ public class OrderServiceImpl implements OrderService {
     public void rejectOrder(Long userId, UUID orderId, OrderRequestDto.RejectOrderDto dto) {
         Order order = findOrderByOrderId(orderId);
         // TODO
-        validateOwner(userId, dto.getOwnerId());
+        if (order.getUser().getRole().equals(UserRoleEnum.OWNER)) validateOwner(userId, dto.getOwnerId());
         order.rejectOrder(dto.getReason());
     }
 

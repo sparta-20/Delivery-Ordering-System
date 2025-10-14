@@ -35,7 +35,7 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrdersByOwner(user.getUserId()));
     }
 
-    @PreAuthorize("hasRole('OWNER')")
+    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
     @PatchMapping("/owner/{orderId}/status")
     public ResponseEntity<Void> changeOrderStatus(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                   @PathVariable UUID orderId,
@@ -47,7 +47,7 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('OWNER')")
+    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
     @PatchMapping("/owner/{orderId}/reject")
     public ResponseEntity<Void> rejectOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                             @PathVariable UUID orderId,
