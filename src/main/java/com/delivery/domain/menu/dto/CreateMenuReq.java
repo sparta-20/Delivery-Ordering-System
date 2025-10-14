@@ -1,6 +1,6 @@
 package com.delivery.domain.menu.dto;
 
-import com.delivery.domain.menu.entity.MenuStatus;
+import com.delivery.domain.menu.entity.MenuStatusEnum;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,5 +25,5 @@ public class CreateMenuReq {
     @NotEmpty
     private Integer quantity;
     @NotEmpty
-    private MenuStatus status;
+    private MenuStatusEnum status;
 }

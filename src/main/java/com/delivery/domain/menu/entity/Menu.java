@@ -33,13 +33,13 @@ public class Menu extends Timestamped {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private MenuStatus status;
+    private MenuStatusEnum status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    public Menu(String name, String description, Integer price, Integer quantity, MenuStatus status, Store store) {
+    public Menu(String name, String description, Integer price, Integer quantity, MenuStatusEnum status, Store store) {
         this.name = name;
         this.description = description;
         this.price = price;

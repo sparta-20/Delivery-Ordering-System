@@ -9,6 +9,7 @@ import com.delivery.domain.store.entity.Store;
 import com.delivery.domain.store.entity.StoreStatusEnum;
 import com.delivery.domain.store.repository.StoreRepository;
 import com.delivery.domain.user.entity.User;
+import com.delivery.domain.user.entity.UserRoleEnum;
 import com.delivery.domain.user.service.UserService;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
@@ -31,7 +32,8 @@ public class MenuServiceImpl implements MenuService {
     public MenuRes create(Long userId, CreateMenuReq req) {
         User user = getUserById(userId);
         Store store = getStoreById(req.getStoreId());
-        checkStoreOwner(store, user);
+        if(UserRoleEnum.CUSTOMER.equals(user.getRole()))
+            checkStoreOwner(store, user);
         Menu menu = menuRepository.save(createMenu(req, store));
         return MenuRes.from(menu);
     }

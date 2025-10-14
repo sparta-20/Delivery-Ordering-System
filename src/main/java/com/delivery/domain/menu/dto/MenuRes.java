@@ -1,7 +1,7 @@
 package com.delivery.domain.menu.dto;
 
 import com.delivery.domain.menu.entity.Menu;
-import com.delivery.domain.menu.entity.MenuStatus;
+import com.delivery.domain.menu.entity.MenuStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -18,7 +18,7 @@ public class MenuRes {
     private String imageUrl;
     private Integer price;
     private Integer quantity;
-    private MenuStatus status;
+    private MenuStatusEnum status;
     private LocalDateTime createdAt;
 
     public static MenuRes from(Menu menu) {
