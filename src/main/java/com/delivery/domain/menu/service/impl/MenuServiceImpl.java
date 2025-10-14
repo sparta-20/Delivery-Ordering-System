@@ -62,10 +62,6 @@ public class MenuServiceImpl implements MenuService {
         return MenuRes.from(menu);
     }
 
-    private static boolean canViewMenu(Long userId, User user, Menu menu, Store store) {
-        return user.isManager() || user.isMaster() || (user.isCustomer() && !menu.isHidden()) || (user.isOwner() && store.isOwnerBy(userId));
-    }
-
     /**
      * OWNER: 자기 가게 메뉴만 수정 가능
      * MANAGER / MASTER: 전체 메뉴 수정 가능
@@ -105,14 +101,18 @@ public class MenuServiceImpl implements MenuService {
 
     }
 
-    private boolean canManageMenu(Long userId, User user, Store store) {
-        return user.isMaster() || user.isManager() || (user.isOwner() && store.isOwnerBy(userId));
-    }
-
     @Override
     public Menu getMenuById(UUID menuId) {
         return menuRepository.findById(menuId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.STORE_NOT_FOUND));
+    }
+
+    private boolean canManageMenu(Long userId, User user, Store store) {
+        return user.isMaster() || user.isManager() || (user.isOwner() && store.isOwnerBy(userId));
+    }
+
+    private static boolean canViewMenu(Long userId, User user, Menu menu, Store store) {
+        return user.isManager() || user.isMaster() || (user.isCustomer() && !menu.isHidden()) || (user.isOwner() && store.isOwnerBy(userId));
     }
 
     private User getUserById(Long userId) {
