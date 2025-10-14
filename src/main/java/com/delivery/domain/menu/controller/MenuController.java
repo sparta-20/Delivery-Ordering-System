@@ -11,12 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,9 +35,20 @@ public class MenuController {
                 .created(URI.create("api/v1/menus/" + menuRes.getMenuId()))
                 .body(ApiResponse.success(menuRes));
     }
-    //메뉴 목록 조회
 
     //메뉴 상세 조회
+    @PostMapping("/{menuId}")
+    @PreAuthorize("hasAnyRole('OWNER', 'MASTER', 'MANAGER')")
+    public ResponseEntity<?> createMenu(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable(value = "menuId") UUID menuId
+    ) {
+        User user = userDetails.getUser();
+        MenuRes menuRes = menuService.getMenuResById(user.getUserId(), menuId);
+        return ResponseEntity.ok(ApiResponse.success(menuRes));
+    }
+
+    //메뉴 목록 조회
 
     //메뉴 수정
 

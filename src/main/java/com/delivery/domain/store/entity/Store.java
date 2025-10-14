@@ -87,4 +87,8 @@ public class Store extends Timestamped {
         if (minPrice != null) this.minPrice = minPrice;
         if (status != null) this.status = status;
     }
+
+    public boolean isOwnerBy(Long userId) {
+        return this.getOwner().getUserId().equals(userId);
+    }
 }

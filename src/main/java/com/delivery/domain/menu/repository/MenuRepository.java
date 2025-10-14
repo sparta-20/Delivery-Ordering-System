@@ -3,5 +3,7 @@ package com.delivery.domain.menu.repository;
 import com.delivery.domain.menu.entity.Menu;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface MenuRepository extends JpaRepository<Menu, Long> {
+import java.util.UUID;
+
+public interface MenuRepository extends JpaRepository<Menu, UUID> {
 }

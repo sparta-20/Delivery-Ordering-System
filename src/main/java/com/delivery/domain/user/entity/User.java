@@ -38,4 +38,12 @@ public class User extends Timestamped {
         this.email = email;
         this.password = password;
     }
+
+    public boolean isCustomer() {
+        return UserRoleEnum.CUSTOMER.equals(this.role);
+    }
+
+    public boolean isMaster() {
+        return UserRoleEnum.MASTER.equals(this.role);
+    }
 }

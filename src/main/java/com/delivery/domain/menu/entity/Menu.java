@@ -47,4 +47,8 @@ public class Menu extends Timestamped {
         this.status = status;
         this.store = store;
     }
+
+    public boolean isHidden() {
+        return MenuStatusEnum.HIDDEN.equals(this.status);
+    }
 }

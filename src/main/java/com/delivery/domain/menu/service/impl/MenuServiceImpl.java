@@ -9,7 +9,6 @@ import com.delivery.domain.store.entity.Store;
 import com.delivery.domain.store.entity.StoreStatusEnum;
 import com.delivery.domain.store.repository.StoreRepository;
 import com.delivery.domain.user.entity.User;
-import com.delivery.domain.user.entity.UserRoleEnum;
 import com.delivery.domain.user.service.UserService;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
@@ -28,29 +27,44 @@ public class MenuServiceImpl implements MenuService {
     private final StoreRepository storeRepository;
     private final MenuRepository menuRepository;
 
+    /**
+     * OWNER: 자기 가게 메뉴 생성 가능
+     * MANAGER / MASTER: 모든 가게 메뉴 생성 가능
+     */
     @Transactional
     public MenuRes create(Long userId, CreateMenuReq req) {
         User user = getUserById(userId);
         Store store = getStoreById(req.getStoreId());
-        if(UserRoleEnum.CUSTOMER.equals(user.getRole()))
-            checkStoreOwner(store, user);
-        Menu menu = menuRepository.save(createMenu(req, store));
+
+        if(user.isCustomer() && !store.isOwnerBy(user.getUserId())){
+            throw new BusinessException(ErrorCode.FORBIDDEN_READ_STORE);
+        }
+
+        Menu menu = menuRepository.save(req.toEntity(store));
         return MenuRes.from(menu);
     }
 
-    private Menu createMenu(CreateMenuReq req, Store store) {
-        return Menu.builder()
-                .name(req.getName())
-                .description(req.getDescription())
-                .price(req.getPrice())
-                .quantity(req.getQuantity())
-                .status(req.getStatus())
-                .store(store).build();
+    /**
+     CUSTOMER: 공개 상태 메뉴만 조회 가능
+     OWNER: 자기 가게 메뉴 상세 조회 가능 (숨김 포함)
+     MANAGER / MASTER: 전체 메뉴 상세 조회 가능
+     */
+    @Override
+    public MenuRes getMenuResById(Long userId, UUID menuId) {
+        User user = getUserById(userId);
+        Menu menu = getMenuById(menuId);
+        Store store = menu.getStore();
+
+        if(menu.isHidden() && user.isCustomer() && !store.isOwnerBy(user.getUserId())){
+            throw new BusinessException(ErrorCode.MENU_NOT_FOUND);
+        }
+        return MenuRes.from(menu);
     }
 
-    private void checkStoreOwner(Store store, User user) {
-        if (!user.getUserId().equals(store.getOwner().getUserId()))
-            throw new BusinessException(ErrorCode.FORBIDDEN_READ_STORE);
+    @Override
+    public Menu getMenuById(UUID menuId) {
+        return menuRepository.findById(menuId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.STORE_NOT_FOUND));
     }
 
     private User getUserById(Long userId) {

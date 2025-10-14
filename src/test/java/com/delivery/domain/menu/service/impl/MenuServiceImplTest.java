@@ -42,7 +42,7 @@ class MenuServiceImplTest {
         long userId = 1L;
         UUID storeId = UUID.randomUUID();
         UUID menuId = UUID.randomUUID();
-        User user = User.builder().userId(userId).build();
+        User user = User.builder().userId(userId).role(UserRoleEnum.OWNER).build();
         Store store = Store.builder().storeId(storeId).status(StoreStatusEnum.ACTIVE).owner(user).build();
         Menu menu = Menu.builder().menuId(menuId).status(MenuStatusEnum.AVAILABLE).store(store).build();
 
@@ -110,6 +110,7 @@ class MenuServiceImplTest {
         assertEquals(storeId, menuRes.getStoreId());
         assertEquals(MenuStatusEnum.AVAILABLE, menuRes.getStatus());
     }
+    
     @Test
     @DisplayName("MANAGER는 모든 Store의 메뉴를 생성할 수 있다.")
     void MANAGER는_모든_Store의_메뉴를_생성할_수_있다() {
@@ -136,4 +137,65 @@ class MenuServiceImplTest {
         assertEquals(MenuStatusEnum.AVAILABLE, menuRes.getStatus());
     }
 
+    @Test
+    @DisplayName("CUSTOMER는 숨김(HIDDEN) 메뉴를 조회하면 예외 발생")
+    void customerCannotViewHiddenMenu() {
+        long userId = 1L;
+        User customer = User.builder().userId(userId).role(UserRoleEnum.CUSTOMER).build();
+        User owner = User.builder().userId(2L).build();
+        UUID menuId = UUID.randomUUID();
+        UUID storeId = UUID.randomUUID();
+
+        Store store = Store.builder().storeId(storeId).owner(owner).status(StoreStatusEnum.ACTIVE).build();
+        Menu hiddenMenu = Menu.builder().menuId(menuId).store(store).status(MenuStatusEnum.HIDDEN).build();
+
+        when(userService.getUserById(userId)).thenReturn(customer);
+        when(menuRepository.findById(menuId)).thenReturn(Optional.of(hiddenMenu));
+
+        BusinessException exception = assertThrows(BusinessException.class, () ->
+                menuService.getMenuResById(userId, menuId)
+        );
+        assertEquals(ErrorCode.MENU_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("OWNER는 자신의 가게 숨김 메뉴 조회할 수 있다.")
+    void ownerCanViewHiddenMenu() {
+        long userId = 2L;
+        User owner = User.builder().userId(userId).role(UserRoleEnum.OWNER).build();
+        UUID menuId = UUID.randomUUID();
+        UUID storeId = UUID.randomUUID();
+
+        Store store = Store.builder().storeId(storeId).owner(owner).status(StoreStatusEnum.ACTIVE).build();
+        Menu hiddenMenu = Menu.builder().menuId(menuId).store(store).status(MenuStatusEnum.HIDDEN).build();
+
+        when(userService.getUserById(userId)).thenReturn(owner);
+        when(menuRepository.findById(menuId)).thenReturn(Optional.of(hiddenMenu));
+
+        MenuRes menuRes = menuService.getMenuResById(userId, menuId);
+
+        assertEquals(menuId, menuRes.getMenuId());
+        assertEquals(storeId, menuRes.getStoreId());
+    }
+
+    @Test
+    @DisplayName("MANAGER/MASTER는 모든 메뉴 조회 할 수 있다.")
+    void managerOrMasterCanViewHiddenMenu() {
+        long userId = 3L;
+        User manager = User.builder().userId(userId).role(UserRoleEnum.MANAGER).build();
+        UUID menuId = UUID.randomUUID();
+        UUID storeId = UUID.randomUUID();
+
+        User owner = User.builder().userId(4L).build();
+        Store store = Store.builder().storeId(storeId).owner(owner).status(StoreStatusEnum.ACTIVE).build();
+        Menu hiddenMenu = Menu.builder().menuId(menuId).store(store).status(MenuStatusEnum.HIDDEN).build();
+
+        when(userService.getUserById(userId)).thenReturn(manager);
+        when(menuRepository.findById(menuId)).thenReturn(Optional.of(hiddenMenu));
+
+        MenuRes menuRes = menuService.getMenuResById(userId, menuId);
+
+        assertEquals(menuId, menuRes.getMenuId());
+        assertEquals(storeId, menuRes.getStoreId());
+    }
 }
