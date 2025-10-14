@@ -10,9 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
@@ -38,6 +35,29 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrdersByOwner(user.getUserId()));
     }
 
+    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
+    @PatchMapping("/owner/{orderId}/status")
+    public ResponseEntity<Void> changeOrderStatus(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                  @PathVariable UUID orderId,
+                                                  @RequestBody OrderRequestDto.ChangeOrderStatusDto dto) {
+        // TODO: ApiResponse 사용해서 수정
+        // TODO: store 이용해서 수정
+        User user = userDetails.getUser();
+        orderService.changeStatus(user.getUserId(), orderId, dto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
+    @PatchMapping("/owner/{orderId}/reject")
+    public ResponseEntity<Void> rejectOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                            @PathVariable UUID orderId,
+                                            @RequestBody OrderRequestDto.RejectOrderDto dto) {
+        // TODO
+        User user = userDetails.getUser();
+        orderService.rejectOrder(user.getUserId(), orderId, dto);
+        return ResponseEntity.noContent().build();
+    }
+      
     @PreAuthorize("hasAnyRole('MANAGER', 'MASTER')")
     @GetMapping("/admin")
     public ResponseEntity<?> getAllOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {

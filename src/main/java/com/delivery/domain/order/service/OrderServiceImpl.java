@@ -5,6 +5,7 @@ import com.delivery.domain.order.dto.OrderResponseDto;
 import com.delivery.domain.order.entity.Order;
 import com.delivery.domain.order.entity.OrderStatusEnum;
 import com.delivery.domain.order.repository.OrderRepository;
+import com.delivery.domain.user.entity.UserRoleEnum;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -39,6 +41,27 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
+    public void changeStatus(Long userId, UUID orderId, OrderRequestDto.ChangeOrderStatusDto dto) {
+        Order order = findOrderByOrderId(orderId);
+        // TODO: orderId 이용해서 Store 정보 -> 가게 주인 확인 후 현재 로그인한 유저랑 일치하는지 확인
+        if (order.getUser().getRole().equals(UserRoleEnum.OWNER)) validateOwner(userId, dto.getOwnerId());
+        order.changeStatus(dto.getStatus());
+    }
+
+    @Override
+    @Transactional
+    public void rejectOrder(Long userId, UUID orderId, OrderRequestDto.RejectOrderDto dto) {
+        Order order = findOrderByOrderId(orderId);
+        // TODO
+        if (order.getUser().getRole().equals(UserRoleEnum.OWNER)) validateOwner(userId, dto.getOwnerId());
+        order.rejectOrder(dto.getReason());
+    }
+
+    private void validateOwner(Long userId, Long ownerId) {
+        if (!userId.equals(ownerId)) throw new BusinessException(ErrorCode.FORBIDDEN);
+    }
+  
     public List<OrderResponseDto.AllOrderListDto> getAllList() {
         List<Order> orders = orderRepository.findAll();
         return orders.stream()
@@ -53,11 +76,6 @@ public class OrderServiceImpl implements OrderService {
         order.cancel(dto.getReason());
     }
 
-    private Order findOrderByOrderId(UUID orderId) {
-        return orderRepository.findByOrderId(orderId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
-    }
-
     private void validateOrder(Order order, Long userId) {
         if (!order.getUser().getUserId().equals(userId))
             throw new BusinessException(ErrorCode.FORBIDDEN);
@@ -66,5 +84,11 @@ public class OrderServiceImpl implements OrderService {
         if (Duration.between(order.getCreatedAt(), LocalDateTime.now()).toMinutes() > 5) {
             throw new BusinessException(ErrorCode.ORDER_CANCEL_TIME_EXCEEDED);
         }
+    }
+
+    private Order findOrderByOrderId(UUID orderId) {
+        return orderRepository.findByOrderId(orderId)
+                // FIXME: 에러코드 수정
+                .orElseThrow(() -> new BusinessException(ErrorCode.AI_REQUEST_NOT_FOUND));
     }
 }
