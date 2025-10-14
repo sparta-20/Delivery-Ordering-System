@@ -24,7 +24,7 @@ public class OrderResponseDto {
 
         public static OrderMenuDetailDto from(OrderMenu orderMenu) {
             return OrderMenuDetailDto.builder()
-                    .menuId(orderMenu.getMenuId())
+                    .menuId(orderMenu.getMenu().getMenuId())
                     .quantity(orderMenu.getQuantity())
                     .price(orderMenu.getPrice())
                     .status(orderMenu.getStatus())

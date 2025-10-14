@@ -1,5 +1,6 @@
 package com.delivery.domain.cart.entity;
 
+import com.delivery.domain.store.entity.Store;
 import com.delivery.domain.user.entity.User;
 import com.delivery.global.common.entity.Timestamped;
 import jakarta.persistence.*;
@@ -28,15 +29,17 @@ public class Cart extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
+
     @OneToMany(mappedBy = "cart")
     private List<CartItem> items = new ArrayList<>();
 
-    @Column
-    private UUID storeId;
-
     @Builder
-    public Cart(User user) {
+    public Cart(User user, Store store) {
         this.user = user;
+        this.store = store;
     }
 
     public void addToCart(CartItem cartItem) {

@@ -2,7 +2,7 @@ package com.delivery.domain.review.service;
 
 import com.delivery.domain.order.entity.Order;
 import com.delivery.domain.order.entity.OrderStatusEnum;
-import com.delivery.domain.order.repository.OrderRepository;
+//import com.delivery.domain.order.repository.OrderRepository;
 import com.delivery.domain.review.dto.ReviewCreateReq;
 import com.delivery.domain.review.dto.ReviewRes;
 import com.delivery.domain.review.entity.Review;

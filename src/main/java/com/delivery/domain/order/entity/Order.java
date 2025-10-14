@@ -1,5 +1,6 @@
 package com.delivery.domain.order.entity;
 
+import com.delivery.domain.store.entity.Store;
 import com.delivery.global.common.entity.Timestamped;
 import com.delivery.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -46,11 +47,9 @@ public class Order extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // Store 추가 필요
-
-    // 임시로 추가 -> 추후 Store과 연결
-    @Column(nullable = false)
-    private Long ownerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
 
     @OneToMany(mappedBy = "order")
     private List<OrderMenu> orderMenus = new ArrayList<>();
@@ -63,7 +62,7 @@ public class Order extends Timestamped {
         this.status = OrderStatusEnum.REJECTED;
         this.canceledReason = reason;
     }
-  
+
     public void cancel(String reason) {
         this.canceledReason = reason;
         this.status = OrderStatusEnum.CANCELED;
