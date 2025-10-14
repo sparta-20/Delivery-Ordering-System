@@ -24,6 +24,9 @@ public class StoreUpdateReq {
     @NotBlank(message = "구/군은 필수입니다.")
     private String district;
 
+    @NotBlank(message = "동은 필수입니다.")
+    private String dong;
+
     @NotNull(message = "최소 주문 금액은 필수입니다.")
     private Integer minPrice;
 
