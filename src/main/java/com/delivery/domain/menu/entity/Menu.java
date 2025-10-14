@@ -29,6 +29,9 @@ public class Menu extends Timestamped {
     private Integer quantity;
 
     @Column(nullable = false)
+    private String imageUrl;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private MenuStatus status;
 

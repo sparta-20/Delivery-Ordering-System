@@ -15,6 +15,7 @@ public class MenuRes {
     private UUID storeId;
     private String name;
     private String description;
+    private String imageUrl;
     private Integer price;
     private Integer quantity;
     private MenuStatus status;
@@ -26,6 +27,7 @@ public class MenuRes {
                 menu.getStore().getStoreId(),
                 menu.getName(),
                 menu.getDescription(),
+                menu.getImageUrl(),
                 menu.getPrice(),
                 menu.getQuantity(),
                 menu.getStatus(),

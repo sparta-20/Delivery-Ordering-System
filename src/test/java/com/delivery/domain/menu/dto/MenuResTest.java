@@ -20,6 +20,7 @@ class MenuResTest {
                 .menuId(UUID.randomUUID())
                 .name("name")
                 .price(10000)
+                .imageUrl("ImageUrl")
                 .store(Store.builder().storeId(storeId).build())
                 .quantity(2)
                 .description("description")
@@ -32,6 +33,7 @@ class MenuResTest {
         assertThat(res.getName()).isEqualTo("name");
         assertThat(res.getPrice()).isEqualTo(10000);
         assertThat(res.getQuantity()).isEqualTo(2);
+        assertThat(res.getImageUrl()).isEqualTo("ImageUrl");
         assertThat(res.getDescription()).isEqualTo("description");
         assertThat(res.getStoreId()).isEqualTo(storeId);
     }
