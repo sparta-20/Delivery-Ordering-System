@@ -28,12 +28,13 @@ public enum ErrorCode {
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "C002", "카테고리를 찾을 수 없습니다." ),
     FORBIDDEN_UPDATE_STORE(HttpStatus.FORBIDDEN, "S003", "가게를 수정할 권한이 없습니다."),
     FORBIDDEN_DELETE_STORE(HttpStatus.FORBIDDEN, "S004", "가게를 삭제할 권한이 없습니다."),
+    FORBIDDEN_READ_STORE(HttpStatus.FORBIDDEN,"s005", "가게를 조회할 권한이 없습니다." ),
 
     // jwt
     TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "A001", "토큰이 존재하지 않습니다."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "A003", "리프레시 토큰을 찾을 수 없습니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "A004", "리프레시 토큰이 유효하지 않습니다."),
-  
+
     // AI 도메인
     AI_API_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "AI001", "AI API 호출 중 오류가 발생했습니다."),
     AI_RESPONSE_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "AI002", "AI 응답이 비어있습니다."),
@@ -47,9 +48,8 @@ public enum ErrorCode {
 
     // 주문 도메인
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "O001", "주문을 찾을 수 없습니다."),
-    ORDER_NOT_COMPLETED(HttpStatus.BAD_REQUEST, "O002", "배송이 완료된 주문만 리뷰 작성이 가능합니다."),
+    ORDER_NOT_COMPLETED(HttpStatus.BAD_REQUEST, "O002", "배송이 완료된 주문만 리뷰 작성이 가능합니다.");
 
-    ;
 
 
     private final HttpStatus status;

@@ -13,6 +13,8 @@ import com.delivery.domain.user.entity.UserRoleEnum;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -99,5 +101,22 @@ public class StoreServiceImpl implements StoreService {
         return new StoreRes(store);
     }
 
-}
+    // OWNER, MASTER, MANAGER - 본인 가게 조회
+    @Override
+    public Page<StoreRes> getMyStores(User user, Pageable pageable){
+        if(user.getRole() == UserRoleEnum.CUSTOMER){
+            throw new BusinessException(ErrorCode.FORBIDDEN_READ_STORE);
+        }
 
+        Page<Store> stores = storeRepository.findAllByOwnerUserIdAndStatus(user.getUserId(), StoreStatusEnum.ACTIVE, pageable);
+
+        if(stores.isEmpty()){
+            throw new BusinessException(ErrorCode.STORE_NOT_FOUND);
+        }
+
+        return stores.map(StoreRes::from);
+    }
+
+
+
+}
