@@ -1,17 +1,15 @@
 package com.delivery.domain.order.controller;
 
+import com.delivery.domain.order.dto.OrderRequestDto;
 import com.delivery.domain.order.dto.OrderResponseDto;
 import com.delivery.domain.order.service.OrderService;
-import com.delivery.global.security.UserDetailsImpl;
 import com.delivery.domain.user.entity.User;
+import com.delivery.global.security.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -35,5 +33,44 @@ public class OrderController {
         User user = userDetails.getUser();
         // 추후 store -> 수정 (현재는 사장이 로그인했다고 가정하고 ID로 찾음)
         return ResponseEntity.ok(orderService.getOrdersByOwner(user.getUserId()));
+    }
+
+    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
+    @PatchMapping("/owner/{orderId}/status")
+    public ResponseEntity<Void> changeOrderStatus(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                  @PathVariable UUID orderId,
+                                                  @RequestBody OrderRequestDto.ChangeOrderStatusDto dto) {
+        // TODO: ApiResponse 사용해서 수정
+        // TODO: store 이용해서 수정
+        User user = userDetails.getUser();
+        orderService.changeStatus(user.getUserId(), orderId, dto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
+    @PatchMapping("/owner/{orderId}/reject")
+    public ResponseEntity<Void> rejectOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                            @PathVariable UUID orderId,
+                                            @RequestBody OrderRequestDto.RejectOrderDto dto) {
+        // TODO
+        User user = userDetails.getUser();
+        orderService.rejectOrder(user.getUserId(), orderId, dto);
+        return ResponseEntity.noContent().build();
+    }
+      
+    @PreAuthorize("hasAnyRole('MANAGER', 'MASTER')")
+    @GetMapping("/admin")
+    public ResponseEntity<?> getAllOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(orderService.getAllList());
+    }
+
+
+    @PatchMapping("/{orderId}/cancel")
+    public ResponseEntity<Void> cancelOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                            @PathVariable UUID orderId,
+                                            @RequestBody OrderRequestDto.CancelOrderDto dto) {
+        User user = userDetails.getUser();
+        orderService.cancelOrder(user.getUserId(), orderId, dto);
+        return ResponseEntity.noContent().build();
     }
 }

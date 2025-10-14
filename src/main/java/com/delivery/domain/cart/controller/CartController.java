@@ -1,18 +1,18 @@
 package com.delivery.domain.cart.controller;
 
-
 import com.delivery.domain.cart.dto.CartRequestDto;
 import com.delivery.domain.cart.dto.CartResponseDto;
 import com.delivery.domain.cart.entity.Cart;
 import com.delivery.domain.cart.service.CartService;
 import com.delivery.domain.user.entity.User;
-import com.delivery.global.security.UserDetailsImpl;
+import com.delivery.global.security.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,6 +43,16 @@ public class CartController {
     public ResponseEntity<Void> clearCart(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         cartService.clearCart(user.getUserId());
+        return ResponseEntity.noContent().build();
+    }
+        
+    @PatchMapping("/items/{itemId}")
+    public ResponseEntity<Void> updateCartItem(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable UUID itemId,
+            @RequestBody CartRequestDto.UpdateCartItemDto dto) {
+        User user = userDetails.getUser();
+        cartService.updateCartItem(user.getUserId(), itemId, dto.getQuantity());
         return ResponseEntity.noContent().build();
     }
 }

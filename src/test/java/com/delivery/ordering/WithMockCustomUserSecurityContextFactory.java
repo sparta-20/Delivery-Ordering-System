@@ -3,7 +3,7 @@ package com.delivery.ordering;
 import com.delivery.domain.user.entity.PublicStatus;
 import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.entity.UserRoleEnum;
-import com.delivery.global.security.UserDetailsImpl;
+import com.delivery.global.security.service.UserDetailsImpl;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

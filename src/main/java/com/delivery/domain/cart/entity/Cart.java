@@ -1,7 +1,7 @@
 package com.delivery.domain.cart.entity;
 
-import com.delivery.global.common.entity.Timestamped;
 import com.delivery.domain.user.entity.User;
+import com.delivery.global.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +22,7 @@ public class Cart extends Timestamped {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private CartStatus status = CartStatus.CART;
+    private CartStatusEnum status = CartStatusEnum.CART;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -44,6 +44,6 @@ public class Cart extends Timestamped {
     }
 
     public void clearCart() {
-        this.status = CartStatus.CART_CANCEL;
+        this.status = CartStatusEnum.CART_CANCEL;
     }
 }
