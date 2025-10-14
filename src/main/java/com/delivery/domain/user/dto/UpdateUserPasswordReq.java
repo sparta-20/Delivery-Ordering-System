@@ -1,20 +1,20 @@
 package com.delivery.domain.user.dto;
 
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class UpdateUserPasswordRequest {
+public class UpdateUserPasswordReq {
 
-    @NotNull
+    @NotBlank
     private String currentPassword;
 
-    @NotNull
+    @NotBlank
     private String newPassword;
 
-    @NotNull
+    @NotBlank
     private String confirmNewPassword;
 }

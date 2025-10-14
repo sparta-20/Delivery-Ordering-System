@@ -1,8 +1,8 @@
 package com.delivery.domain.user.controller;
 
-import com.delivery.domain.user.dto.UpdateUserPasswordRequest;
-import com.delivery.domain.user.dto.UpdateUserRequest;
-import com.delivery.domain.user.dto.UserResponse;
+import com.delivery.domain.user.dto.UpdateUserPasswordReq;
+import com.delivery.domain.user.dto.UpdateUserReq;
+import com.delivery.domain.user.dto.UserRes;
 import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.service.UserService;
 import com.delivery.global.common.ApiResponse;
@@ -26,23 +26,23 @@ public class UserController {
     public ResponseEntity<?> getUserMe(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User requester = userDetails.getUser();
         User user = userService.getUserById(requester.getUserId());
-        return ResponseEntity.ok(ApiResponse.success(UserResponse.from(user)));
+        return ResponseEntity.ok(ApiResponse.success(UserRes.from(user)));
     }
 
     @PutMapping("/me")
     public ResponseEntity<?> updateUserMe(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @Valid @RequestBody UpdateUserRequest request)
+            @Valid @RequestBody UpdateUserReq request)
     {
         User requester = userDetails.getUser();
         User user = userService.updateUser(requester.getUserId(), request);
-        return ResponseEntity.ok(ApiResponse.success(UserResponse.from(user)));
+        return ResponseEntity.ok(ApiResponse.success(UserRes.from(user)));
     }
 
     @PostMapping("/me/password")
     public ResponseEntity<?> updateUserMePassword(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @Valid @RequestBody UpdateUserPasswordRequest request)
+            @Valid @RequestBody UpdateUserPasswordReq request)
     {
         User requester = userDetails.getUser();
         userService.updateUserPassword(requester.getUserId(), request);
@@ -50,7 +50,7 @@ public class UserController {
     }
 
     @DeleteMapping("/me")
-    public ResponseEntity<?> updateUserMePassword(
+    public ResponseEntity<?> deleteUser(
             @AuthenticationPrincipal UserDetailsImpl userDetails)
     {
         User requester = userDetails.getUser();

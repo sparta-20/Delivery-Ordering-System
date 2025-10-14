@@ -1,7 +1,7 @@
 package com.delivery.domain.user.service.impl;
 
-import com.delivery.domain.user.dto.UpdateUserPasswordRequest;
-import com.delivery.domain.user.dto.UpdateUserRequest;
+import com.delivery.domain.user.dto.UpdateUserPasswordReq;
+import com.delivery.domain.user.dto.UpdateUserReq;
 import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.repository.UserRepository;
 import com.delivery.domain.user.service.UserService;
@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User updateUser(Long userId, UpdateUserRequest request) {
+    public User updateUser(Long userId, UpdateUserReq request) {
         request.trim();
         User user = getUserById(userId);
 
@@ -43,21 +43,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User updateUserPassword(Long userId, UpdateUserPasswordRequest request) {
+    public User updateUserPassword(Long userId, UpdateUserPasswordReq request) {
         User user = getUserById(userId);
-
-        //현재 비밀번호 검증: 현재 비밀번호와 일치 하는가
-        String encodeCurrentPassword = passwordEncoder.encode(request.getCurrentPassword());
-        if(!user.getPassword().equals(encodeCurrentPassword)){
-            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
-        }
-
-        // 확인&변경 비밀번호 검증: 확인 비밀번호와 변경 비밀번호가 일치 하는가
-        String newPassword = request.getNewPassword();
-        String confirmNewPassword = request.getConfirmNewPassword();
-        if(!newPassword.equals(confirmNewPassword)){
-            throw new BusinessException(ErrorCode.INVALID_CONFIRM_NEW_PASSWORD);
-        }
+        validateConfirmNewPassword(request.getNewPassword(), request.getConfirmNewPassword());
+        validatePassword(request.getCurrentPassword(), user.getPassword());
 
         user.updatePassword(passwordEncoder.encode(request.getNewPassword()));
         return user;
@@ -65,9 +54,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void delete(Long requestUserId, Long userId) {
+    public User delete(Long requestUserId, Long userId) {
         User user = getUserById(userId);
         user.markDeleted(requestUserId);
+        return user;
+    }
+
+    private void validatePassword(String requestPassword, String useerPassword) {
+        //현재 비밀번호 검증: 현재 비밀번호와 일치 하는가
+        if (!passwordEncoder.matches(requestPassword, useerPassword)) {
+            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
+        }
+    }
+
+    private void validateConfirmNewPassword(String newPassword, String confirmNewPassword) {
+        // 확인&변경 비밀번호 검증: 확인 비밀번호와 변경 비밀번호가 일치 하는가
+        if (!newPassword.equals(confirmNewPassword)) {
+            throw new BusinessException(ErrorCode.INVALID_CONFIRM_NEW_PASSWORD);
+        }
     }
 
     private void validateNickname(String userNickname, String newNickname) {
@@ -79,7 +83,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateEmail(String userEmail, String newEmail) {
-        if (Objects.equals(userEmail,newEmail)) return;
+        if (Objects.equals(userEmail, newEmail)) return;
 
         if (userRepository.existsByEmail(newEmail)) {
             throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);

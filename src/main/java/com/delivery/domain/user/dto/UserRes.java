@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @Builder
-public class UserResponse {
+public class UserRes {
     private Long userId;
     private String nickname;
     private String email;
@@ -21,8 +21,8 @@ public class UserResponse {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public static UserResponse from(User user) {
-        return new UserResponse(
+    public static UserRes from(User user) {
+        return new UserRes(
                 user.getUserId(),
                 user.getNickname(),
                 user.getEmail(),
