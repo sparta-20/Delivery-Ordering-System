@@ -38,7 +38,7 @@ public class MenuController {
     }
 
     //메뉴 상세 조회
-    @PostMapping("/{menuId}")
+    @GetMapping("/{menuId}")
     public ResponseEntity<?> getMenu(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable(value = "menuId") UUID menuId
