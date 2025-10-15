@@ -61,7 +61,7 @@ public class ReviewController {
      * - 작성자 본인만 수정 가능 (CUSTOMER만 허용)
      * - 수정 가능 필드: content, rating
      */
-    @PutMapping("/{reviewId}")
+    @PatchMapping("/{reviewId}")
     @PreAuthorize("hasAnyRole('CUSTOMER')")
     public ResponseEntity<ApiResponse<ReviewRes>> updateReview(
             @PathVariable UUID reviewId,
