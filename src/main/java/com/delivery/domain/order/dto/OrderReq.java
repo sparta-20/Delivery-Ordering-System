@@ -5,13 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class OrderRequestDto {
+public class OrderReq {
 
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChangeOrderStatusDto {
-        private Long ownerId; // TODO: 추후 제거
         private OrderStatusEnum status;
     }
 
@@ -19,7 +18,6 @@ public class OrderRequestDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class RejectOrderDto {
-        private Long ownerId; // TODO: 추후 제거
         private String reason;
     }
   

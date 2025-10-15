@@ -1,11 +1,13 @@
 package com.delivery.domain.order.service;
 
-import com.delivery.domain.order.dto.OrderRequestDto;
-import com.delivery.domain.order.dto.OrderResponseDto;
+import com.delivery.domain.order.dto.OrderReq;
+import com.delivery.domain.order.dto.OrderRes;
 import com.delivery.domain.order.entity.Order;
 import com.delivery.domain.order.entity.OrderStatusEnum;
 import com.delivery.domain.order.repository.OrderRepository;
+import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.entity.UserRoleEnum;
+import com.delivery.domain.user.repository.UserRepository;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -15,65 +17,74 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
 
-    public List<OrderResponseDto.OrderListDto> getOrderList(Long userId) {
+    @Transactional(readOnly = true)
+    @Override
+    public List<OrderRes.OrderListDto> getOrderList(Long userId) {
         List<Order> orders = orderRepository.findByUser_UserId(userId);
-
         return orders.stream()
-                .map(OrderResponseDto.OrderListDto::from)
+                .map(OrderRes.OrderListDto::from)
                 .toList();
     }
 
     @Override
-    public List<OrderResponseDto.OrderListDto> getOrdersByOwner(Long ownerId) {
-        // 수정 필요
-        List<Order> orders = orderRepository.findByOwnerId(ownerId);
+    public List<OrderRes.OrderListDto> getOrdersByOwner(Long ownerUserId) {
+        List<Order> orders = orderRepository.findByStore_Owner_UserId(ownerUserId);
         return orders.stream()
-                .map(OrderResponseDto.OrderListDto::from)
+                .map(OrderRes.OrderListDto::from)
                 .toList();
     }
 
     @Override
     @Transactional
-    public void changeStatus(Long userId, UUID orderId, OrderRequestDto.ChangeOrderStatusDto dto) {
+    public void changeStatus(Long userId, UUID orderId, OrderReq.ChangeOrderStatusDto dto) {
         Order order = findOrderByOrderId(orderId);
-        // TODO: orderId 이용해서 Store 정보 -> 가게 주인 확인 후 현재 로그인한 유저랑 일치하는지 확인
-        if (order.getUser().getRole().equals(UserRoleEnum.OWNER)) validateOwner(userId, dto.getOwnerId());
-        order.changeStatus(dto.getStatus());
+        if (order.getStore().getOwner().getUserId().equals(userId)) order.changeStatus(dto.getStatus());
+        else throw new BusinessException(ErrorCode.FORBIDDEN);
     }
 
     @Override
     @Transactional
-    public void rejectOrder(Long userId, UUID orderId, OrderRequestDto.RejectOrderDto dto) {
+    public void rejectOrder(Long userId, UUID orderId, OrderReq.RejectOrderDto dto) {
         Order order = findOrderByOrderId(orderId);
-        // TODO
-        if (order.getUser().getRole().equals(UserRoleEnum.OWNER)) validateOwner(userId, dto.getOwnerId());
-        order.rejectOrder(dto.getReason());
+        if (order.getStore().getOwner().getUserId().equals(userId)) order.rejectOrder(dto.getReason());
+        else throw new BusinessException(ErrorCode.FORBIDDEN);
     }
 
-    private void validateOwner(Long userId, Long ownerId) {
-        if (!userId.equals(ownerId)) throw new BusinessException(ErrorCode.FORBIDDEN);
-    }
-  
-    public List<OrderResponseDto.AllOrderListDto> getAllList() {
+    @Override
+    public List<OrderRes.AllOrderListDto> getAllList() {
         List<Order> orders = orderRepository.findAll();
         return orders.stream()
-                .map(OrderResponseDto.AllOrderListDto::from)
+                .map(OrderRes.AllOrderListDto::from)
                 .toList();
     }
-    
+
+    @Override
     @Transactional
-    public void cancelOrder(Long userId, UUID orderId, OrderRequestDto.CancelOrderDto dto) {
+    public void cancelOrder(Long userId, UUID orderId, OrderReq.CancelOrderDto dto) {
         Order order = findOrderByOrderId(orderId);
         validateOrder(order, userId);
         order.cancel(dto.getReason());
+    }
+
+    @Override
+    public OrderRes.OrderDetailDto getOrderDetail(Long userId, UUID orderId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        Order order = findOrderByOrderId(orderId);
+        if (user.getRole().equals(UserRoleEnum.OWNER)) {
+            if (!order.getStore().getOwner().getUserId().equals(userId)) {
+                throw new BusinessException(ErrorCode.FORBIDDEN);
+            }
+        }
+        return OrderRes.OrderDetailDto.from(order);
     }
 
     private void validateOrder(Order order, Long userId) {
@@ -88,7 +99,6 @@ public class OrderServiceImpl implements OrderService {
 
     private Order findOrderByOrderId(UUID orderId) {
         return orderRepository.findByOrderId(orderId)
-                // FIXME: 에러코드 수정
-                .orElseThrow(() -> new BusinessException(ErrorCode.AI_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
     }
 }
