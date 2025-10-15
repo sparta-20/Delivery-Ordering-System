@@ -21,13 +21,16 @@ public class Order extends Timestamped {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private OrderStatus status = OrderStatus.PENDING;
+    private OrderStatusEnum status = OrderStatusEnum.PENDING;
 
     @Column(nullable = false)
     private Integer totalPrice;
 
     @Column(nullable = false)
     private String address;
+
+    @Column
+    private String canceledReason;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -41,4 +44,18 @@ public class Order extends Timestamped {
 
     @OneToMany(mappedBy = "order")
     private List<OrderMenu> orderMenus = new ArrayList<>();
+
+    public void changeStatus(OrderStatusEnum status) {
+        this.status = status;
+    }
+
+    public void rejectOrder(String reason) {
+        this.status = OrderStatusEnum.REJECTED;
+        this.canceledReason = reason;
+    }
+  
+    public void cancel(String reason) {
+        this.canceledReason = reason;
+        this.status = OrderStatusEnum.CANCELED;
+    }
 }

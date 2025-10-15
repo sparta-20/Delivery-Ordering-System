@@ -29,4 +29,3 @@ public class StoreCategory extends Timestamped {
     public void activate()   { this.isActive = true; }
     public void deactivate() { this.isActive = false; }
 }
-

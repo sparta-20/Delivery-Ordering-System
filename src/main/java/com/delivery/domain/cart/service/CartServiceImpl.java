@@ -4,7 +4,7 @@ import com.delivery.domain.cart.dto.CartRequestDto;
 import com.delivery.domain.cart.dto.CartResponseDto;
 import com.delivery.domain.cart.entity.Cart;
 import com.delivery.domain.cart.entity.CartItem;
-import com.delivery.domain.cart.entity.CartStatus;
+import com.delivery.domain.cart.entity.CartStatusEnum;
 import com.delivery.domain.cart.repository.CartItemRepository;
 import com.delivery.domain.cart.repository.CartRepository;
 import com.delivery.domain.user.entity.User;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -53,9 +54,16 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public void clearCart(Long userId) {
-        Cart cart = cartRepository.findByUser_UserIdAndStatus(userId, CartStatus.CART)
+        Cart cart = cartRepository.findByUser_UserIdAndStatus(userId, CartStatusEnum.CART)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR));
         cart.clearCart();
+    }
+
+    @Override
+    @Transactional
+    public void updateCartItem(Long userId, UUID itemId, Integer quantity) {
+        CartItem item = findCartItem(itemId, userId);
+        item.updateQuantity(quantity);
     }
 
     private User findUserById(Long userId) {
@@ -64,7 +72,7 @@ public class CartServiceImpl implements CartService {
     }
 
     private Cart getOrCreateCart(User user) {
-        return cartRepository.findByUser_UserIdAndStatus(user.getUserId(), CartStatus.CART)
+        return cartRepository.findByUser_UserIdAndStatus(user.getUserId(), CartStatusEnum.CART)
                 .orElseGet(() -> cartRepository.save(Cart.builder().user(user).build()));
     }
 
@@ -96,5 +104,9 @@ public class CartServiceImpl implements CartService {
         return items.stream()
                 .mapToInt(item -> item.getQuantity() * item.getPrice())
                 .sum();
+    }
+
+    private CartItem findCartItem(UUID cartItemId, Long userId) {
+        return cartItemRepository.findByCartMenuIdAndCart_User_UserId(cartItemId, userId).orElseThrow(() -> new BusinessException(ErrorCode.ITEM_REQUEST_NOT_FOUND));
     }
 }
