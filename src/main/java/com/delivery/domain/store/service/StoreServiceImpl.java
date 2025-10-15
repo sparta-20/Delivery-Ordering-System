@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
@@ -273,6 +275,10 @@ public class StoreServiceImpl implements StoreService {
         return new StoreRes(store);
     }
 
+    private static BigDecimal bd(double v) {
+        return BigDecimal.valueOf(v).setScale(6, RoundingMode.HALF_UP);
+    }
+
     // 가게 목록 조회 -> 광화문 근방 바운딩 박스
     public Specification<Store> withinGwangHwaMoon(double centerLat, double centerLon, double radiusKm){
 
@@ -283,10 +289,10 @@ public class StoreServiceImpl implements StoreService {
         double lonDelta = radiusKm / (111.0 * Math.cos(Math.toRadians(centerLat)));
 
         // 중심점 기준으로 동,서,남,북 경계 좌표 계산
-        double minLat = centerLat - latDelta;
-        double maxLat = centerLat + latDelta;
-        double minLon = centerLon - lonDelta;
-        double maxLon = centerLon + lonDelta;
+        BigDecimal minLat = bd(centerLat - latDelta);
+        BigDecimal maxLat = bd(centerLat + latDelta);
+        BigDecimal minLon = bd(centerLon - lonDelta);
+        BigDecimal maxLon = bd(centerLon + lonDelta);
 
         return (root, query, cb) -> cb.and(
                 cb.isNotNull(root.get("latitude")),
