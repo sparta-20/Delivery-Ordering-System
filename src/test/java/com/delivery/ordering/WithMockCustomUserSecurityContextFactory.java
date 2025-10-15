@@ -14,11 +14,11 @@ import org.springframework.security.test.context.support.WithSecurityContextFact
 import java.util.List;
 
 public class WithMockCustomUserSecurityContextFactory implements WithSecurityContextFactory<WithMockCustomUser> {
-    
+
     @Override
     public SecurityContext createSecurityContext(WithMockCustomUser annotation) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        
+
         // User 객체 생성
         User user = User.builder()
                 .userId(annotation.id())
@@ -27,17 +27,17 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
                 .role(UserRoleEnum.valueOf(annotation.role()))
                 .publicStatus(PublicStatus.PUBLIC)
                 .build();
-        
+
         // UserDetailsImpl 생성
         UserDetailsImpl userDetails = new UserDetailsImpl(user);
-        
+
         // Authentication 객체 생성
         Authentication auth = new UsernamePasswordAuthenticationToken(
                 userDetails,
                 null,
                 List.of(new SimpleGrantedAuthority("ROLE_" + annotation.role()))
         );
-        
+
         context.setAuthentication(auth);
         return context;
     }

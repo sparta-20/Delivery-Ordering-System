@@ -38,4 +38,30 @@ public class User extends Timestamped {
         this.email = email;
         this.password = password;
     }
+
+    public boolean isCustomer() {
+        return UserRoleEnum.CUSTOMER.equals(this.role);
+    }
+
+    public boolean isMaster() {
+        return UserRoleEnum.MASTER.equals(this.role);
+    }
+
+    public boolean isOwner() {
+        return UserRoleEnum.OWNER.equals(this.role);
+    }
+
+    public boolean isManager() {
+        return UserRoleEnum.MANAGER.equals(this.role);
+    }
+
+    public void update(String nickname, String email, PublicStatus publicStatus) {
+        this.nickname = nickname;
+        this.email = email;
+        this.publicStatus = publicStatus;
+    }
+
+    public void updatePassword(String encodePassword) {
+        this.password = encodePassword;
+    }
 }

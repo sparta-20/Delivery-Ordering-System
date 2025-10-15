@@ -25,7 +25,7 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     org.springframework.orm.jpa: DEBUG
     org.springframework.transaction: DEBUG
-    
+
 jwt:
   secret:
     key: "jwt-key"
@@ -41,4 +41,3 @@ ai:
     max-output-tokens: 100
     temperature: 0.7
     prompt-suffix: " 답변을 최대한 간결하게 50자 이하로"
-

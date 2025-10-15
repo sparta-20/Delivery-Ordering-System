@@ -1,6 +1,6 @@
-package com.delivery.user.dto;
+package com.delivery.ordering.domain.user.dto;
 
-import com.delivery.domain.user.dto.UserResponse;
+import com.delivery.domain.user.dto.UserRes;
 import com.delivery.domain.user.entity.PublicStatus;
 import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.entity.UserRoleEnum;
@@ -24,7 +24,7 @@ class UserResponseTest {
                 .build();
 
         // when
-        UserResponse response = UserResponse.from(user);
+        UserRes response = UserRes.from(user);
 
         // then
         assertThat(response.getUserId()).isEqualTo(1L);
