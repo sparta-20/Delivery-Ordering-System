@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public class OrderResponseDto {
+public class OrderRes {
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -102,6 +102,7 @@ public class OrderResponseDto {
         private String address;
         private String message;
         private String deliveryMessage;
+        private String reason;
 
         public static OrderDetailDto from(Order order) {
             return OrderDetailDto.builder()
@@ -118,6 +119,7 @@ public class OrderResponseDto {
                     .address(order.getAddress())
                     .message(order.getMessage())
                     .deliveryMessage(order.getDeliveryMessage())
+                    .reason(order.getCanceledReason())
                     .build();
         }
     }

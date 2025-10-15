@@ -5,7 +5,7 @@ import lombok.*;
 import java.util.List;
 import java.util.UUID;
 
-public class CartResponseDto {
+public class CartRes {
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)

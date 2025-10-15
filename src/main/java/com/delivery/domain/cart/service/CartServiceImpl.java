@@ -1,7 +1,7 @@
 package com.delivery.domain.cart.service;
 
-import com.delivery.domain.cart.dto.CartRequestDto;
-import com.delivery.domain.cart.dto.CartResponseDto;
+import com.delivery.domain.cart.dto.CartReq;
+import com.delivery.domain.cart.dto.CartRes;
 import com.delivery.domain.cart.entity.Cart;
 import com.delivery.domain.cart.entity.CartItem;
 import com.delivery.domain.cart.entity.CartStatusEnum;
@@ -30,7 +30,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public Cart addToCart(Long userId, CartRequestDto.AddCartItemDto dto) {
+    public Cart addToCart(Long userId, CartReq.AddCartItemDto dto) {
         User user = findUserById(userId);
         Menu menu = menuRepository.findById(dto.getMenuId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.MENU_NOT_FOUND));
@@ -43,12 +43,12 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartResponseDto.CartListDto getCart(Long userId) {
+    public CartRes.CartListDto getCart(Long userId) {
         User user = findUserById(userId);
         Cart cart = getExistingCart(user);
-        List<CartResponseDto.CartItemDetailDto> items = toItemDto(cart.getItems());
+        List<CartRes.CartItemDetailDto> items = toItemDto(cart.getItems());
         int totalPrice = calculatePrice(cart.getItems());
-        return CartResponseDto.CartListDto.builder()
+        return CartRes.CartListDto.builder()
                 .cartId(cart.getCartId())
                 .storeId(cart.getStore().getStoreId())
                 .storeName(cart.getStore().getName())
@@ -102,9 +102,9 @@ public class CartServiceImpl implements CartService {
         cart.addToCart(newItem);
     }
 
-    private List<CartResponseDto.CartItemDetailDto> toItemDto(List<CartItem> items) {
+    private List<CartRes.CartItemDetailDto> toItemDto(List<CartItem> items) {
         return items.stream()
-                .map(item -> CartResponseDto.CartItemDetailDto.builder()
+                .map(item -> CartRes.CartItemDetailDto.builder()
                         .cartItemId(item.getCartMenuId())
                         .menuId(item.getMenu().getMenuId())
                         .menuName(item.getMenu().getName())

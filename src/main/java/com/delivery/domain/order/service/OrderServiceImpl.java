@@ -1,7 +1,7 @@
 package com.delivery.domain.order.service;
 
-import com.delivery.domain.order.dto.OrderRequestDto;
-import com.delivery.domain.order.dto.OrderResponseDto;
+import com.delivery.domain.order.dto.OrderReq;
+import com.delivery.domain.order.dto.OrderRes;
 import com.delivery.domain.order.entity.Order;
 import com.delivery.domain.order.entity.OrderStatusEnum;
 import com.delivery.domain.order.repository.OrderRepository;
@@ -11,7 +11,6 @@ import com.delivery.domain.user.repository.UserRepository;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,24 +27,24 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<OrderResponseDto.OrderListDto> getOrderList(Long userId) {
+    public List<OrderRes.OrderListDto> getOrderList(Long userId) {
         List<Order> orders = orderRepository.findByUser_UserId(userId);
         return orders.stream()
-                .map(OrderResponseDto.OrderListDto::from)
+                .map(OrderRes.OrderListDto::from)
                 .toList();
     }
 
     @Override
-    public List<OrderResponseDto.OrderListDto> getOrdersByOwner(Long ownerUserId) {
+    public List<OrderRes.OrderListDto> getOrdersByOwner(Long ownerUserId) {
         List<Order> orders = orderRepository.findByStore_Owner_UserId(ownerUserId);
         return orders.stream()
-                .map(OrderResponseDto.OrderListDto::from)
+                .map(OrderRes.OrderListDto::from)
                 .toList();
     }
 
     @Override
     @Transactional
-    public void changeStatus(Long userId, UUID orderId, OrderRequestDto.ChangeOrderStatusDto dto) {
+    public void changeStatus(Long userId, UUID orderId, OrderReq.ChangeOrderStatusDto dto) {
         Order order = findOrderByOrderId(orderId);
         if (order.getStore().getOwner().getUserId().equals(userId)) order.changeStatus(dto.getStatus());
         else throw new BusinessException(ErrorCode.FORBIDDEN);
@@ -53,30 +52,30 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void rejectOrder(Long userId, UUID orderId, OrderRequestDto.RejectOrderDto dto) {
+    public void rejectOrder(Long userId, UUID orderId, OrderReq.RejectOrderDto dto) {
         Order order = findOrderByOrderId(orderId);
         if (order.getStore().getOwner().getUserId().equals(userId)) order.rejectOrder(dto.getReason());
         else throw new BusinessException(ErrorCode.FORBIDDEN);
     }
 
     @Override
-    public List<OrderResponseDto.AllOrderListDto> getAllList() {
+    public List<OrderRes.AllOrderListDto> getAllList() {
         List<Order> orders = orderRepository.findAll();
         return orders.stream()
-                .map(OrderResponseDto.AllOrderListDto::from)
+                .map(OrderRes.AllOrderListDto::from)
                 .toList();
     }
 
     @Override
     @Transactional
-    public void cancelOrder(Long userId, UUID orderId, OrderRequestDto.CancelOrderDto dto) {
+    public void cancelOrder(Long userId, UUID orderId, OrderReq.CancelOrderDto dto) {
         Order order = findOrderByOrderId(orderId);
         validateOrder(order, userId);
         order.cancel(dto.getReason());
     }
 
     @Override
-    public OrderResponseDto.OrderDetailDto getOrderDetail(Long userId, UUID orderId) {
+    public OrderRes.OrderDetailDto getOrderDetail(Long userId, UUID orderId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
         Order order = findOrderByOrderId(orderId);
@@ -85,7 +84,7 @@ public class OrderServiceImpl implements OrderService {
                 throw new BusinessException(ErrorCode.FORBIDDEN);
             }
         }
-        return OrderResponseDto.OrderDetailDto.from(order);
+        return OrderRes.OrderDetailDto.from(order);
     }
 
     private void validateOrder(Order order, Long userId) {

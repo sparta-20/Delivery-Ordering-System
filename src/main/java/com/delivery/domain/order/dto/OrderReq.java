@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class OrderRequestDto {
+public class OrderReq {
 
     @Getter
     @NoArgsConstructor
