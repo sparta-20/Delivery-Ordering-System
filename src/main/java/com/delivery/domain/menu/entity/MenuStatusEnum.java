@@ -1,5 +1,5 @@
 package com.delivery.domain.menu.entity;
 
-public enum MenuStatus {
+public enum MenuStatusEnum {
     AVAILABLE, SOLD_OUT, HIDDEN
 }

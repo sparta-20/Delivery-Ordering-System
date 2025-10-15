@@ -31,19 +31,36 @@ public class Menu extends Timestamped {
     private Integer quantity;
 
     @Column(nullable = false)
+    private String imageUrl;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private MenuStatus status;
+    private MenuStatusEnum status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    public Menu(String name, String description, Integer price, Integer quantity, MenuStatus status, Store store) {
+    public Menu(String name, String imageUrl, String description, Integer price, Integer quantity, MenuStatusEnum status, Store store) {
         this.name = name;
+        this.imageUrl = imageUrl;
         this.description = description;
         this.price = price;
         this.quantity = quantity;
         this.status = status;
         this.store = store;
+    }
+
+    public boolean isHidden() {
+        return MenuStatusEnum.HIDDEN.equals(this.status);
+    }
+
+    public void update(Integer quantity, String name, Integer price, MenuStatusEnum status, String description, String imageUrl) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.quantity = quantity;
+        this.status = status;
+        this.imageUrl = imageUrl;
     }
 }

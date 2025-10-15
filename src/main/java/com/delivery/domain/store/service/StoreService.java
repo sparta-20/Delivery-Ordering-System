@@ -5,6 +5,7 @@ import com.delivery.domain.store.dto.StoreRes;
 import com.delivery.domain.store.dto.StoreSearchCondition;
 import com.delivery.domain.store.dto.StoreUpdateReq;
 import com.delivery.domain.store.entity.Store;
+import com.delivery.domain.store.entity.StoreStatusEnum;
 import com.delivery.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +32,7 @@ public interface StoreService {
     // 가게 검색 및 조회
     Page<StoreRes> getAllStores(StoreSearchCondition cond, Pageable pageable);
 
+    Store getByStoreIdAndStatus(UUID id, StoreStatusEnum storeStatusEnum);
 
 
 
