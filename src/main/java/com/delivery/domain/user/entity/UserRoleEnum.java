@@ -15,7 +15,7 @@ public enum UserRoleEnum {
     private final Integer rank;
 
     public boolean isLowerThan(UserRoleEnum role) {
-        return this.rank > role.rank;
+        return this.rank >= role.rank;
     }
 
     public boolean equalsRank(UserRoleEnum role) {
