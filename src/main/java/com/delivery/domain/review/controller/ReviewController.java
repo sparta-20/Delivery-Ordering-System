@@ -41,6 +41,22 @@ public class ReviewController {
     }
 
     /**
+     * 리뷰 조회
+     * - CUSTOMER(작성자 본인), OWNER(본인 가게), MANAGER, MASTER 접근 가능
+     * - 삭제되지 않은 리뷰만 조회
+     */
+    @GetMapping("/{reviewId}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'OWNER', 'MANAGER', 'MASTER')")
+    public ResponseEntity<ApiResponse<ReviewRes>> getReview(
+            @PathVariable UUID reviewId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        ReviewRes response = reviewService.getReview(userDetails.getUserId(), userDetails.getRole(), reviewId);
+
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    /**
      * 리뷰 수정
      * - 작성자 본인만 수정 가능 (CUSTOMER만 허용)
      * - 수정 가능 필드: content, rating

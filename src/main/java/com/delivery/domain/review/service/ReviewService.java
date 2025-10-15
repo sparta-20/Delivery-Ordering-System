@@ -12,6 +12,9 @@ public interface ReviewService {
     // 리뷰 생성
     ReviewRes createReview(Long userId, ReviewCreateReq request);
 
+    // 리뷰 조회
+    ReviewRes getReview(Long userId, UserRoleEnum role, UUID reviewId);
+
     // 리뷰 수정
     ReviewRes updateReview(Long userId, UUID reviewId, ReviewUpdateReq request);
 

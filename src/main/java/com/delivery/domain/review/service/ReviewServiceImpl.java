@@ -70,6 +70,58 @@ public class ReviewServiceImpl implements ReviewService{
         );
     }
 
+    // 리뷰 조회
+    @Override
+    public ReviewRes getReview(Long userId, UserRoleEnum role, UUID reviewId) {
+        log.info("[REVIEW] 조회 요청 - reviewId: {}, userId: {}, role: {}", reviewId, userId, role);
+
+        // 리뷰 조회 (User, Order 정보와 함께 조회)
+        Review review = getReviewWithUserAndOrder(reviewId);
+
+        // 접근 권한 검증
+        validateReadPermission(userId, role, review);
+
+        log.info("[REVIEW] 조회 완료 - reviewId: {}", reviewId);
+        return ReviewRes.from(
+                review,
+                review.getOrder().getOrderId(),
+                review.getUser().getUserId(),
+                review.getUser().getNickname()
+        );
+    }
+
+    /**
+     * 조회 권한 검증
+     * - MANAGER/MASTER: 모든 리뷰 조회 가능
+     * - OWNER: 본인 가게 리뷰만 조회 가능 (TODO: storeId 검증)
+     * - CUSTOMER: 본인이 작성한 리뷰만 조회 가능
+     */
+    private void validateReadPermission(Long userId, UserRoleEnum role, Review review) {
+        // 관리자는 모든 리뷰 조회 가능
+        if (role == UserRoleEnum.MANAGER || role == UserRoleEnum.MASTER) {
+            log.debug("[REVIEW] 관리자 권한으로 조회 - userId: {}, role: {}", userId, role);
+            return;
+        }
+
+        // OWNER는 본인 가게 리뷰만 조회 가능
+        if (role == UserRoleEnum.OWNER) {
+            // TODO(#68): Store 연관관계 추가 후 구현
+            User owner = userService.getUserById(userId);
+            // if (review.getStore().getOwner().getUserId().equals(userId)) { return; }
+            log.debug("[REVIEW] OWNER 조회 권한 검증 (미구현) - userId: {}", userId);
+            return;
+        }
+
+        // 일반 사용자는 본인 리뷰만 조회 가능
+        if (!review.getUser().getUserId().equals(userId)) {
+            log.warn("[REVIEW] 조회 권한 없음 - userId: {}, reviewOwnerId: {}",
+                    userId, review.getUser().getUserId());
+            throw new BusinessException(ErrorCode.REVIEW_READ_FORBIDDEN);
+        }
+
+        log.debug("[REVIEW] 본인 리뷰 조회 - userId: {}", userId);
+    }
+
     @Override
     @Transactional
     public ReviewRes updateReview(Long userId, UUID reviewId, ReviewUpdateReq request) {
