@@ -96,4 +96,20 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
         }
     }
+
+    @Override
+    public boolean existsByNickname(String nickname) {
+        return userRepository.existsByNickname(nickname);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    @Transactional
+    public void save(User user) {
+        userRepository.save(user);
+    }
 }

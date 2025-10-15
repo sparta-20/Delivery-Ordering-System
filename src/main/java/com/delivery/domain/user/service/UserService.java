@@ -11,4 +11,7 @@ public interface UserService {
     UserRes updateUser(Long userId, UpdateUserReq request);
     UserRes updateUserPassword(Long userId, UpdateUserPasswordReq request);
     UserRes delete(Long requestUserId, Long userId);
+    boolean existsByNickname(String nickname);
+    boolean existsByEmail(String email);
+    void save(User user);
 }

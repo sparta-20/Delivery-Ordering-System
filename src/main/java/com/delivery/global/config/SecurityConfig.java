@@ -72,6 +72,8 @@ public class SecurityConfig {
                 )
         );
 
+        http.anonymous(anonymous -> anonymous.disable());
+
         http.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

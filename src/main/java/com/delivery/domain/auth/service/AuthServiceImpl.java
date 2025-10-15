@@ -5,6 +5,7 @@ import com.delivery.domain.auth.entity.RefreshToken;
 import com.delivery.domain.auth.entity.TokenBlacklist;
 import com.delivery.domain.auth.repository.RefreshTokenRepository;
 import com.delivery.domain.auth.repository.TokenBlackListRepository;
+import com.delivery.domain.user.service.UserService;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import com.delivery.domain.user.entity.User;
@@ -25,7 +26,7 @@ import java.time.LocalDateTime;
 @Transactional(readOnly = true)
 public class AuthServiceImpl implements AuthService {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenBlackListRepository tokenBlackListRepository;
@@ -34,18 +35,18 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public void signup(SignUpReq signUpReq) {
-        if(userRepository.existsByNickname(signUpReq.getNickname())){
+        if(userService.existsByNickname(signUpReq.getNickname())){
             throw new BusinessException(ErrorCode.DUPLICATE_NICKNAME);
         }
 
-        if (userRepository.existsByEmail(signUpReq.getEmail())) {
+        if (userService.existsByEmail(signUpReq.getEmail())) {
             throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
         }
 
         String encodedPassword = passwordEncoder.encode(signUpReq.getPassword());
 
         User user = new User(signUpReq.getNickname(), signUpReq.getEmail(), encodedPassword);
-        userRepository.save(user);
+        userService.save(user);
     }
 
     @Override
@@ -62,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public void updateRefreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
         Long userId = extractUserIdFromCookie(request);
-        User user = findUserById(userId);
+        User user = userService.getUserById(userId);
         RefreshToken refreshToken = findValidRefreshToken(user);
 
 
@@ -82,7 +83,7 @@ public class AuthServiceImpl implements AuthService {
 
         Claims claims = jwtUtil.getUserInfoFromToken(accessToken);
         Long userId = Long.valueOf(claims.getSubject());
-        User user = findUserById(userId);
+        User user = userService.getUserById(userId);
 
         LocalDateTime expiredAt = jwtUtil.getTokenExpiredAt(accessToken);
 
@@ -119,10 +120,5 @@ public class AuthServiceImpl implements AuthService {
         }
 
         return refreshToken;
-    }
-
-    private User findUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
     }
 }
