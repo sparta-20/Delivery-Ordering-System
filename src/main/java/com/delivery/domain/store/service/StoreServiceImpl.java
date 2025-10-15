@@ -2,6 +2,7 @@ package com.delivery.domain.store.service;
 
 import com.delivery.domain.store.dto.StoreCreateReq;
 import com.delivery.domain.store.dto.StoreRes;
+import com.delivery.domain.store.dto.StoreSearchCondition;
 import com.delivery.domain.store.dto.StoreUpdateReq;
 import com.delivery.domain.store.entity.Store;
 import com.delivery.domain.store.entity.StoreCategory;
@@ -12,12 +13,17 @@ import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.entity.UserRoleEnum;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
+import jakarta.persistence.criteria.Join;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -36,7 +42,7 @@ public class StoreServiceImpl implements StoreService {
             throw new BusinessException(ErrorCode.FORBIDDEN_CREATE_STORE);
         }
 
-        StoreCategory category = storeCategoryRepository.findById(requestDto.getCategoryId()).orElseThrow(
+        StoreCategory category = storeCategoryRepository.findByCategoryNameAndIsActiveTrue(requestDto.getCategoryName().trim()).orElseThrow(
                 ()-> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND));
 
         Store store = new Store(
@@ -45,6 +51,7 @@ public class StoreServiceImpl implements StoreService {
                 requestDto.getAddress(),
                 requestDto.getCity(),
                 requestDto.getDistrict(),
+                requestDto.getDong(),
                 requestDto.getMinPrice(),
                 user
         );
@@ -67,7 +74,7 @@ public class StoreServiceImpl implements StoreService {
             throw new BusinessException(ErrorCode.FORBIDDEN_UPDATE_STORE);
         }
 
-        StoreCategory category = storeCategoryRepository.findById(requestDto.getCategoryId()).orElseThrow(
+        StoreCategory category = storeCategoryRepository.findByCategoryNameAndIsActiveTrue(requestDto.getCategoryName().trim()).orElseThrow(
                 ()-> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND));
 
         store.update(
@@ -76,6 +83,7 @@ public class StoreServiceImpl implements StoreService {
                 requestDto.getAddress(),
                 requestDto.getCity(),
                 requestDto.getDistrict(),
+                requestDto.getDong(),
                 requestDto.getMinPrice(),
                 requestDto.getStatus()
         );
@@ -133,4 +141,88 @@ public class StoreServiceImpl implements StoreService {
         return stores.map(StoreRes::from);
     }
 
+    // 가게 검색 및 조회
+    @Override
+    public Page<StoreRes> getAllStores(StoreSearchCondition cond, Pageable pageable){
+
+        categoryNameNeeded(cond);
+
+        Specification<Store> spec = allOfNotNull(
+                keywordLike(cond.getKeyword()),
+                cityLike(cond.getCity()),
+                districtLike(cond.getDistrict()),
+                dongLike(cond.getDong()),
+                categoryIdLike(cond.getCategoryId())
+        );
+
+        Page<Store> stores = storeRepository.findAll(spec, pageable);
+        return stores.map(StoreRes::from);
+    }
+
+    // categoryName을 categoryId에 매핑
+    private void categoryNameNeeded(StoreSearchCondition cond){
+        if(cond.getCategoryId()!=null) return;
+        if(!StringUtils.hasText(cond.getCategoryName())) return;
+
+        StoreCategory category = storeCategoryRepository.findByCategoryNameAndIsActiveTrue(cond.getCategoryName().trim())
+                .orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND));
+
+        cond.setCategoryId(category.getCategoryId());
+    }
+
+    // null 제외하고 AND 결합
+    private static <T> Specification<T> allOfNotNull(Specification<T> ...specs){
+        return Specification.allOf(
+                Arrays.stream(specs)
+                        .filter(Objects::nonNull)
+                        .toList()
+        );
+    }
+
+    // 키워드 검색
+    private Specification<Store> keywordLike(String q){
+        if(q==null || q.isBlank()){
+            return null;
+        }
+        String like = "%" + q.trim().toLowerCase() + "%";
+        return (root, query, cb) -> cb.like(cb.lower(root.get("name")), like);
+    }
+
+    // 도시(시) 검색
+    private Specification<Store> cityLike(String city){
+        if(city==null || city.isBlank()){
+            return null;
+        }
+        return (root, query, cb) -> cb.equal(root.get("city"), city);
+    }
+
+    // 세부 지역(구) 검색
+    private Specification<Store> districtLike(String district){
+        if(district==null || district.isBlank()){
+            return null;
+        }
+        return (root, query, cb) -> cb.equal(root.get("district"), district);
+    }
+
+    // 동 검색
+    private Specification<Store> dongLike(String dong){
+        if(dong==null || dong.isBlank()){
+            return null;
+        }
+        return (root, query, cb) -> cb.equal(root.get("dong"), dong);
+    }
+
+    // 카테고리 검색
+    private Specification<Store> categoryIdLike(UUID categoryId){
+        if(categoryId==null){
+            return null;
+        }
+        return (root, query, cb) -> {
+            Join<Store, StoreCategory> category = root.join("category");
+            return cb.and(
+                    cb.equal(category.get("categoryId"), categoryId),
+                    cb.isTrue(category.get("isActive"))
+            );
+        };
+    }
 }

@@ -1,4 +1,5 @@
 package com.delivery.domain.store.controller;
+import com.delivery.domain.store.dto.StoreSearchCondition;
 import com.delivery.domain.store.dto.StoreUpdateReq;
 import com.delivery.domain.store.service.StoreService;
 import com.delivery.domain.store.util.PageableUtils;
@@ -85,6 +86,15 @@ public class StoreController {
         return ResponseEntity.ok(ApiResponse.success(result));
     }
 
+    // 가게 검색 및 조회
+    @GetMapping
+    public ResponseEntity<ApiResponse<Page<StoreRes>>> getAllStores(
+            @ModelAttribute StoreSearchCondition cond,
+            Pageable pageable){
+        Pageable p = PageableUtils.enforce(pageable);
+        Page<StoreRes> result = storeService.getAllStores(cond, p);
+        return ResponseEntity.ok(ApiResponse.success(result));
+    }
 
 
 
