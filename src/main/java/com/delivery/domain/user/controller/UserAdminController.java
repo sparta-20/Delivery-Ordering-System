@@ -28,7 +28,7 @@ public class UserAdminController {
             @Valid @RequestBody UpdateRoleReq req
     ){
         User requester = userDetails.getUser();
-        userService.updateUserRole(requester.getUserId(), userId, req.getRole());
-        return ResponseEntity.noContent().build();
+        UserRes userRes = userService.updateUserRole(requester.getUserId(), userId, req.getRole());
+        return ResponseEntity.ok(ApiResponse.success(userRes));
     }
 }
