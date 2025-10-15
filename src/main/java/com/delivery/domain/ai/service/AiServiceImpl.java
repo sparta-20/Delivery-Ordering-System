@@ -69,6 +69,31 @@ public class AiServiceImpl implements AiService {
         return AiRes.from(savedAi, userId, menu.getMenuId());
     }
 
+    // AI 요청 기록 단건 조회
+    @Override
+    public AiRes getAi(Long userId, UserRoleEnum role, UUID aiId) {
+        log.info("[AI] 조회 시작 - aiId: {}, userId: {}, role: {}", aiId, userId, role);
+
+        // 미삭제 건만 조회
+        Ai ai = getActiveAi(aiId);
+
+        // 조회 권한 검증 (OWNER는 본인이 생성한 것만, MANAGER/MASTER는 전체 허용)
+        checkReadPermission(userId, role, ai);
+
+        log.info("[AI] 조회 완료 - aiId: {}", aiId);
+        return AiRes.from(ai, userId, ai.getMenu().getMenuId());
+    }
+
+    // AI 조회 권한 검증 (OWNER는 본인이 생성한 것만, MANAGER/MASTER는 전체 허용)
+    private void checkReadPermission(Long userId, UserRoleEnum role, Ai ai) {
+        validateRole(
+                role,
+                userId,
+                ai.getUser().getUserId(),
+                ErrorCode.AI_ACCESS_DENIED
+        );
+    }
+
     // AI 요청 기록 논리 삭제
     @Override
     @Transactional
