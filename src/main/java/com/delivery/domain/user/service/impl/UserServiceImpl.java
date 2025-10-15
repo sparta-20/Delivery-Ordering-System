@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
         }
 
         //요청자의 역할 수준이 변경하려는 역할보다 이하라면 예외
-        if(requester.getRole().equalsRank(role) && requester.getRole().lessThan(role)){
+        if(requester.getRole().equalsRank(role) && requester.getRole().isLowerThan(role)){
             // throw new BusinessException(ErrorCode.MUST_NOT_GREATER_THAN_ROLE_UPDATE)
         }
 
