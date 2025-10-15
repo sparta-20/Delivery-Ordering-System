@@ -2,22 +2,26 @@ package com.delivery.domain.store.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
 @Getter
 @Builder
+@Setter
 public class StoreSearchCondition {
 
     // 키워드 검색
-    private final String keyword;
+    private String keyword;
 
     // 지역 필터
-    private final String city;
-    private final String district;
+    private String city;
+    private String district;
+    private String dong;
 
     // 카테고리 필터
-    private final UUID categoryId;
+    private UUID categoryId;
+    private String categoryName;
 
     // MASTER - 점주 필터
     private final Long ownerUserId;

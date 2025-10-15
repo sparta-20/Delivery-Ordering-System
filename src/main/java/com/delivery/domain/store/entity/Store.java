@@ -29,6 +29,9 @@ public class Store extends Timestamped {
     @Column(nullable = false, length = 50)
     private String district;
 
+    @Column(nullable = false, length = 50)
+    private String dong;
+
     @Column(nullable = false)
     private Integer minPrice;
 
@@ -56,6 +59,7 @@ public class Store extends Timestamped {
             String address,
             String city,
             String district,
+            String dong,
             Integer minPrice,
             User owner
     ){
@@ -64,6 +68,7 @@ public class Store extends Timestamped {
         this.address = address;
         this.city = city;
         this.district = district;
+        this.dong = dong;
         this.minPrice = minPrice;
         this.owner = owner;
         this.status = StoreStatusEnum.ACTIVE;
@@ -75,6 +80,7 @@ public class Store extends Timestamped {
                        String address,
                        String city,
                        String district,
+                       String dong,
                        Integer minPrice,
                        StoreStatusEnum status) {
         if (name != null) this.name = name;
@@ -82,6 +88,7 @@ public class Store extends Timestamped {
         if (address != null) this.address = address;
         if (city != null) this.city = city;
         if (district != null) this.district = district;
+        if (dong != null) this.dong = dong;
         if (minPrice != null) this.minPrice = minPrice;
         if (status != null) this.status = status;
     }
