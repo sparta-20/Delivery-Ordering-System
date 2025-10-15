@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
         validateNickname(user.getNickname(), request.getNickname());
         validateEmail(user.getEmail(), request.getEmail());
 
-        user.update(request.getNickname(), request.getEmail(), request.getPublicStatus());
+        user.update(request.getNickname(), request.getEmail(), request.getPublicStatus(), request.getPhoneNumber());
         return UserRes.from(user);
     }
 
