@@ -41,6 +41,22 @@ public class AiController {
     }
 
     /**
+     * AI 요청 기록 단건 조회 API
+     * 권한: MASTER / MANAGER / OWNER (OWNER는 본인이 생성한 기록만)
+     * 응답: 200 OK + ApiResponse<AiRes>
+     */
+    @GetMapping("/{aiId}")
+    @PreAuthorize("hasAnyRole('MASTER','MANAGER','OWNER')")
+    public ResponseEntity<ApiResponse<AiRes>> getAi(
+            @PathVariable UUID aiId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        AiRes response = aiService.getAi(userDetails.getUserId(), userDetails.getRole(), aiId);
+
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    /**
      * AI 요청 기록 논리 삭제 (Soft Delete) API
      * 권한: MASTER / MANAGER / OWNER (OWNER는 본인 기록만)
      * 응답: 204 No Content
