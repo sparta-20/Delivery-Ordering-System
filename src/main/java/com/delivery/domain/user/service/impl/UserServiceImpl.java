@@ -67,9 +67,9 @@ public class UserServiceImpl implements UserService {
         return UserRes.from(user);
     }
 
-    private void validatePassword(String requestPassword, String useerPassword) {
+    private void validatePassword(String requestPassword, String userPassword) {
         //현재 비밀번호 검증: 현재 비밀번호와 일치 하는가
-        if (!passwordEncoder.matches(requestPassword, useerPassword)) {
+        if (!passwordEncoder.matches(requestPassword, userPassword)) {
             throw new BusinessException(ErrorCode.INVALID_PASSWORD);
         }
     }
