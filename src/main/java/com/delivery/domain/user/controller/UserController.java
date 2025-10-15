@@ -5,7 +5,7 @@ import com.delivery.domain.user.dto.UpdateUserReq;
 import com.delivery.domain.user.dto.UserRes;
 import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.service.UserService;
-import com.delivery.global.common.ApiResponse;
+import com.delivery.global.common.ApiRes;
 import com.delivery.global.security.service.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class UserController {
     public ResponseEntity<?> getUserMe(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User requester = userDetails.getUser();
         UserRes userRes = userService.getUserResById(requester.getUserId());
-        return ResponseEntity.ok(ApiResponse.success(userRes));
+        return ResponseEntity.ok(ApiRes.success(userRes));
     }
 
     @PutMapping("/me")
@@ -36,7 +36,7 @@ public class UserController {
     {
         User requester = userDetails.getUser();
         UserRes userRes = userService.updateUser(requester.getUserId(), request);
-        return ResponseEntity.ok(ApiResponse.success(userRes));
+        return ResponseEntity.ok(ApiRes.success(userRes));
     }
 
     @PostMapping("/me/password")

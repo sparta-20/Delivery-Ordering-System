@@ -5,7 +5,7 @@ import com.delivery.domain.menu.dto.MenuRes;
 import com.delivery.domain.menu.dto.UpdateMenuReq;
 import com.delivery.domain.menu.service.MenuService;
 import com.delivery.domain.user.entity.User;
-import com.delivery.global.common.ApiResponse;
+import com.delivery.global.common.ApiRes;
 import com.delivery.global.security.service.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class MenuController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('OWNER', 'MASTER', 'MANAGER')")
-    public ResponseEntity<ApiResponse<MenuRes>> createMenu(
+    public ResponseEntity<ApiRes<MenuRes>> createMenu(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody CreateMenuReq req
     ) {
@@ -34,37 +34,37 @@ public class MenuController {
         MenuRes menuRes = menuService.create(user.getUserId(), req);
         return ResponseEntity
                 .created(URI.create("api/v1/menus/" + menuRes.getMenuId()))
-                .body(ApiResponse.success(menuRes));
+                .body(ApiRes.success(menuRes));
     }
 
     //메뉴 상세 조회
     @GetMapping("/{menuId}")
-    public ResponseEntity<ApiResponse<MenuRes>> getMenu(
+    public ResponseEntity<ApiRes<MenuRes>> getMenu(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable(value = "menuId") UUID menuId
     ) {
         User user = userDetails.getUser();
         MenuRes menuRes = menuService.findMenuResById(user.getUserId(), menuId);
-        return ResponseEntity.ok(ApiResponse.success(menuRes));
+        return ResponseEntity.ok(ApiRes.success(menuRes));
     }
 
     //메뉴 수정
     @PutMapping("/{menuId}")
     @PreAuthorize("hasAnyRole('OWNER', 'MASTER', 'MANAGER')")
-    public ResponseEntity<ApiResponse<MenuRes>> updateMenu(
+    public ResponseEntity<ApiRes<MenuRes>> updateMenu(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable(value = "menuId") UUID menuId,
             @RequestBody UpdateMenuReq req
     ) {
         User user = userDetails.getUser();
         MenuRes menuRes = menuService.update(req, user.getUserId(), menuId);
-        return ResponseEntity.ok(ApiResponse.success(menuRes));
+        return ResponseEntity.ok(ApiRes.success(menuRes));
     }
 
     //메뉴 삭제
     @DeleteMapping("/{menuId}")
     @PreAuthorize("hasAnyRole('OWNER', 'MASTER', 'MANAGER')")
-    public ResponseEntity<ApiResponse<MenuRes>> deleteMenu(
+    public ResponseEntity<ApiRes<MenuRes>> deleteMenu(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable(value = "menuId") UUID menuId
     ) {

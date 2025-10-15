@@ -1,6 +1,6 @@
 package com.delivery.domain.test;
 
-import com.delivery.global.common.ApiResponse;
+import com.delivery.global.common.ApiRes;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -26,13 +26,13 @@ public class TestController {
      * }
      */
     @GetMapping("/test/v1")
-    public ResponseEntity<ApiResponse<TestEntity>> get() {
+    public ResponseEntity<ApiRes<TestEntity>> get() {
 
         Long id = testService.save(new TestEntity("value"));
         TestEntity testEntity = testService.getTestEntity(id);
 
         System.out.println(testEntity.getValue());
-        return ResponseEntity.ok(ApiResponse.success(testEntity));
+        return ResponseEntity.ok(ApiRes.success(testEntity));
     }
 
     /**

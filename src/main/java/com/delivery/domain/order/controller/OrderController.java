@@ -4,7 +4,7 @@ import com.delivery.domain.order.dto.OrderReq;
 import com.delivery.domain.order.dto.OrderRes;
 import com.delivery.domain.order.service.OrderService;
 import com.delivery.domain.user.entity.User;
-import com.delivery.global.common.ApiResponse;
+import com.delivery.global.common.ApiRes;
 import com.delivery.global.security.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,27 +22,27 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<OrderRes.OrderListDto>>> getOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ApiRes<List<OrderRes.OrderListDto>>> getOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         List<OrderRes.OrderListDto> list = orderService.getOrderList(user.getUserId());
-        return ResponseEntity.ok(ApiResponse.success(list));
+        return ResponseEntity.ok(ApiRes.success(list));
     }
 
     @PreAuthorize("hasRole('OWNER')")
     @GetMapping("/owner")
-    public ResponseEntity<ApiResponse<List<OrderRes.OrderListDto>>> getOwnerOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ApiRes<List<OrderRes.OrderListDto>>> getOwnerOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         List<OrderRes.OrderListDto> list = orderService.getOrdersByOwner(user.getUserId());
-        return ResponseEntity.ok(ApiResponse.success(list));
+        return ResponseEntity.ok(ApiRes.success(list));
     }
 
     @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
     @GetMapping("/owner/{orderId}")
-    public ResponseEntity<ApiResponse<OrderRes.OrderDetailDto>> getOwnerOrderDetail(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                       @PathVariable UUID orderId) {
+    public ResponseEntity<ApiRes<OrderRes.OrderDetailDto>> getOwnerOrderDetail(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                               @PathVariable UUID orderId) {
         User user = userDetails.getUser();
         OrderRes.OrderDetailDto result = orderService.getOrderDetail(user.getUserId(), orderId);
-        return ResponseEntity.ok(ApiResponse.success(result));
+        return ResponseEntity.ok(ApiRes.success(result));
     }
 
     @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
@@ -50,7 +50,7 @@ public class OrderController {
     public ResponseEntity<Void> changeOrderStatus(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                   @PathVariable UUID orderId,
                                                   @RequestBody OrderReq.ChangeOrderStatusDto dto) {
-        // TODO: ApiResponse 사용해서 수정
+        // TODO: ApiRes 사용해서 수정
         User user = userDetails.getUser();
         orderService.changeStatus(user.getUserId(), orderId, dto);
         return ResponseEntity.noContent().build();
@@ -68,9 +68,9 @@ public class OrderController {
       
     @PreAuthorize("hasAnyRole('MANAGER', 'MASTER')")
     @GetMapping("/admin")
-    public ResponseEntity<ApiResponse<List<OrderRes.AllOrderListDto>>> getAllOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ApiRes<List<OrderRes.AllOrderListDto>>> getAllOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         List<OrderRes.AllOrderListDto> list = orderService.getAllList();
-        return ResponseEntity.ok(ApiResponse.success(list));
+        return ResponseEntity.ok(ApiRes.success(list));
     }
 
     @PatchMapping("/{orderId}/cancel")
@@ -83,10 +83,10 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}/detail")
-    public ResponseEntity<ApiResponse<OrderRes.OrderDetailDto>> getOrderDetail(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                  @PathVariable UUID orderId) {
+    public ResponseEntity<ApiRes<OrderRes.OrderDetailDto>> getOrderDetail(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                          @PathVariable UUID orderId) {
         User user = userDetails.getUser();
         OrderRes.OrderDetailDto result = orderService.getOrderDetail(user.getUserId(), orderId);
-        return ResponseEntity.ok(ApiResponse.success(result));
+        return ResponseEntity.ok(ApiRes.success(result));
     }
 }

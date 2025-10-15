@@ -4,7 +4,7 @@ import com.delivery.domain.store.dto.StoreUpdateReq;
 import com.delivery.domain.store.service.StoreService;
 import com.delivery.domain.store.util.PageableUtils;
 import com.delivery.domain.user.entity.User;
-import com.delivery.global.common.ApiResponse;
+import com.delivery.global.common.ApiRes;
 import com.delivery.global.security.service.UserDetailsImpl;
 import com.delivery.domain.store.dto.StoreCreateReq;
 import com.delivery.domain.store.dto.StoreRes;
@@ -30,30 +30,30 @@ public class StoreController {
     // OWNER, MASTER - 가게 생성
     @PreAuthorize("hasAnyRole('OWNER', 'MASTER', 'MANAGER')")
     @PostMapping
-    public ResponseEntity<ApiResponse<StoreRes>> createStore(
+    public ResponseEntity<ApiRes<StoreRes>> createStore(
             @RequestBody @Valid StoreCreateReq requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails){
         User user = userDetails.getUser();
         StoreRes responseDto = storeService.createStore(requestDto, user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(responseDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiRes.success(responseDto));
     }
 
     // OWNER, MASTER - 가게 수정
     @PreAuthorize("hasAnyRole('OWNER', 'MASTER','MANAGER')")
     @PutMapping("/{storeId}")
-    public ResponseEntity<ApiResponse<StoreRes>> updateStore(
+    public ResponseEntity<ApiRes<StoreRes>> updateStore(
             @PathVariable UUID storeId,
             @RequestBody @Valid StoreUpdateReq requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails){
         User user = userDetails.getUser();
         StoreRes responseDto = storeService.updateStore(storeId, requestDto, user );
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDto));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiRes.success(responseDto));
     }
 
     // OWNER, MASTER - 가게 삭제
     @PreAuthorize("hasAnyRole('OWNER', 'MASTER','MANAGER')")
     @DeleteMapping("/{storeId}")
-    public ResponseEntity<ApiResponse<Void>> deleteStore(
+    public ResponseEntity<ApiRes<Void>> deleteStore(
             @PathVariable UUID storeId,
             @AuthenticationPrincipal UserDetailsImpl userDetails){
         User user = userDetails.getUser();
@@ -64,36 +64,36 @@ public class StoreController {
     // OWNER, MASTER, MANAGER - 본인 가게 조회
     @PreAuthorize("hasAnyRole('OWNER', 'MASTER', 'MANAGER')")
     @GetMapping("/me")
-    public ResponseEntity<ApiResponse<Page<StoreRes>>> getMyStores(
+    public ResponseEntity<ApiRes<Page<StoreRes>>> getMyStores(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             Pageable pageable){
         Pageable p = PageableUtils.enforce(pageable);
         User user = userDetails.getUser();
         Page<StoreRes> result = storeService.getMyStores(user, p);
-        return ResponseEntity.ok(ApiResponse.success(result));
+        return ResponseEntity.ok(ApiRes.success(result));
     }
 
     // MASTER, MANAGER - 점주별 가게 조회
     @PreAuthorize("hasAnyRole('MASTER', 'MANAGER')")
     @GetMapping("/masters/{ownerUserId}")
-    public ResponseEntity<ApiResponse<Page<StoreRes>>> getOwnerStores(
+    public ResponseEntity<ApiRes<Page<StoreRes>>> getOwnerStores(
             @PathVariable Long ownerUserId,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             Pageable pageable){
         Pageable p = PageableUtils.enforce(pageable);
         User user = userDetails.getUser();
         Page<StoreRes> result = storeService.getOwnerStores(ownerUserId, user, p);
-        return ResponseEntity.ok(ApiResponse.success(result));
+        return ResponseEntity.ok(ApiRes.success(result));
     }
 
     // 가게 검색 및 조회
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<StoreRes>>> getAllStores(
+    public ResponseEntity<ApiRes<Page<StoreRes>>> getAllStores(
             @ModelAttribute StoreSearchCondition cond,
             Pageable pageable){
         Pageable p = PageableUtils.enforce(pageable);
         Page<StoreRes> result = storeService.getAllStores(cond, p);
-        return ResponseEntity.ok(ApiResponse.success(result));
+        return ResponseEntity.ok(ApiRes.success(result));
     }
 
 
