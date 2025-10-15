@@ -10,5 +10,5 @@ public interface UserService {
     UserRes getUserResById(Long userId);
     UserRes updateUser(Long userId, UpdateUserReq request);
     UserRes updateUserPassword(Long userId, UpdateUserPasswordReq request);
-    UserRes delete(Long requestUserId, Long userId);
+    UserRes delete(String accessToken, Long requestUserId, Long userId);
 }
