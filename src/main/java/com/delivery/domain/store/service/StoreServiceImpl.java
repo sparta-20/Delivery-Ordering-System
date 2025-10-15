@@ -261,25 +261,14 @@ public class StoreServiceImpl implements StoreService {
             throw new BusinessException(ErrorCode.OUT_OF_SERVICE_AREA);
         }
 
-        // 반경(km)을 위도 단위로 환산
-        double latDelta = radiusKm / 111.0;
-
-        // 경도는 위도에 따른 거리 차이 때문에 cos(위도)로 보정
-        double lonDelta = radiusKm / (111.0 * Math.cos(Math.toRadians(centerLat)));
-
-        // 중심점 기준으로 동,서,남,북 경계 좌표 계산
-        BigDecimal minLat = bd(centerLat - latDelta);
-        BigDecimal maxLat = bd(centerLat + latDelta);
-        BigDecimal minLon = bd(centerLon - lonDelta);
-        BigDecimal maxLon = bd(centerLon + lonDelta);
-
+        BoundingBox box = getBoundingBox(centerLat, centerLon, radiusKm);
         BigDecimal lat = store.getLatitude();
         BigDecimal lon = store.getLongitude();
 
         // 가게 단건 조회 -> 광화문 근방 바운딩 박스
         boolean inBox =
-                lat.compareTo(minLat) >= 0 && lat.compareTo(maxLat) <= 0 &&
-                        lon.compareTo(minLon) >= 0 && lon.compareTo(maxLon) <= 0;
+                lat.compareTo(box.minLat) >= 0 && lat.compareTo(box.maxLat) <= 0 &&
+                        lon.compareTo(box.minLon) >= 0 && lon.compareTo(box.maxLon) <= 0;
 
         if (!inBox) throw new BusinessException(ErrorCode.OUT_OF_SERVICE_AREA);
 
@@ -293,24 +282,32 @@ public class StoreServiceImpl implements StoreService {
     // 가게 목록 조회 -> 광화문 근방 바운딩 박스
     public Specification<Store> withinGwangHwaMoon(double centerLat, double centerLon, double radiusKm){
 
+        BoundingBox box = getBoundingBox(centerLat, centerLon, radiusKm);
+
+        return (root, query, cb) -> cb.and(
+                cb.isNotNull(root.get("latitude")),
+                cb.isNotNull(root.get("longitude")),
+                cb.between(root.get("latitude"), box.minLat(), box.maxLat()),
+                cb.between(root.get("longitude"), box.maxLon(), box.maxLon())
+                );
+    }
+
+    // 바운딩박스 로직 통합
+    private BoundingBox getBoundingBox(double centerLat, double centerLon, double radiusKm){
+
         // 반경(km)을 위도 단위로 환산
         double latDelta = radiusKm / 111.0;
 
         // 경도는 위도에 따른 거리 차이 때문에 cos(위도)로 보정
         double lonDelta = radiusKm / (111.0 * Math.cos(Math.toRadians(centerLat)));
 
-        // 중심점 기준으로 동,서,남,북 경계 좌표 계산
-        BigDecimal minLat = bd(centerLat - latDelta);
-        BigDecimal maxLat = bd(centerLat + latDelta);
-        BigDecimal minLon = bd(centerLon - lonDelta);
-        BigDecimal maxLon = bd(centerLon + lonDelta);
-
-        return (root, query, cb) -> cb.and(
-                cb.isNotNull(root.get("latitude")),
-                cb.isNotNull(root.get("longitude")),
-                cb.between(root.get("latitude"), minLat, maxLat),
-                cb.between(root.get("longitude"), minLon, maxLon)
-                );
+        return new BoundingBox(
+                bd(centerLat - latDelta),
+                bd(centerLat + latDelta),
+                bd(centerLon - lonDelta),
+                bd(centerLon + lonDelta)
+        );
     }
+    record BoundingBox(BigDecimal minLat, BigDecimal maxLat, BigDecimal minLon, BigDecimal maxLon) {}
 
 }
