@@ -1,21 +1,17 @@
 package com.delivery.domain.order.service;
 
-import com.delivery.domain.order.dto.OrderRequestDto;
-import com.delivery.domain.order.dto.OrderResponseDto;
-import com.delivery.domain.order.entity.Order;
-import com.delivery.domain.user.entity.User;
+import com.delivery.domain.order.dto.OrderReq;
+import com.delivery.domain.order.dto.OrderRes;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface OrderService {
-    List<OrderResponseDto.OrderListDto> getOrderList(Long userId);
-    // 수정 필요
-    List<OrderResponseDto.OrderListDto> getOrdersByOwner(Long ownerId);
-    // TODO
-    void changeStatus(Long userId, UUID orderId, OrderRequestDto.ChangeOrderStatusDto dto);
-    void rejectOrder(Long userId, UUID orderId, OrderRequestDto.RejectOrderDto dto);
-    List<OrderResponseDto.AllOrderListDto> getAllList();
-
-    void cancelOrder(Long userId, UUID orderId, OrderRequestDto.CancelOrderDto dto);
+    List<OrderRes.OrderListDto> getOrderList(Long userId);
+    List<OrderRes.OrderListDto> getOrdersByOwner(Long ownerUserId);
+    void changeStatus(Long userId, UUID orderId, OrderReq.ChangeOrderStatusDto dto);
+    void rejectOrder(Long userId, UUID orderId, OrderReq.RejectOrderDto dto);
+    List<OrderRes.AllOrderListDto> getAllList();
+    void cancelOrder(Long userId, UUID orderId, OrderReq.CancelOrderDto dto);
+    OrderRes.OrderDetailDto getOrderDetail(Long userId, UUID orderId);
 }

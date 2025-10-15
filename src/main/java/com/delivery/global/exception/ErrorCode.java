@@ -62,6 +62,10 @@ public enum ErrorCode {
     INVALID_ORDER_STATUS(HttpStatus.BAD_REQUEST, "O003", "주문이 진행중이지 않습니다."),
     ORDER_CANCEL_TIME_EXCEEDED(HttpStatus.BAD_REQUEST, "O004", "주문 취소 가능 시간이 지났습니다."),
 
+    // 장바구니 도메인
+    DIFFERENT_STORE(HttpStatus.BAD_REQUEST, "C001", "같은 가게의 상품만 장바구니에 담을 수 있습니다."),
+    CART_NOT_FOUND(HttpStatus.NOT_FOUND, "C002", "장바구니를 찾을 수 없습니다."),
+
     ITEM_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "I001", "해당 상품을 찾을 수 없습니다.");
 
 
