@@ -26,7 +26,7 @@ public class MenuController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('OWNER', 'MASTER', 'MANAGER')")
-    public ResponseEntity<?> createMenu(
+    public ResponseEntity<ApiResponse<MenuRes>> createMenu(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody CreateMenuReq req
     ) {
@@ -39,7 +39,7 @@ public class MenuController {
 
     //메뉴 상세 조회
     @GetMapping("/{menuId}")
-    public ResponseEntity<?> getMenu(
+    public ResponseEntity<ApiResponse<MenuRes>> getMenu(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable(value = "menuId") UUID menuId
     ) {
@@ -51,7 +51,7 @@ public class MenuController {
     //메뉴 수정
     @PutMapping("/{menuId}")
     @PreAuthorize("hasAnyRole('OWNER', 'MASTER', 'MANAGER')")
-    public ResponseEntity<?> updateMenu(
+    public ResponseEntity<ApiResponse<MenuRes>> updateMenu(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable(value = "menuId") UUID menuId,
             @RequestBody UpdateMenuReq req
@@ -64,7 +64,7 @@ public class MenuController {
     //메뉴 삭제
     @DeleteMapping("/{menuId}")
     @PreAuthorize("hasAnyRole('OWNER', 'MASTER', 'MANAGER')")
-    public ResponseEntity<?> deleteMenu(
+    public ResponseEntity<ApiResponse<MenuRes>> deleteMenu(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable(value = "menuId") UUID menuId
     ) {
