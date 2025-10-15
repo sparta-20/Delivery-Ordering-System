@@ -44,7 +44,9 @@ public enum ErrorCode {
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "리뷰를 찾을 수 없습니다."),
     REVIEW_ALREADY_EXISTS(HttpStatus.CONFLICT, "R002", "이미 해당 주문에 대한 리뷰가 작성되었습니다."),
     REVIEW_ORDER_NOT_OWNED(HttpStatus.FORBIDDEN, "R003", "본인의 주문에 대해서만 리뷰를 작성할 수 있습니다."),
-    REVIEW_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "R004", "리뷰를 삭제할 권한이 없습니다."),
+    REVIEW_READ_FORBIDDEN(HttpStatus.FORBIDDEN, "R004", "리뷰 조회 권한이 없습니다."),
+    REVIEW_UPDATE_FORBIDDEN(HttpStatus.FORBIDDEN, "R005", "본인이 작성한 리뷰만 수정할 수 있습니다."),
+    REVIEW_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "R006", "리뷰 삭제 권한이 없습니다."),
 
     // Order 도메인
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "O001", "주문을 찾을 수 없습니다."),

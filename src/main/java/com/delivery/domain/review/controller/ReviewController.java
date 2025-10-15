@@ -2,6 +2,7 @@ package com.delivery.domain.review.controller;
 
 import com.delivery.domain.review.dto.ReviewCreateReq;
 import com.delivery.domain.review.dto.ReviewRes;
+import com.delivery.domain.review.dto.ReviewUpdateReq;
 import com.delivery.domain.review.service.ReviewService;
 import com.delivery.global.common.ApiResponse;
 import com.delivery.global.security.service.UserDetailsImpl;
@@ -37,6 +38,23 @@ public class ReviewController {
         ReviewRes response = reviewService.createReview(userDetails.getUserId(), request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
+    }
+
+    /**
+     * 리뷰 수정
+     * - 작성자 본인만 수정 가능 (CUSTOMER만 허용)
+     * - 수정 가능 필드: content, rating
+     */
+    @PutMapping("/{reviewId}")
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
+    public ResponseEntity<ApiResponse<ReviewRes>> updateReview(
+            @PathVariable UUID reviewId,
+            @Valid @RequestBody ReviewUpdateReq request,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        ReviewRes response = reviewService.updateReview(userDetails.getUserId(), reviewId, request);
+
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     /**
