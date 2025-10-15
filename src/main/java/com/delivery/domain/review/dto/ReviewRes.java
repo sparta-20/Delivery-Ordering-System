@@ -12,7 +12,7 @@ import java.util.UUID;
 public class ReviewRes {
 
     private UUID reviewId;
-    private Long storeId;
+    private UUID storeId;
     private UUID orderId;
     private Long userId;
     private String nickname;
@@ -25,7 +25,7 @@ public class ReviewRes {
     public static ReviewRes from(Review review, UUID orderId, Long userId, String nickname) {
         return ReviewRes.builder()
                 .reviewId(review.getReviewId())
-                .storeId(review.getStoreId())
+                .storeId(review.getStore().getStoreId())
                 .orderId(orderId)
                 .userId(userId)
                 .nickname(nickname)
