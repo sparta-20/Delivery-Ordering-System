@@ -8,7 +8,7 @@ import com.delivery.domain.menu.repository.MenuRepository;
 import com.delivery.domain.menu.service.MenuService;
 import com.delivery.domain.store.entity.Store;
 import com.delivery.domain.store.entity.StoreStatusEnum;
-import com.delivery.domain.store.repository.StoreRepository;
+import com.delivery.domain.store.service.StoreService;
 import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.service.UserService;
 import com.delivery.global.exception.BusinessException;
@@ -25,7 +25,7 @@ import java.util.UUID;
 public class MenuServiceImpl implements MenuService {
 
     private final UserService userService;
-    private final StoreRepository storeRepository;
+    private final StoreService storeService;
     private final MenuRepository menuRepository;
 
     /**
@@ -120,7 +120,6 @@ public class MenuServiceImpl implements MenuService {
     }
 
     private Store getStoreById(UUID id) {
-        return storeRepository.findByStoreIdAndStatus(id, StoreStatusEnum.ACTIVE)
-                .orElseThrow(() -> new BusinessException(ErrorCode.STORE_NOT_FOUND));
+        return storeService.getByStoreIdAndStatus(id, StoreStatusEnum.ACTIVE);
     }
 }

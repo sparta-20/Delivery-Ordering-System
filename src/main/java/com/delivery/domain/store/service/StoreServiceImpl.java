@@ -133,4 +133,10 @@ public class StoreServiceImpl implements StoreService {
         return stores.map(StoreRes::from);
     }
 
+    @Override
+    public Store getByStoreIdAndStatus(UUID storeId, StoreStatusEnum storeStatusEnum) {
+        return storeRepository.findByStoreIdAndStatus(storeId, storeStatusEnum)
+                .orElseThrow(() -> new BusinessException(ErrorCode.FORBIDDEN_READ_STORE));
+    }
+
 }

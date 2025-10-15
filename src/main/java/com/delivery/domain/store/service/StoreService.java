@@ -3,6 +3,8 @@ package com.delivery.domain.store.service;
 import com.delivery.domain.store.dto.StoreCreateReq;
 import com.delivery.domain.store.dto.StoreRes;
 import com.delivery.domain.store.dto.StoreUpdateReq;
+import com.delivery.domain.store.entity.Store;
+import com.delivery.domain.store.entity.StoreStatusEnum;
 import com.delivery.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,16 +28,5 @@ public interface StoreService {
     // MASTER - 점주별 가게 조회
     Page<StoreRes> getOwnerStores(Long ownerUserId, User user, Pageable pageable);
 
-
-
-
-
-
-
-
-
-
-
-
-
+    Store getByStoreIdAndStatus(UUID id, StoreStatusEnum storeStatusEnum);
 }
