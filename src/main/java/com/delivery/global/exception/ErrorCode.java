@@ -29,6 +29,7 @@ public enum ErrorCode {
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "C002", "카테고리를 찾을 수 없습니다." ),
     FORBIDDEN_UPDATE_STORE(HttpStatus.FORBIDDEN, "S003", "가게를 수정할 권한이 없습니다."),
     FORBIDDEN_DELETE_STORE(HttpStatus.FORBIDDEN, "S004", "가게를 삭제할 권한이 없습니다."),
+    FORBIDDEN_READ_STORE(HttpStatus.FORBIDDEN,"s005", "가게를 조회할 권한이 없습니다." ),
 
     // jwt
     TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "A001", "토큰이 존재하지 않습니다."),
@@ -51,6 +52,9 @@ public enum ErrorCode {
     ORDER_NOT_COMPLETED(HttpStatus.BAD_REQUEST, "O002", "배송이 완료된 주문만 리뷰 작성이 가능합니다."),
     INVALID_ORDER_STATUS(HttpStatus.BAD_REQUEST, "O003", "주문이 진행중이지 않습니다."),
     ORDER_CANCEL_TIME_EXCEEDED(HttpStatus.BAD_REQUEST, "O004", "주문 취소 가능 시간이 지났습니다.");
+    
+    ITEM_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "I001", "해당 상품을 찾을 수 없습니다.");
+    
 
 
     private final HttpStatus status;

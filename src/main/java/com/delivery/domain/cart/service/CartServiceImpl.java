@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -58,6 +59,13 @@ public class CartServiceImpl implements CartService {
         cart.clearCart();
     }
 
+    @Override
+    @Transactional
+    public void updateCartItem(Long userId, UUID itemId, Integer quantity) {
+        CartItem item = findCartItem(itemId, userId);
+        item.updateQuantity(quantity);
+    }
+
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
@@ -96,5 +104,9 @@ public class CartServiceImpl implements CartService {
         return items.stream()
                 .mapToInt(item -> item.getQuantity() * item.getPrice())
                 .sum();
+    }
+
+    private CartItem findCartItem(UUID cartItemId, Long userId) {
+        return cartItemRepository.findByCartMenuIdAndCart_User_UserId(cartItemId, userId).orElseThrow(() -> new BusinessException(ErrorCode.ITEM_REQUEST_NOT_FOUND));
     }
 }
