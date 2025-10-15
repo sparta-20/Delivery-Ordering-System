@@ -141,7 +141,7 @@ public class StoreServiceImpl implements StoreService {
         return stores.map(StoreRes::from);
     }
 
-    // 가게 검색 및 조회
+    // 가게 검색 및 목록 조회
     @Override
     public Page<StoreRes> getAllStores(StoreSearchCondition cond, Pageable pageable){
 
@@ -230,5 +230,13 @@ public class StoreServiceImpl implements StoreService {
                     cb.isTrue(category.get("isActive"))
             );
         };
+    }
+
+    // 가게 단건 조회
+    @Override
+    public StoreRes getStore(UUID storeId){
+        Store store = storeRepository.findByStoreIdAndStatus(storeId, StoreStatusEnum.ACTIVE)
+                .orElseThrow(() -> new BusinessException(ErrorCode.STORE_NOT_FOUND));
+        return new StoreRes(store);
     }
 }
