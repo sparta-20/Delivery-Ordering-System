@@ -54,7 +54,7 @@ public enum ErrorCode {
     ITEM_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "I001", "해당 상품을 찾을 수 없습니다."),
 
     // 메뉴 도매인
-    MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "M001", "메뉴를 찾을 수 없습닏다.");
+    MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "M001", "메뉴를 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;
