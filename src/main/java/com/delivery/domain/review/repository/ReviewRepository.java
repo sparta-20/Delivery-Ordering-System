@@ -17,12 +17,24 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
     Optional<Review> findByReviewIdAndDeletedAtIsNull(UUID reviewId);
 
     /**
-     * 리뷰 ID로 조회 (삭제되지 않은 리뷰만, User JOIN FETCH)
-     * N+1 문제 방지를 위해 User 정보를 함께 조회
+     * 리뷰 조회 (User 정보 함께 조회)
+     * - 삭제되지 않은 리뷰만 조회
      */
     @Query("SELECT r FROM Review r " +
             "JOIN FETCH r.user " +
             "WHERE r.reviewId = :reviewId " +
             "AND r.deletedAt IS NULL")
     Optional<Review> findByReviewIdWithUser(@Param("reviewId") UUID reviewId);
+
+    /**
+     * 리뷰 조회 (User, Order 정보 함께 조회)
+     * - 삭제되지 않은 리뷰만 조회
+     */
+    @Query("SELECT r FROM Review r " +
+            "JOIN FETCH r.user " +
+            "JOIN FETCH r.order " +
+            "WHERE r.reviewId = :reviewId " +
+            "AND r.deletedAt IS NULL")
+    Optional<Review> findByReviewIdWithUserAndOrder(@Param("reviewId") UUID reviewId);
+
 }

@@ -52,4 +52,14 @@ public class Review extends Timestamped {
         this.rating = rating;
         this.content = content;
     }
+
+    /**
+     * 리뷰 수정
+     * @param rating 평점 (1~5)
+     * @param content 리뷰 내용
+     */
+    public void update(int rating, String content) {
+        this.rating = rating;
+        this.content = content;
+    }
 }

@@ -5,6 +5,7 @@ import com.delivery.domain.order.entity.OrderStatus;
 import com.delivery.domain.order.repository.OrderRepository;
 import com.delivery.domain.review.dto.ReviewCreateReq;
 import com.delivery.domain.review.dto.ReviewRes;
+import com.delivery.domain.review.dto.ReviewUpdateReq;
 import com.delivery.domain.review.entity.Review;
 import com.delivery.domain.review.repository.ReviewRepository;
 import com.delivery.domain.user.entity.User;
@@ -69,6 +70,43 @@ public class ReviewServiceImpl implements ReviewService{
         );
     }
 
+    @Override
+    @Transactional
+    public ReviewRes updateReview(Long userId, UUID reviewId, ReviewUpdateReq request) {
+        log.info("[REVIEW] 수정 요청 - reviewId: {}, userId: {}", reviewId, userId);
+
+        // 리뷰 조회 (User, Order 정보와 함께 조회)
+        Review review = getReviewWithUserAndOrder(reviewId);
+
+        // 작성자 본인 검증 (CUSTOMER만 수정 가능)
+        validateUpdatePermission(userId, review);
+
+        // 리뷰 수정
+        review.update(request.getRating(), request.getContent());
+
+        log.info("[REVIEW] 수정 완료 - reviewId: {}, rating: {}", reviewId, request.getRating());
+        return ReviewRes.from(
+                review,
+                review.getOrder().getOrderId(),
+                review.getUser().getUserId(),
+                review.getUser().getNickname()
+        );
+    }
+
+    /**
+     * 수정 권한 검증
+     * - 작성자 본인만 수정 가능 (CUSTOMER만 허용)
+     */
+    private void validateUpdatePermission(Long userId, Review review) {
+        if (!review.getUser().getUserId().equals(userId)) {
+            log.warn("[REVIEW] 수정 권한 없음 - userId: {}, reviewOwnerId: {}",
+                    userId, review.getUser().getUserId());
+            throw new BusinessException(ErrorCode.REVIEW_UPDATE_FORBIDDEN);
+        }
+
+        log.debug("[REVIEW] 본인 리뷰 수정 - userId: {}", userId);
+    }
+
     // 리뷰 삭제 (Soft Delete)
     @Override
     @Transactional
@@ -85,24 +123,6 @@ public class ReviewServiceImpl implements ReviewService{
         review.markDeleted(userId);
 
         log.info("[REVIEW] 삭제 완료 - reviewId: {}, deletedBy: {}", reviewId, userId);
-    }
-
-    // 리뷰 조회 (삭제되지 않은 리뷰만, User 정보 함께 조회)
-    private Review getReviewWithUser(UUID reviewId) {
-        return reviewRepository.findByReviewIdWithUser(reviewId)
-                .orElseThrow(() -> {
-                    log.warn("[REVIEW] 리뷰 조회 실패 - reviewId: {}", reviewId);
-                    return new BusinessException(ErrorCode.REVIEW_NOT_FOUND);
-                });
-    }
-
-    // 리뷰 조회 (삭제되지 않은 리뷰만)
-    private Review getReviewById(UUID reviewId) {
-        return reviewRepository.findByReviewIdAndDeletedAtIsNull(reviewId)
-                .orElseThrow(() -> {
-                    log.warn("[REVIEW] 리뷰 조회 실패 - reviewId: {}", reviewId);
-                    return new BusinessException(ErrorCode.REVIEW_NOT_FOUND);
-                });
     }
 
     /**
@@ -127,6 +147,32 @@ public class ReviewServiceImpl implements ReviewService{
         log.debug("[REVIEW] 본인 리뷰 삭제 - userId: {}", userId);
     }
 
+    // 리뷰 조회 (삭제되지 않은 리뷰만, User 정보 함께 조회)
+    private Review getReviewWithUser(UUID reviewId) {
+        return reviewRepository.findByReviewIdWithUser(reviewId)
+                .orElseThrow(() -> {
+                    log.warn("[REVIEW] 리뷰 조회 실패 - reviewId: {}", reviewId);
+                    return new BusinessException(ErrorCode.REVIEW_NOT_FOUND);
+                });
+    }
+
+    // 리뷰 조회 (삭제되지 않은 리뷰만, User, Order 정보 함께 조회)
+    private Review getReviewWithUserAndOrder(UUID reviewId) {
+        return reviewRepository.findByReviewIdWithUserAndOrder(reviewId)
+                .orElseThrow(() -> {
+                    log.warn("[REVIEW] 리뷰 조회 실패 - reviewId: {}", reviewId);
+                    return new BusinessException(ErrorCode.REVIEW_NOT_FOUND);
+                });
+    }
+
+    // 리뷰 조회 (삭제되지 않은 리뷰만)
+    private Review getReviewById(UUID reviewId) {
+        return reviewRepository.findByReviewIdAndDeletedAtIsNull(reviewId)
+                .orElseThrow(() -> {
+                    log.warn("[REVIEW] 리뷰 조회 실패 - reviewId: {}", reviewId);
+                    return new BusinessException(ErrorCode.REVIEW_NOT_FOUND);
+                });
+    }
 
     // 리뷰 저장
     private Review saveReview(User user, Order order, Long storeId, int rating, String content) {
