@@ -15,6 +15,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiRes<?>> handleBusinessException(BusinessException ex) {
         ErrorCode errorCode = ex.getErrorCode();
         log.error(ex.getMessage());
+        ex.printStackTrace();
         return ResponseEntity
                 .status(errorCode.getStatus())
                 .body(ApiRes.error(errorCode.getCode(), errorCode.getMessage()));
@@ -24,6 +25,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiRes<?>> handleException(Exception ex) {
         log.error(ex.getMessage());
+        ex.printStackTrace();
         return ResponseEntity
                 .status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus())
                 .body(ApiRes.error(ErrorCode.INTERNAL_SERVER_ERROR.getCode(),
