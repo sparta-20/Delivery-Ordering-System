@@ -104,7 +104,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public Menu getMenuById(UUID menuId) {
         return menuRepository.findById(menuId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.STORE_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.MENU_NOT_FOUND));
     }
 
     private boolean canManageMenu(Long userId, User user, Store store) {
