@@ -261,16 +261,27 @@ public class StoreServiceImpl implements StoreService {
             throw new BusinessException(ErrorCode.OUT_OF_SERVICE_AREA);
         }
 
-        // 광화문의 위도,경도와 가게 좌표의 거리 계산
-        double distKm = haversineKm(
-                store.getLatitude().doubleValue(),
-                store.getLongitude().doubleValue(),
-                centerLat, centerLon
-        );
+        // 반경(km)을 위도 단위로 환산
+        double latDelta = radiusKm / 111.0;
 
-        if(distKm>radiusKm){
-            throw new BusinessException(ErrorCode.OUT_OF_SERVICE_AREA);
-        }
+        // 경도는 위도에 따른 거리 차이 때문에 cos(위도)로 보정
+        double lonDelta = radiusKm / (111.0 * Math.cos(Math.toRadians(centerLat)));
+
+        // 중심점 기준으로 동,서,남,북 경계 좌표 계산
+        BigDecimal minLat = bd(centerLat - latDelta);
+        BigDecimal maxLat = bd(centerLat + latDelta);
+        BigDecimal minLon = bd(centerLon - lonDelta);
+        BigDecimal maxLon = bd(centerLon + lonDelta);
+
+        BigDecimal lat = store.getLatitude();
+        BigDecimal lon = store.getLongitude();
+
+        // 가게 단건 조회 -> 광화문 근방 바운딩 박스
+        boolean inBox =
+                lat.compareTo(minLat) >= 0 && lat.compareTo(maxLat) <= 0 &&
+                        lon.compareTo(minLon) >= 0 && lon.compareTo(maxLon) <= 0;
+
+        if (!inBox) throw new BusinessException(ErrorCode.OUT_OF_SERVICE_AREA);
 
         return new StoreRes(store);
     }
@@ -302,25 +313,4 @@ public class StoreServiceImpl implements StoreService {
                 );
     }
 
-    // 가게 단건 조회 -> 광화문 근방 구면 거리
-    private double haversineKm(double lat1, double lon1, double lat2, double lon2) {
-
-        // 지구 평균 반지름
-        double R = 6371.0088;
-
-        // 위도와 경도 차이를 radian으로 변환
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-
-        // Haversine 공식 적용
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-
-        // 중심각 계산
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        // 실제 거리 반환
-        return R * c;
-    }
 }
