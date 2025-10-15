@@ -1,5 +1,6 @@
 package com.delivery.domain.auth.entity;
 
+import com.delivery.domain.user.entity.User;
 import com.delivery.global.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -15,14 +16,16 @@ public class RefreshToken extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
-
     @Column(nullable = false, unique = true)
     private String token;
 
-    public RefreshToken(Long userId, String token) {
-        this.userId = userId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
+
+    public RefreshToken(String token, User user) {
         this.token = token;
+        this.user = user;
     }
 
     public void updateToken(String newToken) {

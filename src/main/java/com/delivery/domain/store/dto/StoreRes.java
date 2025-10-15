@@ -14,6 +14,7 @@ public class StoreRes {
     private String address;
     private String city;
     private String district;
+    private String dong;
     private Integer minPrice;
     private String status;
     private UUID categoryId;
@@ -28,6 +29,7 @@ public class StoreRes {
         this.address = store.getAddress();
         this.city = store.getCity();
         this.district = store.getDistrict();
+        this.dong = store.getDong();
         this.minPrice = store.getMinPrice();
         this.status = store.getStatus()!= null ? store.getStatus().name() : StoreStatusEnum.ACTIVE.name();
 

@@ -54,4 +54,14 @@ public class User extends Timestamped {
     public boolean isManager() {
         return UserRoleEnum.MANAGER.equals(this.role);
     }
+
+    public void update(String nickname, String email, PublicStatus publicStatus) {
+        this.nickname = nickname;
+        this.email = email;
+        this.publicStatus = publicStatus;
+    }
+
+    public void updatePassword(String encodePassword) {
+        this.password = encodePassword;
+    }
 }

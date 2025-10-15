@@ -10,12 +10,14 @@ import java.util.UUID;
 @Getter
 @Entity
 @Builder
+@Table(name = "p_menu")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Menu extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID menuId;
+
     @Column(nullable = false)
     private String name;
 
@@ -59,5 +61,6 @@ public class Menu extends Timestamped {
         this.price = price;
         this.quantity = quantity;
         this.status = status;
+        this.imageUrl = imageUrl;
     }
 }

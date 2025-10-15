@@ -24,11 +24,14 @@ public class StoreUpdateReq {
     @NotBlank(message = "구/군은 필수입니다.")
     private String district;
 
+    @NotBlank(message = "동은 필수입니다.")
+    private String dong;
+
     @NotNull(message = "최소 주문 금액은 필수입니다.")
     private Integer minPrice;
 
     @NotNull(message = "카테고리는 필수입니다.")
-    private UUID categoryId;
+    private String categoryName;
 
     @NotNull(message = "상태값은 필수입니다.")
     private StoreStatusEnum status;
