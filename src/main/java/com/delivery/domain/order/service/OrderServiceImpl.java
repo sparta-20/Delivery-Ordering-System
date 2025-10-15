@@ -85,17 +85,7 @@ public class OrderServiceImpl implements OrderService {
                 throw new BusinessException(ErrorCode.FORBIDDEN);
             }
         }
-        int recentOrderCount = calculateOrder(user, order);
-        return OrderResponseDto.OrderDetailDto.from(order, recentOrderCount);
-    }
-
-    private int calculateOrder(User user, Order order) {
-        LocalDateTime six = LocalDateTime.now().minusMonths(6);
-        return orderRepository.countByUserAndStore(
-                user.getUserId(),
-                order.getStore().getStoreId(),
-                six
-        );
+        return OrderResponseDto.OrderDetailDto.from(order);
     }
 
     private void validateOrder(Order order, Long userId) {

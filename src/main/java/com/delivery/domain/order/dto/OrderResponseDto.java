@@ -102,9 +102,8 @@ public class OrderResponseDto {
         private String address;
         private String message;
         private String deliveryMessage;
-        private Integer count;
 
-        public static OrderDetailDto from(Order order, Integer count) {
+        public static OrderDetailDto from(Order order) {
             return OrderDetailDto.builder()
                     .storeId(order.getStore().getStoreId())
                     .storeName(order.getStore().getName())
@@ -119,7 +118,6 @@ public class OrderResponseDto {
                     .address(order.getAddress())
                     .message(order.getMessage())
                     .deliveryMessage(order.getDeliveryMessage())
-                    .count(count)
                     .build();
         }
     }

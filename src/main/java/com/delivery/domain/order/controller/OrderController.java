@@ -79,4 +79,12 @@ public class OrderController {
         orderService.cancelOrder(user.getUserId(), orderId, dto);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{orderId}/detail")
+    public ResponseEntity<OrderResponseDto.OrderDetailDto> getOrderDetail(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                          @PathVariable UUID orderId) {
+        User user = userDetails.getUser();
+        OrderResponseDto.OrderDetailDto result = orderService.getOrderDetail(user.getUserId(), orderId);
+        return ResponseEntity.ok(result);
+    }
 }

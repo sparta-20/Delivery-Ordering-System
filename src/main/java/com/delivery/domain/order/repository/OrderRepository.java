@@ -16,9 +16,4 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
     List<Order> findByUser_UserId(Long userId);
     List<Order> findByStore_Owner_UserId(Long ownerUserId);
     Optional<Order> findByOrderId(UUID orderId);
-    @Query("SELECT COUNT(o) FROM Order o WHERE o.user.userId = :userId AND o.store.storeId = :storeId AND o.createdAt >= :from")
-    Integer countByUserAndStore(
-            @Param("userId") Long userId,
-            @Param("storeId") UUID storeId,
-            @Param("from") LocalDateTime from);
 }
