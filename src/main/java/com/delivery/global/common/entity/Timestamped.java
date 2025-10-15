@@ -28,6 +28,7 @@ public abstract class Timestamped {
     private LocalDateTime modifiedAt;
 
     @LastModifiedBy
+    @Column
     private Long modifiedBy;
 
     @Column
