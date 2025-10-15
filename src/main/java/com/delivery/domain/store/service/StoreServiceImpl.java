@@ -44,7 +44,7 @@ public class StoreServiceImpl implements StoreService {
     @Value("${app.service-area.center-lon}")
     private double centerLon;
 
-    @Value("${app.service-area.radius-km}")
+    @Value("${app.service-area.radius-km:3.0}")
     private double radiusKm;
 
     // OWNER, MASTER, MANAGER - 가게 생성
@@ -250,7 +250,24 @@ public class StoreServiceImpl implements StoreService {
         };
     }
 
-    // 가게 단건 조회
+    private static BigDecimal bd(double v) {
+        return BigDecimal.valueOf(v).setScale(6, RoundingMode.HALF_UP);
+    }
+
+    // 가게 목록 조회 -> 광화문 근방 바운딩 박스
+    public Specification<Store> withinGwangHwaMoon(double centerLat, double centerLon, double radiusKm){
+
+        BoundingBox box = getBoundingBox(centerLat, centerLon, radiusKm);
+
+        return (root, query, cb) -> cb.and(
+                cb.isNotNull(root.get("latitude")),
+                cb.isNotNull(root.get("longitude")),
+                cb.between(root.get("latitude"), box.minLat(), box.maxLat()),
+                cb.between(root.get("longitude"), box.minLon(), box.maxLon())
+        );
+    }
+
+    // 가게 단건 조회 -> 광화문 근방 바운딩 박스
     @Override
     public StoreRes getStore(UUID storeId){
         Store store = storeRepository.findByStoreIdAndStatus(storeId, StoreStatusEnum.ACTIVE)
@@ -265,31 +282,14 @@ public class StoreServiceImpl implements StoreService {
         BigDecimal lat = store.getLatitude();
         BigDecimal lon = store.getLongitude();
 
-        // 가게 단건 조회 -> 광화문 근방 바운딩 박스
+        // 광화문 근방 바운딩 박스 검증
         boolean inBox =
-                lat.compareTo(box.minLat) >= 0 && lat.compareTo(box.maxLat) <= 0 &&
-                        lon.compareTo(box.minLon) >= 0 && lon.compareTo(box.maxLon) <= 0;
+                box.minLat().compareTo(lat) <= 0 && lat.compareTo(box.maxLat()) <= 0 &&
+                        box.minLon().compareTo(lon) <= 0 && lon.compareTo(box.maxLon()) <= 0;
 
         if (!inBox) throw new BusinessException(ErrorCode.OUT_OF_SERVICE_AREA);
 
         return new StoreRes(store);
-    }
-
-    private static BigDecimal bd(double v) {
-        return BigDecimal.valueOf(v).setScale(6, RoundingMode.HALF_UP);
-    }
-
-    // 가게 목록 조회 -> 광화문 근방 바운딩 박스
-    public Specification<Store> withinGwangHwaMoon(double centerLat, double centerLon, double radiusKm){
-
-        BoundingBox box = getBoundingBox(centerLat, centerLon, radiusKm);
-
-        return (root, query, cb) -> cb.and(
-                cb.isNotNull(root.get("latitude")),
-                cb.isNotNull(root.get("longitude")),
-                cb.between(root.get("latitude"), box.minLat(), box.maxLat()),
-                cb.between(root.get("longitude"), box.maxLon(), box.maxLon())
-                );
     }
 
     // 바운딩박스 로직 통합
