@@ -4,6 +4,7 @@ import com.delivery.domain.ai.client.GeminiAiClient;
 import com.delivery.domain.ai.config.GeminiProperties;
 import com.delivery.domain.ai.dto.AiCreateReq;
 import com.delivery.domain.ai.dto.AiRes;
+import com.delivery.domain.ai.dto.AiSearchRes;
 import com.delivery.domain.ai.entity.Ai;
 import com.delivery.domain.ai.entity.RequestTypeEnum;
 import com.delivery.domain.ai.repository.AiRepository;
@@ -14,8 +15,13 @@ import com.delivery.domain.user.entity.UserRoleEnum;
 import com.delivery.domain.user.service.UserService;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
+import com.delivery.global.util.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -110,6 +116,56 @@ public class AiServiceImpl implements AiService {
         ai.markDeleted(userId);
 
         log.info("[AI] 삭제 완료 - aiId: {}, deletedBy: {}", aiId, userId);
+    }
+
+    // AI 요청 기록 검색 (페이징)
+    @Override
+    public Page<AiSearchRes> searchAiRequests(
+            RequestTypeEnum requestType,
+            Long userId,
+            UUID menuId,
+            int page,
+            int size,
+            Sort.Direction direction,
+            User currentUser
+    ) {
+        log.info("[AI_SEARCH] 검색 시작 - requesterId={}, role={}," +
+                        " reqType={}, userId={}, menuId={}, page={}, size={}, dir={}",
+                currentUser.getUserId(), currentUser.getRole(), requestType, userId, menuId, page, size, direction);
+
+        // Pageable 생성
+        Pageable pageable = PageableUtils.createPageableWithCreatedAt(page, size, direction);
+
+        // 권한에 따른 userId 결정 (OWNER: 본인 강제, MANAGER/MASTER: 요청 user 또는 전체)
+        Long resolvedUserId = determineSearchUserId(userId, currentUser);
+        log.debug("[AI_SEARCH] 조회 범위 적용 - resolvedUserId={}",
+                resolvedUserId != null ? resolvedUserId : "ALL");
+
+        // 검색 실행 (DB 조회)
+        try {
+            Page<Ai> aiPage = aiRepository.searchAiRequests(requestType, resolvedUserId, menuId, pageable);
+
+            log.info("[AI_SEARCH] 검색 완료 - total={}, pageNo={}",
+                    aiPage.getTotalElements(), aiPage.getNumber());
+
+            return aiPage.map(AiSearchRes::from);
+
+        } catch (DataAccessException dae) {
+            log.error("[AI_SEARCH] DB 조회 실패 - reqType={}, resolvedUserId={}, menuId={}, page={}, size={}, dir={}",
+                    requestType, resolvedUserId, menuId, page, size, direction, dae);
+            throw new BusinessException(ErrorCode.AI_SEARCH_FAILED);
+        }
+    }
+
+    /**
+     * 사용자 역할에 따라 조회 가능한 데이터 범위 제한
+     * - OWNER: 본인 데이터만 조회 (요청 파라미터 무시)
+     * - MANAGER/MASTER: 전체 또는 특정 사용자 조회  가능
+     */
+    private Long determineSearchUserId(Long requestedUserId, User currentUser) {
+        return (currentUser.getRole() == UserRoleEnum.OWNER)
+                ? currentUser.getUserId()
+                : requestedUserId;
     }
 
     // 프롬프트 가공 (요구사항: 50자 이하 안내 문구 첨부)
