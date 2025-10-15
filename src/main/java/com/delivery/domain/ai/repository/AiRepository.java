@@ -1,6 +1,5 @@
 package com.delivery.domain.ai.repository;
 
-import com.delivery.domain.ai.dto.AiSearchRes;
 import com.delivery.domain.ai.entity.Ai;
 import com.delivery.domain.ai.entity.RequestTypeEnum;
 import org.springframework.data.domain.Page;
@@ -33,42 +32,4 @@ public interface AiRepository extends JpaRepository<Ai, UUID> {
              @Param("menuId") UUID menuId,
              Pageable pageable
      );
-//    /**
-//     * 전체 검색 (관리자 전용)
-//     */
-//    @Query("""
-//        SELECT new com.delivery.domain.ai.dto.AiSearchRes(
-//            a.aiId, a.user.userId, a.menu.menuId, a.requestType,
-//            a.prompt, a.response, a.createdAt
-//        )
-//        FROM Ai a
-//        WHERE a.deletedAt IS NULL
-//          AND (:requestType IS NULL OR a.requestType = :requestType)
-//          AND (:menuId IS NULL OR a.menu.menuId = :menuId)
-//        ORDER BY a.createdAt DESC
-//        """)
-//    Page<AiSearchRes> searchAll(@Param("requestType") RequestTypeEnum requestType,
-//                                @Param("menuId") UUID menuId,
-//                                Pageable pageable);
-//
-//    /**
-//     * 특정 유저 검색 (소유자 or 관리자가 userId 명시한 경우)
-//     */
-//    @Query("""
-//        SELECT new com.delivery.domain.ai.dto.AiSearchRes(
-//            a.aiId, a.user.userId, a.menu.menuId, a.requestType,
-//            a.prompt, a.response, a.createdAt
-//        )
-//        FROM Ai a
-//        WHERE a.deletedAt IS NULL
-//          AND a.user.userId = :userId
-//          AND (:requestType IS NULL OR a.requestType = :requestType)
-//          AND (:menuId IS NULL OR a.menu.menuId = :menuId)
-//        ORDER BY a.createdAt DESC
-//        """)
-//    Page<AiSearchRes> searchByUserId(@Param("requestType") RequestTypeEnum requestType,
-//                                     @Param("userId") Long userId,
-//                                     @Param("menuId") UUID menuId,
-//                                     Pageable pageable);
-
 }
