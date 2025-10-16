@@ -1,7 +1,6 @@
 package com.delivery.domain.store.repository;
 
 import com.delivery.domain.store.entity.Store;
-import com.delivery.domain.store.entity.StoreCategory;
 import com.delivery.domain.store.entity.StoreStatusEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,4 +14,6 @@ public interface StoreRepository extends JpaRepository<Store,UUID>, JpaSpecifica
 
     Optional<Store> findByStoreIdAndStatus(UUID storeId, StoreStatusEnum status);
     Page<Store> findAllByOwnerUserIdAndStatus(Long ownerUserId, StoreStatusEnum status, Pageable pageable);
+    // OWNER의 가게 조회 (리뷰 검색 시 사용)
+    Optional<Store> findByOwnerUserIdAndDeletedAtIsNull(Long userId);
 }

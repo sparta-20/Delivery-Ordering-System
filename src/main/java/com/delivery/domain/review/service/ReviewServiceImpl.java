@@ -2,20 +2,27 @@ package com.delivery.domain.review.service;
 
 import com.delivery.domain.order.entity.Order;
 import com.delivery.domain.order.entity.OrderStatusEnum;
-import com.delivery.domain.order.repository.OrderRepository;
+import com.delivery.domain.order.service.OrderService;
 import com.delivery.domain.review.dto.ReviewCreateReq;
 import com.delivery.domain.review.dto.ReviewRes;
+import com.delivery.domain.review.dto.ReviewSearchRes;
 import com.delivery.domain.review.dto.ReviewUpdateReq;
 import com.delivery.domain.review.entity.Review;
 import com.delivery.domain.review.repository.ReviewRepository;
+import com.delivery.domain.store.entity.Store;
+import com.delivery.domain.store.service.StoreService;
 import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.entity.UserRoleEnum;
-import com.delivery.domain.user.repository.UserRepository;
 import com.delivery.domain.user.service.UserService;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
+import com.delivery.global.util.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,9 +36,9 @@ import java.util.UUID;
 public class ReviewServiceImpl implements ReviewService{
 
     private final ReviewRepository reviewRepository;
-    private final OrderRepository orderRepository;  // TODO(#68): OrderService로 교체
-    private final UserRepository userRepository;    // TODO(#68): UserService로 교체
     private final UserService userService;
+    private final OrderService orderService;
+    private final StoreService storeService;
 
     // 리뷰 생성
     @Override
@@ -40,14 +47,9 @@ public class ReviewServiceImpl implements ReviewService{
         log.info("[REVIEW] 생성 요청 - userId: {}, orderId: {}", userId, request.getOrderId());
 
         // 사용자 조회
-        // TODO(#68): UserService.getUserById로 변경 (deletedAt 고려)
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-
+        User user = userService.getUserById(userId);
         // 주문 조회
-        // TODO(#68): OrderService.getOrderById로 변경 (deletedAt 및 상태 고려)
-        Order order = orderRepository.findById(request.getOrderId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
+        Order order = orderService.getOrderById(request.getOrderId());
 
         // 검증
         validateReviewCreation(user, order);
@@ -56,7 +58,7 @@ public class ReviewServiceImpl implements ReviewService{
         Review savedReview = saveReview(
                 user,
                 order,
-                1L, // TODO(#68): order.getStore()로 교체
+                order.getStore(),
                 request.getRating(),
                 request.getContent()
         );
@@ -93,7 +95,7 @@ public class ReviewServiceImpl implements ReviewService{
     /**
      * 조회 권한 검증
      * - MANAGER/MASTER: 모든 리뷰 조회 가능
-     * - OWNER: 본인 가게 리뷰만 조회 가능 (TODO: storeId 검증)
+     * - OWNER: 본인 가게 리뷰만 조회 가능
      * - CUSTOMER: 본인이 작성한 리뷰만 조회 가능
      */
     private void validateReadPermission(Long userId, UserRoleEnum role, Review review) {
@@ -105,10 +107,10 @@ public class ReviewServiceImpl implements ReviewService{
 
         // OWNER는 본인 가게 리뷰만 조회 가능
         if (role == UserRoleEnum.OWNER) {
-            // TODO(#68): Store 연관관계 추가 후 구현
-            User owner = userService.getUserById(userId);
-            // if (review.getStore().getOwner().getUserId().equals(userId)) { return; }
-            log.debug("[REVIEW] OWNER 조회 권한 검증 (미구현) - userId: {}", userId);
+            Long ownerId = review.getStore().getOwner().getUserId();
+            if (!ownerId.equals(userId)) {
+                throw new BusinessException(ErrorCode.REVIEW_READ_FORBIDDEN);
+            }
             return;
         }
 
@@ -178,6 +180,108 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     /**
+     * 권한별 스코프
+     * - CUSTOMER: storeId 필수(특정 가게만)
+     * - OWNER   : 자신의 가게로 강제(요청 storeId 무시)
+     * - MANAGER/MASTER: 요청값 그대로(null이면 전체)
+     */
+    @Override
+    public Page<ReviewSearchRes> searchReviews(
+            UUID storeId,
+            int rating,
+            Long writerId,
+            int page,
+            int size,
+            Sort.Direction direction,
+            User currentUser
+    ) {
+        log.info("[REVIEW_SEARCH] 검색 시작 - requesterId={}, role={}, storeId={}, rating={}, writerId={}, page={}, size={}, dir={}",
+                currentUser.getUserId(), currentUser.getRole(), storeId, rating, writerId, page, size, direction);
+
+        // rating 유효성 검증
+        validateRating(rating);
+
+        // Pageable 생성
+        Pageable pageable = PageableUtils.createPageableWithCreatedAt(page, size, direction);
+
+        // 권한에 따른 storeId 결정 (OWNER: 본인 가게 강제, CUSTOMER/MANAGER/MASTER: 요청 또는 전체)
+        UUID resolvedStoreId = determineSearchStoreId(storeId, currentUser);
+        // 권한에 따른 작성자 강제 (CUSTOMER는 storeId 유무에 따라 정책 분기)
+        Long resolvedWriterId = determineSearchUserId(storeId, writerId, currentUser);
+
+        log.debug("[REVIEW_SEARCH] 조회 범위 적용 - resolvedStoreId={}, resolvedWriterId={}",
+                resolvedStoreId != null ? resolvedStoreId : "ALL",
+                resolvedWriterId != null ? resolvedWriterId : "ALL");
+
+        // 검색 실행 (DB 조회)
+        try {
+            Page<Review> reviewPage = reviewRepository.searchReviews(resolvedStoreId, rating, resolvedWriterId, pageable);
+
+            log.info("[REVIEW_SEARCH] 검색 완료 - total={}, pageNo={}",
+                    reviewPage.getTotalElements(), reviewPage.getNumber());
+
+            return reviewPage.map(ReviewSearchRes::from);
+
+        } catch (DataAccessException dae) {
+            log.error("[REVIEW_SEARCH] DB 조회 실패 - storeId={}, rating={}, writerId={}, page={}, size={}, dir={}",
+                    resolvedStoreId, rating, resolvedWriterId, page, size, direction, dae);
+            throw new BusinessException(ErrorCode.REVIEW_SEARCH_FAILED);
+        }
+    }
+
+    /**
+     * 권한에 따른 검색 storeId 결정
+     * - CUSTOMER: 파라미터 그대로 (null이면 전체 검색)
+     * - OWNER: 본인 가게로 강제 (파라미터 무시)
+     * - MANAGER/MASTER: 파라미터 그대로 (null이면 전체 검색)
+     */
+    private UUID determineSearchStoreId(UUID requestedStoreId, User currentUser) {
+        if (currentUser.getRole() == UserRoleEnum.OWNER) {
+            // OWNER는 본인 가게만 조회 가능
+            Store ownerStore = storeService.getStoreByOwnerId(currentUser.getUserId());
+            return ownerStore.getStoreId(); // 요청값 무시
+        }
+        // CUSTOMER, MANAGER, MASTER: 요청 그대로 (null이면 전역)
+        return requestedStoreId;
+    }
+
+    /**
+     * 권한에 따른 검색 writerId 결정
+     * - CUSTOMER:
+     *   - storeId == null → 전역 "내 리뷰" (writerId = 본인)
+     *   - storeId != null → 특정 가게
+     *       - requestedWriterId == 본인 → 본인 리뷰만
+     *       - requestedWriterId == null or 타인 → 가게 전체 리뷰 (writerId = null)
+     * - OWNER / MANAGER / MASTER: 요청값 그대로 사용
+     */
+    private Long determineSearchUserId(UUID requestedStoreId, Long requestedWriterId, User currentUser) {
+        UserRoleEnum role = currentUser.getRole();
+
+        if (role == UserRoleEnum.CUSTOMER) {
+            // 전역(모든 가게) 조회: 내 리뷰만
+            if (requestedStoreId == null) {
+                return currentUser.getUserId();
+            }
+            // 특정 가게 조회
+            if (requestedWriterId != null && requestedWriterId.equals(currentUser.getUserId())) {
+                return currentUser.getUserId(); // 본인 리뷰만
+            }
+            return null; // 가게 전체 리뷰
+        }
+
+        // OWNER / MANAGER / MASTER
+        return requestedWriterId;
+    }
+
+    // 평점 유효성 검증 (1~5점)
+    private void validateRating(Integer rating) {
+        if (rating != null && (rating < 1 || rating > 5)) {
+            log.warn("[REVIEW_SEARCH] 잘못된 평점 요청 - rating={}", rating);
+            throw new BusinessException(ErrorCode.INVALID_REVIEW_RATING);
+        }
+    }
+
+    /**
      * 삭제 권한 검증
      * - MANAGER/MASTER: 모든 리뷰 삭제 가능
      * - CUSTOMER: 본인 리뷰만 삭제 가능
@@ -227,10 +331,10 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     // 리뷰 저장
-    private Review saveReview(User user, Order order, Long storeId, int rating, String content) {
+    private Review saveReview(User user, Order order, Store store, int rating, String content) {
         Review review = Review.builder()
                 .user(user)
-                .storeId(storeId)    // TODO(#68): order.getStore().getId() 로 교체
+                .store(store)
                 .order(order)
                 .rating(rating)
                 .content(content)
@@ -259,9 +363,8 @@ public class ReviewServiceImpl implements ReviewService{
 
     // 주문 상태 검증 (배송 완료 여부)
     private void validateOrderStatus(Order order) {
-        // TODO(#68): 실제 완료 상태 확정 시(DELIVERED/COMPLETED)로 변경
         if (order.getStatus() != OrderStatusEnum.DONE) {
-            log.warn("[REVIEW] 주문 상태 불일치 - orderId: {}, status: {}, required: DELIVERED|COMPLETED",
+            log.warn("[REVIEW] 주문 상태 불일치 - orderId: {}, status: {}, required: DONE",
                     order.getOrderId(), order.getStatus());
             throw new BusinessException(ErrorCode.ORDER_NOT_COMPLETED);
         }

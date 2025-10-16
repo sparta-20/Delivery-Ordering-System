@@ -1,6 +1,7 @@
 package com.delivery.domain.review.entity;
 
 import com.delivery.domain.order.entity.Order;
+import com.delivery.domain.store.entity.Store;
 import com.delivery.domain.user.entity.User;
 import com.delivery.global.common.entity.Timestamped;
 import jakarta.persistence.*;
@@ -27,9 +28,10 @@ public class Review extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // 가게 (N:1) -> TODO(#68): Store 엔티티 생성 전까지 Long으로 보관
-    @Column(name = "store_id", nullable = false)
-    private Long storeId;
+    // 가게 (N:1)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
 
     // 주문 (1:1) — 주문당 리뷰 1건
     @OneToOne(fetch = FetchType.LAZY, optional = false)
@@ -45,9 +47,9 @@ public class Review extends Timestamped {
     private String content;
 
     @Builder
-    private Review(User user, Long storeId, Order order, int rating, String content) {
+    private Review(User user, Store store, Order order, int rating, String content) {
         this.user = user;
-        this.storeId = storeId; // TODO(#68): order 파생으로 교체 예정
+        this.store = store;
         this.order = order;
         this.rating = rating;
         this.content = content;
