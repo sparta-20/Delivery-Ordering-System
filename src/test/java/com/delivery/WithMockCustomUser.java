@@ -1,4 +1,4 @@
-package com.delivery.ordering;
+package com.delivery;
 
 import org.springframework.security.test.context.support.WithSecurityContext;
 

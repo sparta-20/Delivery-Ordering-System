@@ -67,7 +67,7 @@ class MenuRepositoryTest {
     }
 
     private User createUser() {
-        User owner = new User("nickname", "email@email.com", "encodedPassword");
+        User owner = new User("nickname", "email@email.com", "encodedPassword", "01012341234");
         userRepository.save(owner);
         return owner;
     }
