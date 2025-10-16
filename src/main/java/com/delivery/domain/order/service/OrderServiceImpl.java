@@ -1,10 +1,20 @@
 package com.delivery.domain.order.service;
 
+import com.delivery.domain.cart.entity.Cart;
+import com.delivery.domain.cart.entity.CartItem;
+import com.delivery.domain.cart.entity.CartStatusEnum;
+import com.delivery.domain.cart.repository.CartItemRepository;
+import com.delivery.domain.cart.repository.CartRepository;
+import com.delivery.domain.menu.entity.Menu;
 import com.delivery.domain.order.dto.OrderReq;
 import com.delivery.domain.order.dto.OrderRes;
 import com.delivery.domain.order.entity.Order;
+import com.delivery.domain.order.entity.OrderMenu;
+import com.delivery.domain.order.entity.OrderMenuStatusEnum;
 import com.delivery.domain.order.entity.OrderStatusEnum;
+import com.delivery.domain.order.repository.OrderMenuRepository;
 import com.delivery.domain.order.repository.OrderRepository;
+import com.delivery.domain.store.entity.Store;
 import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.entity.UserRoleEnum;
 import com.delivery.domain.user.repository.UserRepository;
@@ -26,6 +36,10 @@ import java.util.UUID;
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
+    private final OrderMenuRepository orderMenuRepository;
+
 
     @Transactional(readOnly = true)
     @Override
@@ -87,6 +101,81 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         return OrderRes.OrderDetailDto.from(order);
+    }
+
+    @Override
+    @Transactional
+    public OrderRes.OrderDetailDto createOrder(User user) {
+        Cart cart = cartRepository.findByUser_UserIdAndStatus(user.getUserId(), CartStatusEnum.CART)
+                .orElseThrow(() -> new BusinessException(ErrorCode.CART_NOT_FOUND));
+
+        List<CartItem> cartItems = cartItemRepository.findByCartCartId(cart.getCartId());
+        if (cartItems.isEmpty()) {
+            throw new BusinessException(ErrorCode.CART_EMPTY);
+        }
+
+        Store store = cart.getStore();
+        if (store == null) {
+            throw new BusinessException(ErrorCode.STORE_NOT_FOUND);
+        }
+
+        int totalPrice = cartItems.stream()
+                .mapToInt(item -> item.getMenu().getPrice() * item.getQuantity())
+                .sum();
+
+        Order order = Order.builder()
+                .user(user)
+                .store(store)
+                .totalPrice(totalPrice)
+                .address("address") // 추후 변경
+                .status(OrderStatusEnum.PENDING)
+                .build();
+
+        orderRepository.save(order);
+
+        for (CartItem cartItem : cartItems) {
+            Menu menu = cartItem.getMenu();
+
+            OrderMenu orderMenu = OrderMenu.builder()
+                    .order(order)
+                    .menu(menu)
+                    .price(menu.getPrice())
+                    .quantity(cartItem.getQuantity())
+                    .status(OrderMenuStatusEnum.ORDER)
+                    .build();
+
+            orderMenuRepository.save(orderMenu);
+            order.getOrderMenus().add(orderMenu);
+        }
+
+        cart.changeStatus(CartStatusEnum.CART_CANCEL);
+
+        return OrderRes.OrderDetailDto.from(order);
+    }
+
+    @Override
+    public OrderRes.OrderDetailDto getOrder(UUID orderId, User user) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
+
+        if (!order.getUser().getUserId().equals(user.getUserId())) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
+
+        return OrderRes.OrderDetailDto.from(order);
+    }
+
+    @Override
+    @Transactional
+    public void deleteOrder(UUID orderId, User user) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
+
+        if (!order.getUser().getUserId().equals(user.getUserId())) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
+
+        order.markDeleted(user.getUserId());
     }
 
     private void validateOrder(Order order, Long userId) {

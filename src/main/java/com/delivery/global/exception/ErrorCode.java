@@ -65,12 +65,17 @@ public enum ErrorCode {
     ORDER_NOT_COMPLETED(HttpStatus.BAD_REQUEST, "O002", "배송이 완료된 주문만 리뷰 작성이 가능합니다."),
     INVALID_ORDER_STATUS(HttpStatus.BAD_REQUEST, "O003", "주문이 진행중이지 않습니다."),
     ORDER_CANCEL_TIME_EXCEEDED(HttpStatus.BAD_REQUEST, "O004", "주문 취소 가능 시간이 지났습니다."),
+    ORDER_ALREADY_COMPLETED(HttpStatus.CONFLICT, "O002", "이미 완료된 주문입니다."),
+    ORDER_CREATION_FAILED(HttpStatus.BAD_REQUEST, "O003", "주문 생성에 실패했습니다."),
 
     // 장바구니 도메인
     DIFFERENT_STORE(HttpStatus.BAD_REQUEST, "C001", "같은 가게의 상품만 장바구니에 담을 수 있습니다."),
     CART_NOT_FOUND(HttpStatus.NOT_FOUND, "C002", "장바구니를 찾을 수 없습니다."),
+    ITEM_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "I001", "해당 상품을 찾을 수 없습니다."),
+    CART_EMPTY(HttpStatus.BAD_REQUEST, "C002", "장바구니에 담긴 상품이 없습니다."),
 
-    ITEM_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "I001", "해당 상품을 찾을 수 없습니다.");
+    // 주소 도메인
+    ADDRESS_NOT_FOUND(HttpStatus.NOT_FOUND, "AD001", "주소를 찾을 수 없습니다.");
 
 
     private final HttpStatus status;

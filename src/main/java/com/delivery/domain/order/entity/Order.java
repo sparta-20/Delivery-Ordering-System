@@ -4,8 +4,7 @@ import com.delivery.domain.store.entity.Store;
 import com.delivery.global.common.entity.Timestamped;
 import com.delivery.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
@@ -13,8 +12,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@NoArgsConstructor
 @Table(name = "p_order")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 @Getter
 public class Order extends Timestamped {
     @Id
@@ -55,6 +56,7 @@ public class Order extends Timestamped {
     private Store store;
 
     @OneToMany(mappedBy = "order")
+    @Builder.Default
     private List<OrderMenu> orderMenus = new ArrayList<>();
 
     public void changeStatus(OrderStatusEnum status) {

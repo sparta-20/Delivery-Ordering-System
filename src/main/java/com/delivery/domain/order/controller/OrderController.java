@@ -89,4 +89,30 @@ public class OrderController {
         OrderRes.OrderDetailDto result = orderService.getOrderDetail(user.getUserId(), orderId);
         return ResponseEntity.ok(ApiResponse.success(result));
     }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<OrderRes.OrderDetailDto>> createOrder(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        OrderRes.OrderDetailDto order = orderService.createOrder(userDetails.getUser());
+        return ResponseEntity.ok(ApiResponse.success(order));
+    }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<ApiResponse<OrderRes.OrderDetailDto>> getOrder(
+            @PathVariable UUID orderId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        OrderRes.OrderDetailDto order = orderService.getOrder(orderId, userDetails.getUser());
+        return ResponseEntity.ok(ApiResponse.success(order));
+    }
+
+    @DeleteMapping("/{orderId}")
+    public ResponseEntity<ApiResponse<Void>> deleteOrder(
+            @PathVariable UUID orderId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        orderService.deleteOrder(orderId, userDetails.getUser());
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
 }
