@@ -27,8 +27,8 @@ out/
 !**/src/test/**/out/
 
 ##yml
-application.yml
-application-test.yml
+**/application.yml
+**/application-test.yml
 application.properties
 *.env
 
