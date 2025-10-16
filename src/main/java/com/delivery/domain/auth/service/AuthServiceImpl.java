@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 @Transactional(readOnly = true)
 public class AuthServiceImpl implements AuthService {
 
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenBlackListRepository tokenBlackListRepository;
@@ -35,11 +35,11 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public void signup(SignUpReq signUpReq) {
-        if(userService.existsByNickname(signUpReq.getNickname())){
+        if(userRepository.existsByNickname(signUpReq.getNickname())){
             throw new BusinessException(ErrorCode.DUPLICATE_NICKNAME);
         }
 
-        if (userService.existsByEmail(signUpReq.getEmail())) {
+        if (userRepository.existsByEmail(signUpReq.getEmail())) {
             throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
         }
 
@@ -63,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public void updateRefreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
         Long userId = extractUserIdFromCookie(request);
-        User user = userService.getUserById(userId);
+        User user = findUserById(userId);
         RefreshToken refreshToken = findValidRefreshToken(user);
 
 
@@ -83,7 +83,7 @@ public class AuthServiceImpl implements AuthService {
 
         Claims claims = jwtUtil.getUserInfoFromToken(accessToken);
         Long userId = Long.valueOf(claims.getSubject());
-        User user = userService.getUserById(userId);
+        User user = findUserById(userId);
 
         LocalDateTime expiredAt = jwtUtil.getTokenExpiredAt(accessToken);
 
@@ -120,5 +120,10 @@ public class AuthServiceImpl implements AuthService {
         }
 
         return refreshToken;
+    }
+
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
     }
 }
