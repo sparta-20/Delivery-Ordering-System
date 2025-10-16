@@ -44,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
 
         String encodedPassword = passwordEncoder.encode(signUpReq.getPassword());
 
-        User user = new User(signUpReq.getNickname(), signUpReq.getEmail(), encodedPassword);
+        User user = new User(signUpReq.getNickname(), signUpReq.getEmail(), encodedPassword, signUpReq.getPhoneNumber());
         userRepository.save(user);
     }
 
