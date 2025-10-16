@@ -51,6 +51,10 @@ public enum ErrorCode {
     REVIEW_READ_FORBIDDEN(HttpStatus.FORBIDDEN, "R004", "리뷰 조회 권한이 없습니다."),
     REVIEW_UPDATE_FORBIDDEN(HttpStatus.FORBIDDEN, "R005", "본인이 작성한 리뷰만 수정할 수 있습니다."),
     REVIEW_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "R006", "리뷰 삭제 권한이 없습니다."),
+    REVIEW_SEARCH_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "R007", "리뷰 검색 처리 중 오류가 발생했습니다."),
+    REVIEW_ACCESS_DENIED(HttpStatus.FORBIDDEN, "R008", "리뷰 접근 권한이 없습니다."),
+    INVALID_REVIEW_RATING(HttpStatus.BAD_REQUEST, "R009", "평점은 1~5점 사이여야 합니다."),
+    BAD_REQUEST_STORE_REQUIRED_FOR_CUSTOMER(HttpStatus.BAD_REQUEST, "R010", "고객 리뷰 검색 시 storeId는 필수입니다."),
 
     // 메뉴 도메인
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "M001", "메뉴를 찾을 수 없습니다."),

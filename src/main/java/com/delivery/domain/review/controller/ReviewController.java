@@ -2,12 +2,15 @@ package com.delivery.domain.review.controller;
 
 import com.delivery.domain.review.dto.ReviewCreateReq;
 import com.delivery.domain.review.dto.ReviewRes;
+import com.delivery.domain.review.dto.ReviewSearchRes;
 import com.delivery.domain.review.dto.ReviewUpdateReq;
 import com.delivery.domain.review.service.ReviewService;
 import com.delivery.global.common.ApiResponse;
 import com.delivery.global.security.service.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -87,5 +90,32 @@ public class ReviewController {
         reviewService.deleteReview(userDetails.getUserId(), userDetails.getRole(), reviewId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 리뷰 검색 API
+     * - CUSTOMER: 전체 조회
+     * - OWNER: 자신의 가게 리뷰만 조회
+     * - MANAGER/MASTER: 전체 조회
+     */
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('CUSTOMER','OWNER','MANAGER','MASTER')")
+    public ResponseEntity<ApiResponse<Page<ReviewSearchRes>>> searchReviews(
+            @RequestParam(required = false) UUID storeId,
+            @RequestParam(required = false) int rating,
+            @RequestParam(required = false) Long writerId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "DESC") Sort.Direction direction,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
+        Page<ReviewSearchRes> result = reviewService.searchReviews(
+                storeId, rating, writerId,
+                page, size, direction,
+                userDetails.getUser()
+        );
+
+        return ResponseEntity.ok(ApiResponse.success(result));
     }
 }
