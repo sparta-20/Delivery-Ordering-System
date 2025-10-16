@@ -49,4 +49,9 @@ public class Cart extends Timestamped {
     public void clearCart() {
         this.status = CartStatusEnum.CART_CANCEL;
     }
+
+
+    public void changeStatus(CartStatusEnum status) {
+        this.status = status;
+    }
 }
