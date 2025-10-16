@@ -30,6 +30,7 @@ public enum ErrorCode {
     FORBIDDEN_UPDATE_STORE(HttpStatus.FORBIDDEN, "S003", "가게를 수정할 권한이 없습니다."),
     FORBIDDEN_DELETE_STORE(HttpStatus.FORBIDDEN, "S004", "가게를 삭제할 권한이 없습니다."),
     FORBIDDEN_READ_STORE(HttpStatus.FORBIDDEN,"s005", "가게를 조회할 권한이 없습니다." ),
+    OUT_OF_SERVICE_AREA(HttpStatus.FORBIDDEN,"S006","서비스 가능 지역 외 요청입니다." ),
 
     // jwt
     TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "A001", "토큰이 존재하지 않습니다."),

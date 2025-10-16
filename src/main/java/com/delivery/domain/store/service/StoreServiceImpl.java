@@ -15,6 +15,7 @@ import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import jakarta.persistence.criteria.Join;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
@@ -33,6 +36,16 @@ public class StoreServiceImpl implements StoreService {
 
     private final StoreRepository storeRepository;
     private final StoreCategoryRepository storeCategoryRepository;
+
+    //광화문 중심좌표/반경 설정값 주입
+    @Value("${app.service-area.center-lat}")
+    private double centerLat;
+
+    @Value("${app.service-area.center-lon}")
+    private double centerLon;
+
+    @Value("${app.service-area.radius-km:3.0}")
+    private double radiusKm;
 
     // OWNER, MASTER, MANAGER - 가게 생성
     @Override
@@ -52,6 +65,8 @@ public class StoreServiceImpl implements StoreService {
                 requestDto.getCity(),
                 requestDto.getDistrict(),
                 requestDto.getDong(),
+                requestDto.getLatitude(),
+                requestDto.getLongitude(),
                 requestDto.getMinPrice(),
                 user
         );
@@ -84,6 +99,8 @@ public class StoreServiceImpl implements StoreService {
                 requestDto.getCity(),
                 requestDto.getDistrict(),
                 requestDto.getDong(),
+                requestDto.getLatitude(),
+                requestDto.getLongitude(),
                 requestDto.getMinPrice(),
                 requestDto.getStatus()
         );
@@ -141,7 +158,7 @@ public class StoreServiceImpl implements StoreService {
         return stores.map(StoreRes::from);
     }
 
-    // 가게 검색 및 조회
+    // 가게 검색 및 목록 조회
     @Override
     public Page<StoreRes> getAllStores(StoreSearchCondition cond, Pageable pageable){
 
@@ -152,7 +169,8 @@ public class StoreServiceImpl implements StoreService {
                 cityLike(cond.getCity()),
                 districtLike(cond.getDistrict()),
                 dongLike(cond.getDong()),
-                categoryIdLike(cond.getCategoryId())
+                categoryIdLike(cond.getCategoryId()),
+                withinGwangHwaMoon(centerLat, centerLon, radiusKm)
         );
 
         Page<Store> stores = storeRepository.findAll(spec, pageable);
@@ -237,4 +255,65 @@ public class StoreServiceImpl implements StoreService {
             );
         };
     }
+
+    private static BigDecimal bd(double v) {
+        return BigDecimal.valueOf(v).setScale(6, RoundingMode.HALF_UP);
+    }
+
+    // 가게 목록 조회 -> 광화문 근방 바운딩 박스
+    public Specification<Store> withinGwangHwaMoon(double centerLat, double centerLon, double radiusKm){
+
+        BoundingBox box = getBoundingBox(centerLat, centerLon, radiusKm);
+
+        return (root, query, cb) -> cb.and(
+                cb.isNotNull(root.get("latitude")),
+                cb.isNotNull(root.get("longitude")),
+                cb.between(root.get("latitude"), box.minLat(), box.maxLat()),
+                cb.between(root.get("longitude"), box.minLon(), box.maxLon())
+        );
+    }
+
+    // 가게 단건 조회 -> 광화문 근방 바운딩 박스
+    @Override
+    public StoreRes getStore(UUID storeId){
+        Store store = storeRepository.findByStoreIdAndStatus(storeId, StoreStatusEnum.ACTIVE)
+                .orElseThrow(() -> new BusinessException(ErrorCode.STORE_NOT_FOUND));
+
+        // 좌표없으면 차단
+        if(store.getLatitude()==null || store.getLongitude()==null){
+            throw new BusinessException(ErrorCode.OUT_OF_SERVICE_AREA);
+        }
+
+        BoundingBox box = getBoundingBox(centerLat, centerLon, radiusKm);
+        BigDecimal lat = store.getLatitude();
+        BigDecimal lon = store.getLongitude();
+
+        // 광화문 근방 바운딩 박스 검증
+        boolean inBox =
+                box.minLat().compareTo(lat) <= 0 && lat.compareTo(box.maxLat()) <= 0 &&
+                        box.minLon().compareTo(lon) <= 0 && lon.compareTo(box.maxLon()) <= 0;
+
+        if (!inBox) throw new BusinessException(ErrorCode.OUT_OF_SERVICE_AREA);
+
+        return new StoreRes(store);
+    }
+
+    // 바운딩박스 로직 통합
+    private BoundingBox getBoundingBox(double centerLat, double centerLon, double radiusKm){
+
+        // 반경(km)을 위도 단위로 환산
+        double latDelta = radiusKm / 111.0;
+
+        // 경도는 위도에 따른 거리 차이 때문에 cos(위도)로 보정
+        double lonDelta = radiusKm / (111.0 * Math.cos(Math.toRadians(centerLat)));
+
+        return new BoundingBox(
+                bd(centerLat - latDelta),
+                bd(centerLat + latDelta),
+                bd(centerLon - lonDelta),
+                bd(centerLon + lonDelta)
+        );
+    }
+    record BoundingBox(BigDecimal minLat, BigDecimal maxLat, BigDecimal minLon, BigDecimal maxLon) {}
+
 }

@@ -1,4 +1,4 @@
-package com.delivery.ordering;
+package com.delivery;
 
 import com.delivery.domain.user.entity.PublicStatus;
 import com.delivery.domain.user.entity.User;

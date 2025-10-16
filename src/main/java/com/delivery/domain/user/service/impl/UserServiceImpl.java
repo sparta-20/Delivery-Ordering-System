@@ -10,6 +10,7 @@ import com.delivery.domain.user.repository.UserRepository;
 import com.delivery.domain.user.service.UserService;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -67,7 +68,8 @@ public class UserServiceImpl implements UserService {
     public UserRes delete(String accessToken, Long requestUserId, Long userId) {
         User user = getUserById(userId);
         user.markDeleted(requestUserId);
-        authService.logout(accessToken);
+        if(!StringUtils.isEmpty(accessToken))
+            authService.logout(accessToken);
         return UserRes.from(user);
     }
 
@@ -119,21 +121,5 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(newEmail)) {
             throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
         }
-    }
-
-    @Override
-    public boolean existsByNickname(String nickname) {
-        return userRepository.existsByNickname(nickname);
-    }
-
-    @Override
-    public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
-    }
-
-    @Override
-    @Transactional
-    public void save(User user) {
-        userRepository.save(user);
     }
 }
