@@ -3,6 +3,7 @@ package com.delivery.domain.auth.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,4 +28,9 @@ public class SignUpReq {
             message = "비밀번호는 8~15자, 대소문자, 숫자, 특수문자를 모두 포함해야 합니다."
     )
     private String password;
+
+    @NotBlank(message = "전화번호는 필수 값입니다.")
+    @Size(min = 10, max = 11, message = "전화번호는 10~11자리 숫자여야 합니다.")
+    @Pattern(regexp = "^[0-9]+$", message = "전화번호는 숫자만 입력 가능합니다.")
+    private String phoneNumber;
 }
