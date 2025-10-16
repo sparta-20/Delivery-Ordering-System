@@ -25,42 +25,31 @@ public class GeminiAiClient {
     public String generateContent(String prompt, RequestTypeEnum requestType) {
         // Gemini 설정 조회
         GenerateContentConfig config = geminiConfig.getConfig(requestType);
-
-        log.info("[Gemini] 요청 시작 - model: {}, type: {}, promptLen: {}",
-                geminiProperties.getModel(), requestType, prompt.length());
-
+        // Gemini 외부 API 호출
         final GenerateContentResponse response;
         try {
              response = geminiClient.models.generateContent(
                     geminiProperties.getModel(),
-                    prompt,
+                     enhancePrompt(prompt),
                     config
             );
         } catch (Exception e) {
-            log.error("[Gemini] 호출 실패 - model: {}, type: {}", geminiProperties.getModel(), requestType, e);
             throw new BusinessException(ErrorCode.AI_API_ERROR);
         }
+        // Gemini 응답 검증 및 반환
+        return extractAndValidateResponse(response);
+    }
 
-        String responseText = extractAndValidateResponse(response);
-
-        log.info("[Gemini] 응답 성공 - responseLen: {}", responseText.length());
-        return responseText;
+    // 프롬프트 가공 (요구사항: 50자 이하 안내 문구 첨부)
+    private String enhancePrompt(String prompt) {
+        return prompt + geminiProperties.getPromptSuffix();
     }
 
     // Gemini 응답 텍스트 추출 및 검증
     private String extractAndValidateResponse(GenerateContentResponse response) {
         if (response == null || response.text() == null || response.text().isBlank()) {
-            log.error("[Gemini] 응답이 비어있음");
             throw new BusinessException(ErrorCode.AI_RESPONSE_EMPTY);
         }
-
-        String text = response.text().trim();
-
-        // 50자 초과 시 경고
-        if (text.length() > 50) {
-            log.warn("[Gemini] 응답 50자 초과 - len: {}", text.length());
-        }
-
-        return text;
+        return response.text().trim();
     }
 }

@@ -32,7 +32,6 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class AiServiceImpl implements AiService {
 
-    private final GeminiProperties geminiProperties;
     private final GeminiAiClient geminiAiClient;
     private final AiRepository aiRepository;
     private final UserService userService;
@@ -46,7 +45,7 @@ public class AiServiceImpl implements AiService {
         User user = userService.getUserById(userId);
         Menu menu = menuService.getMenuById(request.getMenuId());
         // Gemini API 호출
-        String aiText  = geminiAiClient.generateContent(enhancePrompt(request.getPrompt()), request.getRequestType());
+        String aiText  = geminiAiClient.generateContent(request.getPrompt(), request.getRequestType());
         // AI 요청 기록 저장
         Ai savedAi = saveAi(
                 user,
@@ -56,11 +55,6 @@ public class AiServiceImpl implements AiService {
                 aiText
         );
         return AiRes.from(savedAi);
-    }
-
-    // 프롬프트 가공 (요구사항: 50자 이하 안내 문구 첨부)
-    private String enhancePrompt(String prompt) {
-        return prompt + geminiProperties.getPromptSuffix();
     }
 
     // AI 요청 기록 저장
