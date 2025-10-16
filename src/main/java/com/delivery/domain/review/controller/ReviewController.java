@@ -5,7 +5,7 @@ import com.delivery.domain.review.dto.ReviewRes;
 import com.delivery.domain.review.dto.ReviewSearchRes;
 import com.delivery.domain.review.dto.ReviewUpdateReq;
 import com.delivery.domain.review.service.ReviewService;
-import com.delivery.global.common.ApiResponse;
+import com.delivery.global.common.ApiRes;
 import com.delivery.global.security.service.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,13 +34,13 @@ public class ReviewController {
      */
     @PostMapping
     @PreAuthorize("hasAnyRole('CUSTOMER')")
-    public ResponseEntity<ApiResponse<ReviewRes>> createReview(
+    public ResponseEntity<ApiRes<ReviewRes>> createReview(
             @Valid @RequestBody ReviewCreateReq request,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         ReviewRes response = reviewService.createReview(userDetails.getUserId(), request);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiRes.success(response));
     }
 
     /**
@@ -50,13 +50,13 @@ public class ReviewController {
      */
     @GetMapping("/{reviewId}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'OWNER', 'MANAGER', 'MASTER')")
-    public ResponseEntity<ApiResponse<ReviewRes>> getReview(
+    public ResponseEntity<ApiRes<ReviewRes>> getReview(
             @PathVariable UUID reviewId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         ReviewRes response = reviewService.getReview(userDetails.getUserId(), userDetails.getRole(), reviewId);
 
-        return ResponseEntity.ok(ApiResponse.success(response));
+        return ResponseEntity.ok(ApiRes.success(response));
     }
 
     /**
@@ -66,14 +66,14 @@ public class ReviewController {
      */
     @PatchMapping("/{reviewId}")
     @PreAuthorize("hasAnyRole('CUSTOMER')")
-    public ResponseEntity<ApiResponse<ReviewRes>> updateReview(
+    public ResponseEntity<ApiRes<ReviewRes>> updateReview(
             @PathVariable UUID reviewId,
             @Valid @RequestBody ReviewUpdateReq request,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         ReviewRes response = reviewService.updateReview(userDetails.getUserId(), reviewId, request);
 
-        return ResponseEntity.ok(ApiResponse.success(response));
+        return ResponseEntity.ok(ApiRes.success(response));
     }
 
     /**

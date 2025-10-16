@@ -2,7 +2,7 @@ package com.delivery.domain.auth.controller;
 
 import com.delivery.domain.auth.dto.SignUpReq;
 import com.delivery.domain.auth.service.AuthServiceImpl;
-import com.delivery.global.common.ApiResponse;
+import com.delivery.global.common.ApiRes;
 import com.delivery.global.jwt.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,24 +20,24 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<Void>> signup(@Validated @RequestBody SignUpReq signUpReq) {
+    public ResponseEntity<ApiRes<Void>> signup(@Validated @RequestBody SignUpReq signUpReq) {
         authService.signup(signUpReq);
-        return ResponseEntity.ok(ApiResponse.success(null));
+        return ResponseEntity.ok(ApiRes.success(null));
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<ApiResponse<Void>> refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<ApiRes<Void>> refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
         authService.updateRefreshAccessToken(request, response);
-        return ResponseEntity.ok(ApiResponse.success(null));
+        return ResponseEntity.ok(ApiRes.success(null));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<Void>> logout(
+    public ResponseEntity<ApiRes<Void>> logout(
             @CookieValue(value = "accessToken", required = false) String accessToken,
             HttpServletResponse response
     ) {
         authService.logout(accessToken);
         jwtUtil.expireCookie(response);
-        return ResponseEntity.ok(ApiResponse.success(null));
+        return ResponseEntity.ok(ApiRes.success(null));
     }
 }

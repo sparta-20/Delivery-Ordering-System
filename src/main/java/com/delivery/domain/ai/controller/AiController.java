@@ -5,7 +5,7 @@ import com.delivery.domain.ai.dto.AiRes;
 import com.delivery.domain.ai.dto.AiSearchRes;
 import com.delivery.domain.ai.entity.RequestTypeEnum;
 import com.delivery.domain.ai.service.AiService;
-import com.delivery.global.common.ApiResponse;
+import com.delivery.global.common.ApiRes;
 import com.delivery.global.security.service.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +29,11 @@ public class AiController {
     /**
      * AI 설명 생성 API
      * 권한: MASTER / MANAGER / OWNER (OWNER는 본인 가게 메뉴만)
-     * 응답: 201 Created + ApiResponse<AiRes>
+     * 응답: 201 Created + ApiRes<AiRes>
      */
     @PostMapping
     @PreAuthorize("hasAnyRole('MASTER','MANAGER','OWNER')")
-    public ResponseEntity<ApiResponse<AiRes>> createAiContent(
+    public ResponseEntity<ApiRes<AiRes>> createAiContent(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody AiCreateReq request) {
 
@@ -41,23 +41,23 @@ public class AiController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(response));
+                .body(ApiRes.success(response));
     }
 
     /**
      * AI 요청 기록 단건 조회 API
      * 권한: MASTER / MANAGER / OWNER (OWNER는 본인이 생성한 기록만)
-     * 응답: 200 OK + ApiResponse<AiRes>
+     * 응답: 200 OK + ApiRes<AiRes>
      */
     @GetMapping("/{aiId}")
     @PreAuthorize("hasAnyRole('MASTER','MANAGER','OWNER')")
-    public ResponseEntity<ApiResponse<AiRes>> getAi(
+    public ResponseEntity<ApiRes<AiRes>> getAi(
             @PathVariable UUID aiId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         AiRes response = aiService.getAi(userDetails.getUserId(), userDetails.getRole(), aiId);
 
-        return ResponseEntity.ok(ApiResponse.success(response));
+        return ResponseEntity.ok(ApiRes.success(response));
     }
 
     /**
