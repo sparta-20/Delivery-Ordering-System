@@ -183,6 +183,12 @@ public class StoreServiceImpl implements StoreService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.FORBIDDEN_READ_STORE));
     }
 
+    @Override
+    public Store getStoreByOwnerId(Long ownerId) {
+        return storeRepository.findByOwnerUserIdAndDeletedAtIsNull(ownerId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.STORE_NOT_FOUND));
+    }
+
     // categoryName을 categoryId에 매핑
     private void categoryNameNeeded(StoreSearchCondition cond){
         if(cond.getCategoryId()!=null) return;

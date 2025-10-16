@@ -21,6 +21,7 @@ import com.delivery.domain.user.repository.UserRepository;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
@@ -189,5 +191,16 @@ public class OrderServiceImpl implements OrderService {
     private Order findOrderByOrderId(UUID orderId) {
         return orderRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
+    }
+
+    // 주문 단건 조회 (Soft Delete 반영)
+    @Override
+    @Transactional(readOnly = true)
+    public Order getOrderById(UUID orderId) {
+        return orderRepository.findByOrderIdAndDeletedAtIsNull(orderId)
+                .orElseThrow(() -> {
+                    log.warn("[ORDER] 주문 조회 실패 - orderId={}", orderId);
+                    return new BusinessException(ErrorCode.ORDER_NOT_FOUND);
+                });
     }
 }

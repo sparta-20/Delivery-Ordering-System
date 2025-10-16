@@ -11,4 +11,5 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
     List<Order> findByUser_UserId(Long userId);
     List<Order> findByStore_Owner_UserId(Long ownerUserId);
     Optional<Order> findByOrderId(UUID orderId);
+    Optional<Order> findByOrderIdAndDeletedAtIsNull(UUID orderId);
 }

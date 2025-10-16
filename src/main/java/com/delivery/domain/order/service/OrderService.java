@@ -2,6 +2,7 @@ package com.delivery.domain.order.service;
 
 import com.delivery.domain.order.dto.OrderReq;
 import com.delivery.domain.order.dto.OrderRes;
+import com.delivery.domain.order.entity.Order;
 import com.delivery.domain.user.entity.User;
 
 import java.util.List;
@@ -15,6 +16,8 @@ public interface OrderService {
     List<OrderRes.AllOrderListDto> getAllList();
     void cancelOrder(Long userId, UUID orderId, OrderReq.CancelOrderDto dto);
     OrderRes.OrderDetailDto getOrderDetail(Long userId, UUID orderId);
+    // 주문 단건 조회 (Soft Delete)
+    Order getOrderById(UUID orderId);
     OrderRes.OrderDetailDto createOrder(User user);
     OrderRes.OrderDetailDto getOrder(UUID orderId, User user);
     void deleteOrder(UUID orderId, User user);

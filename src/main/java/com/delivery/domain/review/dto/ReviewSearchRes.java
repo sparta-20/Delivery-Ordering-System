@@ -9,26 +9,24 @@ import java.util.UUID;
 
 @Getter
 @Builder
-public class ReviewRes {
-
+public class ReviewSearchRes {
     private UUID reviewId;
     private UUID storeId;
-    private UUID orderId;
+    private String storeName;
     private Long userId;
     private String nickname;
-    private int rating;
+    private Integer rating;
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    // Entity -> DTO 변환
-    public static ReviewRes from(Review review, UUID orderId, Long userId, String nickname) {
-        return ReviewRes.builder()
+    public static ReviewSearchRes from(Review review) {
+        return ReviewSearchRes.builder()
                 .reviewId(review.getReviewId())
                 .storeId(review.getStore().getStoreId())
-                .orderId(orderId)
-                .userId(userId)
-                .nickname(nickname)
+                .storeName(review.getStore().getName())
+                .userId(review.getUser().getUserId())
+                .nickname(review.getUser().getNickname())
                 .rating(review.getRating())
                 .content(review.getContent())
                 .createdAt(review.getCreatedAt())

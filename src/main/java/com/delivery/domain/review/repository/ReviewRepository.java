@@ -1,6 +1,8 @@
 package com.delivery.domain.review.repository;
 
 import com.delivery.domain.review.entity.Review;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -37,4 +39,36 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
             "AND r.deletedAt IS NULL")
     Optional<Review> findByReviewIdWithUserAndOrder(@Param("reviewId") UUID reviewId);
 
+
+    /**
+     * 리뷰 검색
+     * - storeId, rating, writerId로 동적 검색
+     * - 삭제된 리뷰 제외
+     * - N+1 방지를 위한 JOIN FETCH
+     */
+    @Query("SELECT r FROM Review r " +
+            "JOIN FETCH r.store s " +
+            "JOIN FETCH r.user u " +
+            "WHERE (:storeId IS NULL OR s.storeId = :storeId) " +
+            "AND (:rating IS NULL OR r.rating = :rating) " +
+            "AND (:writerId IS NULL OR u.userId = :writerId) " +
+            "AND r.deletedAt IS NULL " +
+            "AND s.deletedAt IS NULL " +
+            "AND u.deletedAt IS NULL")
+    Page<Review> searchReviews(
+            @Param("storeId") UUID storeId,
+            @Param("rating") Integer rating,
+            @Param("writerId") Long writerId,
+            Pageable pageable
+    );
+
+    /**
+     * 가게별 평점 평균 계산
+     * - 가게 목록 조회 시 사용
+     * - N+1 방지를 위해 별도 메서드로 분리
+     */
+    @Query("SELECT AVG(r.rating) FROM Review r " +
+            "WHERE r.store.storeId = :storeId " +
+            "AND r.deletedAt IS NULL")
+    Double getAverageRatingByStoreId(@Param("storeId") UUID storeId);
 }
