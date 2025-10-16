@@ -34,6 +34,7 @@ public class OrderController {
                 user.getUserId(), page, size, direction);
         return ResponseEntity.ok(ApiRes.success(list));
     }
+
     @PreAuthorize("hasRole('OWNER')")
     @GetMapping("/owner")
     public ResponseEntity<ApiRes<Page<OrderRes.OrderListDto>>> getOwnerOrders(@AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -45,7 +46,8 @@ public class OrderController {
                 user.getUserId(), page, size, direction);
         return ResponseEntity.ok(ApiRes.success(list));
     }
-    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
+
+    @PreAuthorize("hasRole('OWNER')")
     @GetMapping("/owner/{orderId}")
     public ResponseEntity<ApiRes<OrderRes.OrderDetailDto>> getOwnerOrderDetail(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                                @PathVariable UUID orderId) {
@@ -53,7 +55,17 @@ public class OrderController {
         OrderRes.OrderDetailDto result = orderService.getOrderDetail(user.getUserId(), orderId);
         return ResponseEntity.ok(ApiRes.success(result));
     }
-    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
+
+    @PreAuthorize("hasAnyRole('MANAGER', 'MASTER')")
+    @GetMapping("/admin/{orderId}")
+    public ResponseEntity<ApiRes<OrderRes.OrderDetailDto>> getAdminOrderDetail(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                               @PathVariable UUID orderId) {
+        User user = userDetails.getUser();
+        OrderRes.OrderDetailDto result = orderService.getAdminOrderDetail(user.getUserId(), orderId);
+        return ResponseEntity.ok(ApiRes.success(result));
+    }
+
+    @PreAuthorize("hasRole('OWNER')")
     @PatchMapping("/owner/{orderId}/status")
     public ResponseEntity<Void> changeOrderStatus(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                   @PathVariable UUID orderId,
@@ -62,13 +74,34 @@ public class OrderController {
         orderService.changeStatus(user.getUserId(), orderId, dto);
         return ResponseEntity.noContent().build();
     }
-    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
+
+    @PreAuthorize("hasAnyRole('MANAGER', 'MASTER')")
+    @PatchMapping("/admin/{orderId}/status")
+    public ResponseEntity<Void> changeOrderStatusByAdmin(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                  @PathVariable UUID orderId,
+                                                  @RequestBody OrderReq.ChangeOrderStatusDto dto) {
+        User user = userDetails.getUser();
+        orderService.changeStatusByAdmin(user.getUserId(), orderId, dto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasRole('OWNER')")
     @PatchMapping("/owner/{orderId}/reject")
     public ResponseEntity<Void> rejectOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                             @PathVariable UUID orderId,
                                             @RequestBody OrderReq.RejectOrderDto dto) {
         User user = userDetails.getUser();
         orderService.rejectOrder(user.getUserId(), orderId, dto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasAnyRole('MANAGER', 'MASTER')")
+    @PatchMapping("/admin/{orderId}/reject")
+    public ResponseEntity<Void> rejectOrderByAdmin(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                            @PathVariable UUID orderId,
+                                            @RequestBody OrderReq.RejectOrderDto dto) {
+        User user = userDetails.getUser();
+        orderService.rejectOrderByAdmin(user.getUserId(), orderId, dto);
         return ResponseEntity.noContent().build();
     }
 
@@ -82,6 +115,7 @@ public class OrderController {
         return ResponseEntity.ok(ApiRes.success(list));
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PatchMapping("/{orderId}/cancel")
     public ResponseEntity<Void> cancelOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                             @PathVariable UUID orderId,
@@ -90,14 +124,8 @@ public class OrderController {
         orderService.cancelOrder(user.getUserId(), orderId, dto);
         return ResponseEntity.noContent().build();
     }
-    @GetMapping("/{orderId}/detail")
-    public ResponseEntity<ApiRes<OrderRes.OrderDetailDto>> getOrderDetail(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                          @PathVariable UUID orderId) {
-        User user = userDetails.getUser();
-        OrderRes.OrderDetailDto result = orderService.getOrderDetail(user.getUserId(), orderId);
-        return ResponseEntity.ok(ApiRes.success(result));
-    }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping
     public ResponseEntity<ApiRes<OrderRes.OrderDetailDto>> createOrder(
             @RequestBody CreateOrderReq request,
@@ -111,6 +139,7 @@ public class OrderController {
         return ResponseEntity.ok(ApiRes.success(order));
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/{orderId}")
     public ResponseEntity<ApiRes<OrderRes.OrderDetailDto>> getOrder(
             @PathVariable UUID orderId,
@@ -120,6 +149,7 @@ public class OrderController {
         return ResponseEntity.ok(ApiRes.success(order));
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @DeleteMapping("/{orderId}")
     public ResponseEntity<ApiRes<Void>> deleteOrder(
             @PathVariable UUID orderId,

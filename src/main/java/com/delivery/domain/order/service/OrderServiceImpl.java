@@ -78,10 +78,24 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
+    public void changeStatusByAdmin(Long userId, UUID orderId, OrderReq.ChangeOrderStatusDto dto) {
+        Order order = findOrderByOrderId(orderId);
+        order.changeStatus(dto.getStatus());
+    }
+
+    @Override
+    @Transactional
     public void rejectOrder(Long userId, UUID orderId, OrderReq.RejectOrderDto dto) {
         Order order = findOrderByOrderId(orderId);
         if (order.getStore().getOwner().getUserId().equals(userId)) order.rejectOrder(dto.getReason());
         else throw new BusinessException(ErrorCode.FORBIDDEN);
+    }
+
+    @Override
+    @Transactional
+    public void rejectOrderByAdmin(Long userId, UUID orderId, OrderReq.RejectOrderDto dto) {
+        Order order = findOrderByOrderId(orderId);
+        order.rejectOrder(dto.getReason());
     }
 
     @Override
@@ -109,6 +123,14 @@ public class OrderServiceImpl implements OrderService {
                 throw new BusinessException(ErrorCode.FORBIDDEN);
             }
         }
+        return OrderRes.OrderDetailDto.from(order);
+    }
+
+    @Override
+    public OrderRes.OrderDetailDto getAdminOrderDetail(Long userId, UUID orderId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        Order order = findOrderByOrderId(orderId);
         return OrderRes.OrderDetailDto.from(order);
     }
 
