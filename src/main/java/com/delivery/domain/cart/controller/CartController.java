@@ -5,7 +5,7 @@ import com.delivery.domain.cart.dto.CartRes;
 import com.delivery.domain.cart.entity.Cart;
 import com.delivery.domain.cart.service.CartService;
 import com.delivery.domain.user.entity.User;
-import com.delivery.global.common.ApiResponse;
+import com.delivery.global.common.ApiRes;
 import com.delivery.global.security.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.UUID;
 
 @RestController
@@ -24,20 +23,20 @@ public class CartController {
     private final CartService cartService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<UUID>> addToCart(
+    public ResponseEntity<ApiRes<UUID>> addToCart(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody CartReq.AddCartItemDto dto) {
         User user = userDetails.getUser();
         Cart cart = cartService.addToCart(user.getUserId(), dto);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(cart.getCartId()));
+                .body(ApiRes.success(cart.getCartId()));
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<CartRes.CartListDto>> getCart(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ApiRes<CartRes.CartListDto>> getCart(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         CartRes.CartListDto result = cartService.getCart(user.getUserId());
-        return ResponseEntity.ok(ApiResponse.success(result));
+        return ResponseEntity.ok(ApiRes.success(result));
     }
 
     @PatchMapping("/clear")
