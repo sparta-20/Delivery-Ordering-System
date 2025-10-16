@@ -1,5 +1,7 @@
 package com.delivery.domain.order.service;
 
+import com.delivery.domain.address.entity.Address;
+import com.delivery.domain.address.service.AddressService;
 import com.delivery.domain.cart.entity.Cart;
 import com.delivery.domain.cart.entity.CartItem;
 import com.delivery.domain.cart.entity.CartStatusEnum;
@@ -33,18 +35,18 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final OrderMenuRepository orderMenuRepository;
+    private final AddressService addressService;
 
-
-    @Transactional(readOnly = true)
     @Override
     public List<OrderRes.OrderListDto> getOrderList(Long userId) {
-        List<Order> orders = orderRepository.findByUser_UserId(userId);
+        List<Order> orders = orderRepository.findByUser_UserIdAndDeletedAtIsNull(userId);
         return orders.stream()
                 .map(OrderRes.OrderListDto::from)
                 .toList();
@@ -105,7 +107,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderRes.OrderDetailDto createOrder(User user) {
+    public OrderRes.OrderDetailDto createOrder(UUID addressId, String message, String deliveryMessage, User user) {
         Cart cart = cartRepository.findByUser_UserIdAndStatus(user.getUserId(), CartStatusEnum.CART)
                 .orElseThrow(() -> new BusinessException(ErrorCode.CART_NOT_FOUND));
 
@@ -119,6 +121,8 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException(ErrorCode.STORE_NOT_FOUND);
         }
 
+        Address address = addressService.findById(addressId);
+
         int totalPrice = cartItems.stream()
                 .mapToInt(item -> item.getMenu().getPrice() * item.getQuantity())
                 .sum();
@@ -127,7 +131,11 @@ public class OrderServiceImpl implements OrderService {
                 .user(user)
                 .store(store)
                 .totalPrice(totalPrice)
-                .address("address") // 추후 변경
+                .address(address.getDetailAddress())
+                .phoneNumber(user.getPhoneNumber())
+                .message(message)
+                .deliveryMessage(deliveryMessage)
+                .deliveryFee(0)
                 .status(OrderStatusEnum.PENDING)
                 .build();
 
@@ -155,7 +163,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderRes.OrderDetailDto getOrder(UUID orderId, User user) {
-        Order order = orderRepository.findById(orderId)
+        Order order = orderRepository.findByOrderIdAndDeletedAtIsNull(orderId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
         if (!order.getUser().getUserId().equals(user.getUserId())) {
@@ -193,7 +201,6 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
     }
 
-    // 주문 단건 조회 (Soft Delete 반영)
     @Override
     @Transactional(readOnly = true)
     public Order getOrderById(UUID orderId) {

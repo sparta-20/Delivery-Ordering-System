@@ -1,5 +1,6 @@
 package com.delivery.domain.order.controller;
 
+import com.delivery.domain.order.dto.CreateOrderReq;
 import com.delivery.domain.order.dto.OrderReq;
 import com.delivery.domain.order.dto.OrderRes;
 import com.delivery.domain.order.service.OrderService;
@@ -20,14 +21,12 @@ import java.util.UUID;
 @RequestMapping("/api/v1/orders")
 public class OrderController {
     private final OrderService orderService;
-
     @GetMapping
     public ResponseEntity<ApiRes<List<OrderRes.OrderListDto>>> getOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         List<OrderRes.OrderListDto> list = orderService.getOrderList(user.getUserId());
         return ResponseEntity.ok(ApiRes.success(list));
     }
-
     @PreAuthorize("hasRole('OWNER')")
     @GetMapping("/owner")
     public ResponseEntity<ApiRes<List<OrderRes.OrderListDto>>> getOwnerOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -35,7 +34,6 @@ public class OrderController {
         List<OrderRes.OrderListDto> list = orderService.getOrdersByOwner(user.getUserId());
         return ResponseEntity.ok(ApiRes.success(list));
     }
-
     @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
     @GetMapping("/owner/{orderId}")
     public ResponseEntity<ApiRes<OrderRes.OrderDetailDto>> getOwnerOrderDetail(@AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -44,7 +42,6 @@ public class OrderController {
         OrderRes.OrderDetailDto result = orderService.getOrderDetail(user.getUserId(), orderId);
         return ResponseEntity.ok(ApiRes.success(result));
     }
-
     @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
     @PatchMapping("/owner/{orderId}/status")
     public ResponseEntity<Void> changeOrderStatus(@AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -55,7 +52,6 @@ public class OrderController {
         orderService.changeStatus(user.getUserId(), orderId, dto);
         return ResponseEntity.noContent().build();
     }
-
     @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
     @PatchMapping("/owner/{orderId}/reject")
     public ResponseEntity<Void> rejectOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -65,14 +61,13 @@ public class OrderController {
         orderService.rejectOrder(user.getUserId(), orderId, dto);
         return ResponseEntity.noContent().build();
     }
-      
+
     @PreAuthorize("hasAnyRole('MANAGER', 'MASTER')")
     @GetMapping("/admin")
     public ResponseEntity<ApiRes<List<OrderRes.AllOrderListDto>>> getAllOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         List<OrderRes.AllOrderListDto> list = orderService.getAllList();
         return ResponseEntity.ok(ApiRes.success(list));
     }
-
     @PatchMapping("/{orderId}/cancel")
     public ResponseEntity<Void> cancelOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                             @PathVariable UUID orderId,
@@ -81,7 +76,6 @@ public class OrderController {
         orderService.cancelOrder(user.getUserId(), orderId, dto);
         return ResponseEntity.noContent().build();
     }
-
     @GetMapping("/{orderId}/detail")
     public ResponseEntity<ApiRes<OrderRes.OrderDetailDto>> getOrderDetail(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                           @PathVariable UUID orderId) {
@@ -92,9 +86,14 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<ApiRes<OrderRes.OrderDetailDto>> createOrder(
+            @RequestBody CreateOrderReq request,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        OrderRes.OrderDetailDto order = orderService.createOrder(userDetails.getUser());
+        OrderRes.OrderDetailDto order = orderService.createOrder(
+                request.getAddressId(),
+                request.getMessage(),
+                request.getDeliveryMessage(),
+                userDetails.getUser());
         return ResponseEntity.ok(ApiRes.success(order));
     }
 

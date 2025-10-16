@@ -16,9 +16,8 @@ public interface OrderService {
     List<OrderRes.AllOrderListDto> getAllList();
     void cancelOrder(Long userId, UUID orderId, OrderReq.CancelOrderDto dto);
     OrderRes.OrderDetailDto getOrderDetail(Long userId, UUID orderId);
-    // 주문 단건 조회 (Soft Delete)
-    Order getOrderById(UUID orderId);
-    OrderRes.OrderDetailDto createOrder(User user);
+    OrderRes.OrderDetailDto createOrder(UUID addressId, String message, String deliveryMessage, User user);
     OrderRes.OrderDetailDto getOrder(UUID orderId, User user);
+    Order getOrderById(UUID orderId);
     void deleteOrder(UUID orderId, User user);
 }
