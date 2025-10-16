@@ -1,4 +1,4 @@
-package com.delivery.ordering.domain.user.dto;
+package com.delivery.domain.menu.dto;
 
 import com.delivery.domain.user.dto.UserRes;
 import com.delivery.domain.user.entity.PublicStatus;

@@ -1,4 +1,4 @@
-package com.delivery.ordering;
+package com.delivery;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
