@@ -23,14 +23,14 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/me")
-    public ResponseEntity<?> getUserMe(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ApiResponse<UserRes>> getUserMe(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User requester = userDetails.getUser();
         UserRes userRes = userService.getUserResById(requester.getUserId());
         return ResponseEntity.ok(ApiResponse.success(userRes));
     }
 
     @PutMapping("/me")
-    public ResponseEntity<?> updateUserMe(
+    public ResponseEntity<ApiResponse<UserRes>> updateUserMe(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody UpdateUserReq request)
     {
@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @PostMapping("/me/password")
-    public ResponseEntity<?> updateUserMePassword(
+    public ResponseEntity<ApiResponse<UserRes>> updateUserMePassword(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody UpdateUserPasswordReq request)
     {
@@ -50,7 +50,7 @@ public class UserController {
     }
 
     @DeleteMapping("/me")
-    public ResponseEntity<?> deleteUser(
+    public ResponseEntity<ApiResponse<UserRes>> deleteUser(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @CookieValue(value = "accessToken", required = false) String accessToken)
     {

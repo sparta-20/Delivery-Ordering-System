@@ -5,6 +5,7 @@ import com.delivery.domain.user.dto.UpdateUserPasswordReq;
 import com.delivery.domain.user.dto.UpdateUserReq;
 import com.delivery.domain.user.dto.UserRes;
 import com.delivery.domain.user.entity.User;
+import com.delivery.domain.user.entity.UserRoleEnum;
 import com.delivery.domain.user.repository.UserRepository;
 import com.delivery.domain.user.service.UserService;
 import com.delivery.global.exception.BusinessException;
@@ -67,6 +68,26 @@ public class UserServiceImpl implements UserService {
         User user = getUserById(userId);
         user.markDeleted(requestUserId);
         authService.logout(accessToken);
+        return UserRes.from(user);
+    }
+
+    @Override
+    @Transactional
+    public UserRes updateUserRole(Long requesterId, Long userId, UserRoleEnum role) {
+        User requester = getUserById(requesterId);
+        User user = getUserById(userId);
+
+        //TODO: 개발 편의상 임시 제거
+        if(requester.getUserId().equals(user.getUserId())){
+            // throw new BusinessException(ErrorCode.MUST_NOT_SELF_ROLE_UPDATE)
+        }
+
+        //요청자의 역할 수준이 변경하려는 역할보다 이하라면 예외
+        if(requester.getRole().isLowerThan(role)){
+            // throw new BusinessException(ErrorCode.MUST_NOT_GREATER_THAN_ROLE_UPDATE)
+        }
+
+        user.updateRole(role);
         return UserRes.from(user);
     }
 

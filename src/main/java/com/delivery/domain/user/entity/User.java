@@ -64,4 +64,8 @@ public class User extends Timestamped {
     public void updatePassword(String encodePassword) {
         this.password = encodePassword;
     }
+
+    public void updateRole(UserRoleEnum role) {
+        this.role = role;
+    }
 }
