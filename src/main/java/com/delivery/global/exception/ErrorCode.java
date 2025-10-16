@@ -43,7 +43,8 @@ public enum ErrorCode {
     AI_UNSUPPORTED_REQUEST_TYPE(HttpStatus.BAD_REQUEST, "AI003", "지원하지 않는 요청 타입입니다."),
     AI_NOT_FOUND(HttpStatus.NOT_FOUND, "AI004", "AI 요청 기록을 찾을 수 없습니다."),
     AI_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "AI005", "AI 요청 기록을 삭제할 권한이 없습니다."),
-    AI_ACCESS_DENIED(HttpStatus.FORBIDDEN, "AI_006", "AI 요청 기록 조회 권한이 없습니다."),
+    AI_ACCESS_DENIED(HttpStatus.FORBIDDEN, "AI006", "AI 요청 기록 조회 권한이 없습니다."),
+    AI_SEARCH_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AI007", "AI 검색 처리 중 오류가 발생했습니다."),
 
     // 리뷰 도메인
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "리뷰를 찾을 수 없습니다."),
