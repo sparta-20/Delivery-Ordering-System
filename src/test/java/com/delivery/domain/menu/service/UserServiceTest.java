@@ -1,4 +1,4 @@
-package com.delivery.ordering.domain.user.service;
+package com.delivery.domain.menu.service;
 
 import com.delivery.domain.user.dto.UpdateUserPasswordReq;
 import com.delivery.domain.user.dto.UpdateUserReq;
@@ -56,7 +56,7 @@ class UserServiceTest {
                 .nickname(oldNickName)
                 .publicStatus(oldPublicStatus)
                 .build();
-        UpdateUserReq req = new UpdateUserReq("newNick", "newEmail@enamil.com", PublicStatus.PRIVATE);
+        UpdateUserReq req = new UpdateUserReq("newNick", "newEmail@enamil.com", PublicStatus.PRIVATE, "01012341234");
         when(userRepository.findByUserIdAndDeletedAtIsNull(userId))
                 .thenReturn(Optional.of(user));
 
@@ -78,7 +78,7 @@ class UserServiceTest {
                 .userId(userId)
                 .nickname(oldNickName)
                 .build();
-        UpdateUserReq req = new UpdateUserReq(changeNickname, "newEmail@enamil.com", PublicStatus.PRIVATE);
+        UpdateUserReq req = new UpdateUserReq(changeNickname, "newEmail@enamil.com", PublicStatus.PRIVATE, "01012341234");
         when(userRepository.findByUserIdAndDeletedAtIsNull(userId)).thenReturn(Optional.of(user));
         when(userRepository.existsByNickname(changeNickname)).thenReturn(true);
 
@@ -96,7 +96,7 @@ class UserServiceTest {
         String oldEmail = "email@email.com";
         String changeEmail = "exist@email.com";
         User user = User.builder().userId(userId).email(oldEmail).build();
-        UpdateUserReq req = new UpdateUserReq("nick", changeEmail, PublicStatus.PRIVATE);
+        UpdateUserReq req = new UpdateUserReq("nick", changeEmail, PublicStatus.PRIVATE, "01012341234");
         when(userRepository.findByUserIdAndDeletedAtIsNull(userId)).thenReturn(Optional.of(user));
         when(userRepository.existsByEmail(changeEmail)).thenReturn(true);
 
@@ -175,7 +175,7 @@ class UserServiceTest {
                 .build();
         when(userRepository.findByUserIdAndDeletedAtIsNull(userId)).thenReturn(Optional.of(user));
 
-        UserRes delete = userService.delete(userId, userId);
+        UserRes delete = userService.delete("", userId, userId);
 
         assertNotNull(delete.getDeletedAt());
     }
