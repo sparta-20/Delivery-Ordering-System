@@ -7,6 +7,8 @@ import com.delivery.domain.ai.entity.RequestTypeEnum;
 import com.delivery.domain.ai.service.AiService;
 import com.delivery.global.common.ApiRes;
 import com.delivery.global.security.service.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,60 +21,62 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@Tag(name = "AI", description = "AI 설명 생성 및 요청 기록 관리 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/ai")
-public class AiController {
+@RequestMapping("/api/v1/admin/ai")
+@PreAuthorize("hasAnyRole('MASTER','MANAGER')")
+public class AiAdminController {
 
     private final AiService aiService;
 
     /**
      * AI 설명 생성 API
-     * 권한: MASTER / MANAGER / OWNER (OWNER는 본인 가게 메뉴만)
+     * 권한: MASTER / MANAGER
      * 응답: 201 Created + ApiRes<AiRes>
      */
+    @Operation(
+            summary = "AI 설명 생성 (관리자용)",
+            description = "Gemini AI를 사용하여 메뉴 설명을 자동 생성합니다. MASTER 또는 MANAGER 권한이 필요합니다."
+    )
     @PostMapping
-    @PreAuthorize("hasAnyRole('MASTER','MANAGER','OWNER')")
-    public ResponseEntity<ApiRes<AiRes>> createAiContent(
+    public ResponseEntity<ApiRes<AiRes>> createAi(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody AiCreateReq request) {
-
-        AiRes response = aiService.createAiContent(userDetails.getUserId(), request);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(ApiRes.success(response));
+        AiRes response = aiService.createAi(userDetails.getUserId(), request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiRes.success(response));
     }
 
     /**
      * AI 요청 기록 단건 조회 API
-     * 권한: MASTER / MANAGER / OWNER (OWNER는 본인이 생성한 기록만)
+     * 권한: MASTER / MANAGER
      * 응답: 200 OK + ApiRes<AiRes>
      */
+    @Operation(
+            summary = "AI 요청 기록 단건 조회 (관리자용)",
+            description = "AI 요청 기록을 ID로 조회합니다. 관리자는 모든 기록을 조회할 수 있습니다."
+    )
     @GetMapping("/{aiId}")
-    @PreAuthorize("hasAnyRole('MASTER','MANAGER','OWNER')")
     public ResponseEntity<ApiRes<AiRes>> getAi(
-            @PathVariable UUID aiId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-
-        AiRes response = aiService.getAi(userDetails.getUserId(), userDetails.getRole(), aiId);
-
+            @PathVariable UUID aiId) {
+        AiRes response = aiService.getAiForAdmin(aiId);
         return ResponseEntity.ok(ApiRes.success(response));
     }
 
     /**
      * AI 요청 기록 논리 삭제 (Soft Delete) API
-     * 권한: MASTER / MANAGER / OWNER (OWNER는 본인 기록만)
+     * 권한: MASTER / MANAGER
      * 응답: 204 No Content
      */
+    @Operation(
+            summary = "AI 요청 기록 삭제 (관리자용)",
+            description = "AI 요청 기록을 논리 삭제(Soft Delete)합니다. 관리자는 모든 기록을 삭제할 수 있습니다."
+    )
     @DeleteMapping("/{aiId}")
-    @PreAuthorize("hasAnyRole('MASTER','MANAGER','OWNER')")
     public ResponseEntity<Void> deleteAi(
             @PathVariable UUID aiId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-
-        aiService.softDelete(aiId, userDetails.getUserId(), userDetails.getRole());
-
+        aiService.softDeleteForAdmin(userDetails.getUserId(), aiId);
         return ResponseEntity.noContent().build();
     }
 
@@ -80,25 +84,31 @@ public class AiController {
      * AI 요청 기록 검색 API
      * - 기본 정렬: createdAt DESC
      * - 페이지 크기: 10, 30, 50만 허용 (기타 값은 10으로 강제)
-     * - 권한: OWNER는 본인 데이터만, MANAGER/MASTER는 전체 조회
+     * - 권한: MANAGER/MASTER는 전체 조회
      */
+    @Operation(
+            summary = "AI 요청 기록 검색 (관리자용)",
+            description = """
+            AI 요청 기록을 다양한 조건으로 검색합니다.
+            - 조건: requestType, userId, menuId
+            - 기본 정렬: 생성일시 내림차순
+            - 페이지 크기: 10, 30, 50만 허용 (기타 값은 10으로 강제)
+            - 관리자는 전체 사용자의 기록을 조회할 수 있습니다.
+            """
+    )
     @GetMapping("/search")
-    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
     public ResponseEntity<ApiRes<Page<AiSearchRes>>> searchAiRequests(
             @RequestParam(required = false) RequestTypeEnum requestType,
             @RequestParam(required = false) Long userId,
             @RequestParam(required = false) UUID menuId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "DESC") Sort.Direction direction,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @RequestParam(defaultValue = "DESC") Sort.Direction direction
     ) {
         Page<AiSearchRes> result = aiService.searchAiRequests(
-                requestType, userId, menuId,
-                page, size, direction,
-                userDetails.getUser()
+                userId, requestType, menuId,
+                page, size, direction
         );
-
         return  ResponseEntity.ok(ApiRes.success(result));
     }
 }
