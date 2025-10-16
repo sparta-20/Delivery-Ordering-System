@@ -11,4 +11,5 @@ public interface CartService {
     CartRes.CartListDto getCart(Long userId);
     void clearCart(Long userId);
     void updateCartItem(Long userId, UUID itemId, Integer quantity);
+
 }

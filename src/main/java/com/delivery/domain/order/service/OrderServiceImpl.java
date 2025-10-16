@@ -185,7 +185,7 @@ public class OrderServiceImpl implements OrderService {
             order.getOrderMenus().add(orderMenu);
         }
 
-        cart.changeStatus(CartStatusEnum.CART_CANCEL);
+        cart.changeStatus(CartStatusEnum.ORDERED);
 
         return OrderRes.OrderDetailDto.from(order);
     }

@@ -10,6 +10,7 @@ import com.delivery.global.security.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ public class CartController {
 
     private final CartService cartService;
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping
     public ResponseEntity<ApiRes<UUID>> addToCart(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -32,6 +34,7 @@ public class CartController {
                 .body(ApiRes.success(cart.getCartId()));
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping
     public ResponseEntity<ApiRes<CartRes.CartListDto>> getCart(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
@@ -39,13 +42,23 @@ public class CartController {
         return ResponseEntity.ok(ApiRes.success(result));
     }
 
+    @PreAuthorize("hasAnyRole('MANAGER', 'MASTER')")
+    @GetMapping("/{userId}")
+    public ResponseEntity<ApiRes<CartRes.CartListDto>> getCartByAdmin(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                      @PathVariable Long userId) {
+        CartRes.CartListDto result = cartService.getCart(userId);
+        return ResponseEntity.ok(ApiRes.success(result));
+    }
+
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PatchMapping("/clear")
     public ResponseEntity<Void> clearCart(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         cartService.clearCart(user.getUserId());
         return ResponseEntity.noContent().build();
     }
-        
+
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PatchMapping("/items/{itemId}")
     public ResponseEntity<Void> updateCartItem(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
