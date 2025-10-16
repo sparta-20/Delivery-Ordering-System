@@ -32,7 +32,11 @@ public interface StoreService {
     // 가게 검색 및 조회
     Page<StoreRes> getAllStores(StoreSearchCondition cond, Pageable pageable);
 
+    // 가게 단건 조회
+    StoreRes getStore(UUID storeId);
+
     Store getByStoreIdAndStatus(UUID id, StoreStatusEnum storeStatusEnum);
+
 
 
 

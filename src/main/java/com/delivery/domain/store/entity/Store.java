@@ -4,6 +4,8 @@ import com.delivery.domain.user.entity.User;
 import com.delivery.global.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -33,6 +35,12 @@ public class Store extends Timestamped {
     @Column(nullable = false, length = 50)
     private String dong;
 
+    @Column(nullable = false, precision = 9, scale = 6)
+    private BigDecimal latitude;
+
+    @Column(nullable = false, precision = 9, scale = 6)
+    private BigDecimal longitude;
+
     @Column(nullable = false)
     private Integer minPrice;
 
@@ -61,6 +69,8 @@ public class Store extends Timestamped {
             String city,
             String district,
             String dong,
+            BigDecimal latitude,
+            BigDecimal longitude,
             Integer minPrice,
             User owner
     ){
@@ -70,6 +80,8 @@ public class Store extends Timestamped {
         this.city = city;
         this.district = district;
         this.dong = dong;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.minPrice = minPrice;
         this.owner = owner;
         this.status = StoreStatusEnum.ACTIVE;
@@ -82,6 +94,8 @@ public class Store extends Timestamped {
                        String city,
                        String district,
                        String dong,
+                       BigDecimal latitude,
+                       BigDecimal longitude,
                        Integer minPrice,
                        StoreStatusEnum status) {
         if (name != null) this.name = name;
@@ -90,6 +104,8 @@ public class Store extends Timestamped {
         if (city != null) this.city = city;
         if (district != null) this.district = district;
         if (dong != null) this.dong = dong;
+        if (latitude != null) this.latitude = latitude;
+        if (longitude != null) this.longitude = longitude;
         if (minPrice != null) this.minPrice = minPrice;
         if (status != null) this.status = status;
     }

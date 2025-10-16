@@ -1,0 +1,57 @@
+spring:
+  config:
+    import: optional:file:./.env[.properties]
+  application:
+    name: delivery
+  
+  datasource:
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  sql:
+    init:
+      mode: always
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.orm.jpa: DEBUG
+    org.springframework.transaction: DEBUG
+
+jwt:
+  secret:
+    key: asdfadkfkjdkfjkfddjfkjakjadjfaksfdjksfjksdjfksghjdksfjasksgjasdfjsdffjkskffj
+  access-token:
+    expire-time: 1800000
+  refresh-token:
+    expire-time: 604800000
+
+ai:
+  gemini:
+    api-key: ${GOOGLE_API_KEY}
+    model: gemini-2.5-flash
+    max-output-tokens: 100
+    temperature: 0.7
+    prompt-suffix: " 답변을 최대한 간결하게 50자 이하로"
+
+
+app:
+  service-area:
+    center-lat: 37.5760222
+    center-lon: 126.9769000
+    radius-km: 3.0
+
