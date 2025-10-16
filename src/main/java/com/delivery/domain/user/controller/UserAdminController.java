@@ -4,7 +4,7 @@ import com.delivery.domain.user.dto.UpdateRoleReq;
 import com.delivery.domain.user.dto.UserRes;
 import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.service.UserService;
-import com.delivery.global.common.ApiResponse;
+import com.delivery.global.common.ApiRes;
 import com.delivery.global.security.service.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +22,13 @@ public class UserAdminController {
 
     @PatchMapping("/{userId}/role")
     @PreAuthorize("hasAnyRole('MASTER','MANAGER')")
-    public ResponseEntity<ApiResponse<UserRes>> updateUserRole(
+    public ResponseEntity<ApiRes<UserRes>> updateUserRole(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable(value = "userId") Long userId,
             @Valid @RequestBody UpdateRoleReq req
     ){
         User requester = userDetails.getUser();
         UserRes userRes = userService.updateUserRole(requester.getUserId(), userId, req.getRole());
-        return ResponseEntity.ok(ApiResponse.success(userRes));
+        return ResponseEntity.ok(ApiRes.success(userRes));
     }
 }

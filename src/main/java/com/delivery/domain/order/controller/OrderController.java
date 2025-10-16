@@ -91,28 +91,28 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<OrderRes.OrderDetailDto>> createOrder(
+    public ResponseEntity<ApiRes<OrderRes.OrderDetailDto>> createOrder(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         OrderRes.OrderDetailDto order = orderService.createOrder(userDetails.getUser());
-        return ResponseEntity.ok(ApiResponse.success(order));
+        return ResponseEntity.ok(ApiRes.success(order));
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<ApiResponse<OrderRes.OrderDetailDto>> getOrder(
+    public ResponseEntity<ApiRes<OrderRes.OrderDetailDto>> getOrder(
             @PathVariable UUID orderId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         OrderRes.OrderDetailDto order = orderService.getOrder(orderId, userDetails.getUser());
-        return ResponseEntity.ok(ApiResponse.success(order));
+        return ResponseEntity.ok(ApiRes.success(order));
     }
 
     @DeleteMapping("/{orderId}")
-    public ResponseEntity<ApiResponse<Void>> deleteOrder(
+    public ResponseEntity<ApiRes<Void>> deleteOrder(
             @PathVariable UUID orderId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         orderService.deleteOrder(orderId, userDetails.getUser());
-        return ResponseEntity.ok(ApiResponse.success(null));
+        return ResponseEntity.ok(ApiRes.success(null));
     }
 }

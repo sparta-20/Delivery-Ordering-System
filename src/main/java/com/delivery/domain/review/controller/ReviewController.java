@@ -100,7 +100,7 @@ public class ReviewController {
      */
     @GetMapping("/search")
     @PreAuthorize("hasAnyRole('CUSTOMER','OWNER','MANAGER','MASTER')")
-    public ResponseEntity<ApiResponse<Page<ReviewSearchRes>>> searchReviews(
+    public ResponseEntity<ApiRes<Page<ReviewSearchRes>>> searchReviews(
             @RequestParam(required = false) UUID storeId,
             @RequestParam(required = false) int rating,
             @RequestParam(required = false) Long writerId,
@@ -116,6 +116,6 @@ public class ReviewController {
                 userDetails.getUser()
         );
 
-        return ResponseEntity.ok(ApiResponse.success(result));
+        return ResponseEntity.ok(ApiRes.success(result));
     }
 }
