@@ -1,7 +1,7 @@
 package com.delivery.domain.menu.dto;
 
 import com.delivery.domain.menu.entity.MenuStatusEnum;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,16 +10,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateMenuReq {
-    @NotEmpty
+    @NotNull
     private String name;
-    @NotEmpty
+    @NotNull
     private String description;
-    @NotEmpty
+    @NotNull
     private String imageUrl;
-    @NotEmpty
+    @NotNull
     private Integer price;
-    @NotEmpty
+    @NotNull
     private Integer quantity;
-    @NotEmpty
+    @NotNull
     private MenuStatusEnum status;
 }
