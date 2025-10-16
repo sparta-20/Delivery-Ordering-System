@@ -98,8 +98,8 @@ public class StoreController {
 
     // 가게 단건 조회
     @GetMapping("/{storeId}")
-    public ResponseEntity<ApiResponse<StoreRes>> getStore(@PathVariable UUID storeId){
-        return ResponseEntity.ok(ApiResponse.success(storeService.getStore(storeId)));
+    public ResponseEntity<ApiRes<StoreRes>> getStore(@PathVariable UUID storeId){
+        return ResponseEntity.ok(ApiRes.success(storeService.getStore(storeId)));
     }
 
 
