@@ -3,14 +3,15 @@ package com.delivery.domain.order.entity;
 import com.delivery.domain.menu.entity.Menu;
 import com.delivery.global.common.entity.Timestamped;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
 @Entity
-@NoArgsConstructor
 @Table(name = "p_order_menu")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 @Getter
 public class OrderMenu extends Timestamped {
     @Id
@@ -34,5 +35,4 @@ public class OrderMenu extends Timestamped {
 
     @Column(nullable = false)
     private Integer price;
-
 }

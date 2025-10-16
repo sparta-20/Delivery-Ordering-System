@@ -5,6 +5,7 @@ import com.delivery.domain.auth.entity.RefreshToken;
 import com.delivery.domain.auth.entity.TokenBlacklist;
 import com.delivery.domain.auth.repository.RefreshTokenRepository;
 import com.delivery.domain.auth.repository.TokenBlackListRepository;
+import com.delivery.domain.user.service.UserService;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
 import com.delivery.domain.user.entity.User;
