@@ -144,7 +144,7 @@ class MenuServiceImplTest {
         when(menuRepository.findById(hiddenMenu.getMenuId())).thenReturn(Optional.of(hiddenMenu));
 
         BusinessException exception = assertThrows(BusinessException.class, () ->
-                menuService.findMenuResById(userId, hiddenMenu.getMenuId())
+                menuService.getMenuResById(userId, hiddenMenu.getMenuId())
         );
         assertEquals(ErrorCode.MENU_NOT_FOUND, exception.getErrorCode());
     }
@@ -160,7 +160,7 @@ class MenuServiceImplTest {
         when(userService.getUserById(userId)).thenReturn(owner);
         when(menuRepository.findById(hiddenMenu.getMenuId())).thenReturn(Optional.of(hiddenMenu));
 
-        MenuRes menuRes = menuService.findMenuResById(userId, hiddenMenu.getMenuId());
+        MenuRes menuRes = menuService.getMenuResById(userId, hiddenMenu.getMenuId());
 
         assertEquals(hiddenMenu.getMenuId(), menuRes.getMenuId());
         assertEquals(store.getStoreId(), menuRes.getStoreId());
@@ -219,7 +219,7 @@ class MenuServiceImplTest {
         when(userService.getUserById(userId)).thenReturn(owner);
         when(menuRepository.findById(hiddenMenu.getMenuId())).thenReturn(Optional.of(hiddenMenu));
 
-        MenuRes result = menuService.findMenuResById(userId, hiddenMenu.getMenuId());
+        MenuRes result = menuService.getMenuResById(userId, hiddenMenu.getMenuId());
 
         assertEquals(hiddenMenu.getMenuId(), result.getMenuId());
     }
@@ -236,7 +236,7 @@ class MenuServiceImplTest {
         when(userService.getUserById(userId)).thenReturn(manager);
         when(menuRepository.findById(hiddenMenu.getMenuId())).thenReturn(Optional.of(hiddenMenu));
 
-        MenuRes result = menuService.findMenuResById(userId, hiddenMenu.getMenuId());
+        MenuRes result = menuService.getMenuResById(userId, hiddenMenu.getMenuId());
 
         assertEquals(hiddenMenu.getMenuId(), result.getMenuId());
     }
@@ -253,7 +253,7 @@ class MenuServiceImplTest {
         when(userService.getUserById(userId)).thenReturn(manager);
         when(menuRepository.findById(hiddenMenu.getMenuId())).thenReturn(Optional.of(hiddenMenu));
 
-        MenuRes result = menuService.findMenuResById(userId, hiddenMenu.getMenuId());
+        MenuRes result = menuService.getMenuResById(userId, hiddenMenu.getMenuId());
 
         assertEquals(hiddenMenu.getMenuId(), result.getMenuId());
     }

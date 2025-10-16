@@ -16,6 +16,7 @@ public class UserRes {
     private Long userId;
     private String nickname;
     private String email;
+    private String phoneNumber;
     private UserRoleEnum role;
     private PublicStatus isPublic;
     private LocalDateTime createdAt;
@@ -27,6 +28,7 @@ public class UserRes {
                 user.getUserId(),
                 user.getNickname(),
                 user.getEmail(),
+                user.getPhoneNumber(),
                 user.getRole(),
                 user.getPublicStatus(),
                 user.getCreatedAt(),
