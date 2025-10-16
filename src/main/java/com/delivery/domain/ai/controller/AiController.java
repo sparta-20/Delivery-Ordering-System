@@ -84,7 +84,7 @@ public class AiController {
      */
     @GetMapping("/search")
     @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
-    public ResponseEntity<ApiResponse<Page<AiSearchRes>>> searchAiRequests(
+    public ResponseEntity<ApiRes<Page<AiSearchRes>>> searchAiRequests(
             @RequestParam(required = false) RequestTypeEnum requestType,
             @RequestParam(required = false) Long userId,
             @RequestParam(required = false) UUID menuId,
@@ -99,6 +99,6 @@ public class AiController {
                 userDetails.getUser()
         );
 
-        return  ResponseEntity.ok(ApiResponse.success(result));
+        return  ResponseEntity.ok(ApiRes.success(result));
     }
 }

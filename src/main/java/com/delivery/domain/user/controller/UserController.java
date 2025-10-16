@@ -47,7 +47,7 @@ public class UserController {
             )
     })
     @GetMapping("/me")
-    public ResponseEntity<ApiResponse<UserRes>> getUserMe(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ApiRes<UserRes>> getUserMe(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User requester = userDetails.getUser();
         UserRes userRes = userService.getUserResById(requester.getUserId());
         return ResponseEntity.ok(ApiRes.success(userRes));
@@ -73,7 +73,7 @@ public class UserController {
             )
     })
     @PutMapping("/me")
-    public ResponseEntity<ApiResponse<UserRes>> updateUserMe(
+    public ResponseEntity<ApiRes<UserRes>> updateUserMe(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody UpdateUserReq request)
     {
@@ -101,7 +101,7 @@ public class UserController {
             )
     })
     @PostMapping("/me/password")
-    public ResponseEntity<ApiResponse<UserRes>> updateUserMePassword(
+    public ResponseEntity<ApiRes<UserRes>> updateUserMePassword(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody UpdateUserPasswordReq request)
     {
@@ -125,7 +125,7 @@ public class UserController {
             )
     })
     @DeleteMapping("/me")
-    public ResponseEntity<ApiResponse<UserRes>> deleteUser(
+    public ResponseEntity<ApiRes<UserRes>> deleteUser(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @CookieValue(value = "accessToken", required = false) String accessToken)
     {

@@ -85,4 +85,11 @@ public class AddressServiceImpl implements AddressService{
 
         return AddressRes.from(address);
     }
+
+    @Override
+    public Address findById(UUID addressId) {
+        Address address = addressRepository.findByAddressIdAndDeletedAtIsNull(addressId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ADDRESS_NOT_FOUND));
+        return address;
+    }
 }

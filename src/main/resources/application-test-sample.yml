@@ -8,3 +8,6 @@ spring:
     properties:
       hibernate:
         globally_quoted_identifiers: true
+  sql:
+    init:
+      mode: never

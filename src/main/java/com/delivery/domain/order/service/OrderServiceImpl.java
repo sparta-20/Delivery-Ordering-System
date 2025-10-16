@@ -1,6 +1,6 @@
 package com.delivery.domain.order.service;
 
-import com.delivery.domain.address.dto.AddressRes;
+import com.delivery.domain.address.entity.Address;
 import com.delivery.domain.address.service.AddressService;
 import com.delivery.domain.cart.entity.Cart;
 import com.delivery.domain.cart.entity.CartItem;
@@ -121,7 +121,7 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException(ErrorCode.STORE_NOT_FOUND);
         }
 
-        AddressRes addressRes = addressService.findById(addressId);
+        Address address = addressService.findById(addressId);
 
         int totalPrice = cartItems.stream()
                 .mapToInt(item -> item.getMenu().getPrice() * item.getQuantity())
@@ -131,7 +131,7 @@ public class OrderServiceImpl implements OrderService {
                 .user(user)
                 .store(store)
                 .totalPrice(totalPrice)
-                .address(addressRes.getDetailAddress())
+                .address(address.getDetailAddress())
                 .phoneNumber(user.getPhoneNumber())
                 .message(message)
                 .deliveryMessage(deliveryMessage)
