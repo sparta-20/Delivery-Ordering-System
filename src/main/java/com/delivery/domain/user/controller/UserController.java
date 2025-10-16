@@ -51,12 +51,13 @@ public class UserController {
 
     @DeleteMapping("/me")
     public ResponseEntity<?> deleteUser(
-            @AuthenticationPrincipal UserDetailsImpl userDetails)
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @CookieValue(value = "accessToken", required = false) String accessToken)
     {
         User requester = userDetails.getUser();
         Long requesterUserId = requester.getUserId();
         Long targetId = requester.getUserId();
-        userService.delete(requesterUserId, targetId);
+        userService.delete(accessToken, requesterUserId, targetId);
         return ResponseEntity.noContent().build();
     }
 }
