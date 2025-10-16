@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -80,6 +81,8 @@ class MenuRepositoryTest {
                 "city",
                 "district",
                 "dong",
+                BigDecimal.ONE,
+                BigDecimal.ONE,
                 10000,
                 owner
         );
