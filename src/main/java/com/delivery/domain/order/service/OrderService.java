@@ -4,16 +4,18 @@ import com.delivery.domain.order.dto.OrderReq;
 import com.delivery.domain.order.dto.OrderRes;
 import com.delivery.domain.order.entity.Order;
 import com.delivery.domain.user.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface OrderService {
-    List<OrderRes.OrderListDto> getOrderList(Long userId);
-    List<OrderRes.OrderListDto> getOrdersByOwner(Long ownerUserId);
+    Page<OrderRes.OrderListDto> getOrderList(Long userId, int page, int size, Sort.Direction direction);
+    Page<OrderRes.OrderListDto> getOrdersByOwner(Long ownerUserId, int page, int size, Sort.Direction direction);
     void changeStatus(Long userId, UUID orderId, OrderReq.ChangeOrderStatusDto dto);
     void rejectOrder(Long userId, UUID orderId, OrderReq.RejectOrderDto dto);
-    List<OrderRes.AllOrderListDto> getAllList();
+    Page<OrderRes.AllOrderListDto> getAllList(int page, int size, Sort.Direction direction);
     void cancelOrder(Long userId, UUID orderId, OrderReq.CancelOrderDto dto);
     OrderRes.OrderDetailDto getOrderDetail(Long userId, UUID orderId);
     OrderRes.OrderDetailDto createOrder(UUID addressId, String message, String deliveryMessage, User user);

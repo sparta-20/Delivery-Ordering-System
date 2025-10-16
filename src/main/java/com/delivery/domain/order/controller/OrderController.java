@@ -8,6 +8,8 @@ import com.delivery.domain.user.entity.User;
 import com.delivery.global.common.ApiRes;
 import com.delivery.global.security.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,17 +23,26 @@ import java.util.UUID;
 @RequestMapping("/api/v1/orders")
 public class OrderController {
     private final OrderService orderService;
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping
-    public ResponseEntity<ApiRes<List<OrderRes.OrderListDto>>> getOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ApiRes<Page<OrderRes.OrderListDto>>> getOrders(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                         @RequestParam(defaultValue = "0") int page,
+                                                                         @RequestParam(defaultValue = "10") int size,
+                                                                         @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
         User user = userDetails.getUser();
-        List<OrderRes.OrderListDto> list = orderService.getOrderList(user.getUserId());
+        Page<OrderRes.OrderListDto> list = orderService.getOrderList(
+                user.getUserId(), page, size, direction);
         return ResponseEntity.ok(ApiRes.success(list));
     }
     @PreAuthorize("hasRole('OWNER')")
     @GetMapping("/owner")
-    public ResponseEntity<ApiRes<List<OrderRes.OrderListDto>>> getOwnerOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ApiRes<Page<OrderRes.OrderListDto>>> getOwnerOrders(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                              @RequestParam(defaultValue = "0") int page,
+                                                                              @RequestParam(defaultValue = "10") int size,
+                                                                              @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
         User user = userDetails.getUser();
-        List<OrderRes.OrderListDto> list = orderService.getOrdersByOwner(user.getUserId());
+        Page<OrderRes.OrderListDto> list = orderService.getOrdersByOwner(
+                user.getUserId(), page, size, direction);
         return ResponseEntity.ok(ApiRes.success(list));
     }
     @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
@@ -47,7 +58,6 @@ public class OrderController {
     public ResponseEntity<Void> changeOrderStatus(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                   @PathVariable UUID orderId,
                                                   @RequestBody OrderReq.ChangeOrderStatusDto dto) {
-        // TODO: ApiRes 사용해서 수정
         User user = userDetails.getUser();
         orderService.changeStatus(user.getUserId(), orderId, dto);
         return ResponseEntity.noContent().build();
@@ -64,10 +74,14 @@ public class OrderController {
 
     @PreAuthorize("hasAnyRole('MANAGER', 'MASTER')")
     @GetMapping("/admin")
-    public ResponseEntity<ApiRes<List<OrderRes.AllOrderListDto>>> getAllOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        List<OrderRes.AllOrderListDto> list = orderService.getAllList();
+    public ResponseEntity<ApiRes<Page<OrderRes.AllOrderListDto>>> getAllOrders(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                               @RequestParam(defaultValue = "0") int page,
+                                                                               @RequestParam(defaultValue = "10") int size,
+                                                                               @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
+        Page<OrderRes.AllOrderListDto> list = orderService.getAllList(page, size, direction);
         return ResponseEntity.ok(ApiRes.success(list));
     }
+
     @PatchMapping("/{orderId}/cancel")
     public ResponseEntity<Void> cancelOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                             @PathVariable UUID orderId,

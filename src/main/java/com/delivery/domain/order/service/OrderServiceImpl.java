@@ -22,8 +22,12 @@ import com.delivery.domain.user.entity.UserRoleEnum;
 import com.delivery.domain.user.repository.UserRepository;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
+import com.delivery.global.util.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,19 +49,23 @@ public class OrderServiceImpl implements OrderService {
     private final AddressService addressService;
 
     @Override
-    public List<OrderRes.OrderListDto> getOrderList(Long userId) {
-        List<Order> orders = orderRepository.findByUser_UserIdAndDeletedAtIsNull(userId);
-        return orders.stream()
-                .map(OrderRes.OrderListDto::from)
-                .toList();
+    public Page<OrderRes.OrderListDto> getOrderList(Long userId,
+                                                          int page,
+                                                          int size,
+                                                          Sort.Direction direction) {
+        Pageable pageable = PageableUtils.createPageableWithCreatedAt(page, size, direction);
+        Page<Order> orders = orderRepository.findByUser_UserIdAndDeletedAtIsNull(userId, pageable);
+        return orders.map(OrderRes.OrderListDto::from);
     }
 
     @Override
-    public List<OrderRes.OrderListDto> getOrdersByOwner(Long ownerUserId) {
-        List<Order> orders = orderRepository.findByStore_Owner_UserId(ownerUserId);
-        return orders.stream()
-                .map(OrderRes.OrderListDto::from)
-                .toList();
+    public Page<OrderRes.OrderListDto> getOrdersByOwner(Long ownerUserId,
+                                                        int page,
+                                                        int size,
+                                                        Sort.Direction direction) {
+        Pageable pageable = PageableUtils.createPageableWithCreatedAt(page, size, direction);
+        Page<Order> orders = orderRepository.findByStore_Owner_UserId(ownerUserId, pageable);
+        return orders.map(OrderRes.OrderListDto::from);
     }
 
     @Override
@@ -77,11 +85,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderRes.AllOrderListDto> getAllList() {
-        List<Order> orders = orderRepository.findAll();
-        return orders.stream()
-                .map(OrderRes.AllOrderListDto::from)
-                .toList();
+    public Page<OrderRes.AllOrderListDto> getAllList(int page, int size, Sort.Direction direction) {
+        Pageable pageable = PageableUtils.createPageableWithCreatedAt(page, size, direction);
+        Page<Order> orders = orderRepository.findAll(pageable);
+        return orders.map(OrderRes.AllOrderListDto::from);
     }
 
     @Override
