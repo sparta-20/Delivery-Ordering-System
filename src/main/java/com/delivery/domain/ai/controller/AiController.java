@@ -2,11 +2,15 @@ package com.delivery.domain.ai.controller;
 
 import com.delivery.domain.ai.dto.AiCreateReq;
 import com.delivery.domain.ai.dto.AiRes;
+import com.delivery.domain.ai.dto.AiSearchRes;
+import com.delivery.domain.ai.entity.RequestTypeEnum;
 import com.delivery.domain.ai.service.AiService;
 import com.delivery.global.common.ApiResponse;
 import com.delivery.global.security.service.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -70,5 +74,31 @@ public class AiController {
         aiService.softDelete(aiId, userDetails.getUserId(), userDetails.getRole());
 
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * AI 요청 기록 검색 API
+     * - 기본 정렬: createdAt DESC
+     * - 페이지 크기: 10, 30, 50만 허용 (기타 값은 10으로 강제)
+     * - 권한: OWNER는 본인 데이터만, MANAGER/MASTER는 전체 조회
+     */
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'MASTER')")
+    public ResponseEntity<ApiResponse<Page<AiSearchRes>>> searchAiRequests(
+            @RequestParam(required = false) RequestTypeEnum requestType,
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) UUID menuId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "DESC") Sort.Direction direction,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        Page<AiSearchRes> result = aiService.searchAiRequests(
+                requestType, userId, menuId,
+                page, size, direction,
+                userDetails.getUser()
+        );
+
+        return  ResponseEntity.ok(ApiResponse.success(result));
     }
 }
