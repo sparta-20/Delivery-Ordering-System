@@ -34,14 +34,5 @@ public interface StoreService {
 
     Store getByStoreIdAndStatus(UUID id, StoreStatusEnum storeStatusEnum);
 
-
-
-
-
-
-
-
-
-
-
+    Store getStoreByOwnerId(Long userId);
 }
