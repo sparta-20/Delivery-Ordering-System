@@ -3,6 +3,7 @@ package com.delivery.domain.address.service;
 import com.delivery.domain.address.dto.AddressRes;
 import com.delivery.domain.address.dto.CreateAddressReq;
 import com.delivery.domain.address.dto.UpdateAddressReq;
+import com.delivery.domain.address.entity.Address;
 import com.delivery.domain.user.entity.User;
 
 import java.util.List;
@@ -14,4 +15,5 @@ public interface AddressService {
     AddressRes updateAddress(UUID addressId, UpdateAddressReq request, User user);
     void deleteAddress(UUID addressId, User user);
     AddressRes setDefaultAddress(UUID addressId, User user);
+    Address findById(UUID addressId);
 }
