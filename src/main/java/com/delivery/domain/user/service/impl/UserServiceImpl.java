@@ -1,5 +1,6 @@
 package com.delivery.domain.user.service.impl;
 
+import com.delivery.domain.auth.service.AuthService;
 import com.delivery.domain.user.dto.UpdateUserPasswordReq;
 import com.delivery.domain.user.dto.UpdateUserReq;
 import com.delivery.domain.user.dto.UserRes;
@@ -23,6 +24,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
 
     @Override
     public User getUserById(Long userId) {
@@ -62,9 +64,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserRes delete(Long requestUserId, Long userId) {
+    public UserRes delete(String accessToken, Long requestUserId, Long userId) {
         User user = getUserById(userId);
         user.markDeleted(requestUserId);
+        authService.logout(accessToken);
         return UserRes.from(user);
     }
 
