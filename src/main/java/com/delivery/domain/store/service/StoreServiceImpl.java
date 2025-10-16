@@ -159,6 +159,12 @@ public class StoreServiceImpl implements StoreService {
         return stores.map(StoreRes::from);
     }
 
+    @Override
+    public Store getByStoreIdAndStatus(UUID storeId, StoreStatusEnum storeStatusEnum) {
+        return storeRepository.findByStoreIdAndStatus(storeId, storeStatusEnum)
+                .orElseThrow(() -> new BusinessException(ErrorCode.FORBIDDEN_READ_STORE));
+    }
+
     // categoryName을 categoryId에 매핑
     private void categoryNameNeeded(StoreSearchCondition cond){
         if(cond.getCategoryId()!=null) return;

@@ -1,5 +1,6 @@
 package com.delivery.domain.cart.entity;
 
+import com.delivery.domain.menu.entity.Menu;
 import com.delivery.global.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -24,23 +25,15 @@ public class CartItem extends Timestamped {
     @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
 
-    /*
-    추후 수정
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id", nullable = false)
     private Menu menu;
-     */
-
-    @Column(nullable = false)
-    private UUID menuId;
-
-    @Column(nullable = false)
-    private Integer price;
 
     @Builder
-    public CartItem(Cart cart, UUID menuId, Integer quantity, Integer price) {
+    public CartItem(Cart cart, Menu menu, Integer quantity) {
         this.cart = cart;
-        this.menuId = menuId;
+        this.menu = menu;
         this.quantity = quantity;
-        this.price = price;
     }
 
     public void updateQuantity(Integer quantity) {

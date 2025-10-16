@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-public class CartRequestDto {
+public class CartReq {
 
     @Getter
     @NoArgsConstructor

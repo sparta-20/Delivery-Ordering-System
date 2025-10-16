@@ -1,15 +1,17 @@
 package com.delivery.domain.order.entity;
 
+import com.delivery.domain.menu.entity.Menu;
 import com.delivery.global.common.entity.Timestamped;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
 @Entity
-@NoArgsConstructor
 @Table(name = "p_order_menu")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 @Getter
 public class OrderMenu extends Timestamped {
     @Id
@@ -20,6 +22,10 @@ public class OrderMenu extends Timestamped {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id", nullable = false)
+    private Menu menu;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private OrderMenuStatusEnum status = OrderMenuStatusEnum.ORDER;
@@ -29,8 +35,4 @@ public class OrderMenu extends Timestamped {
 
     @Column(nullable = false)
     private Integer price;
-
-    // 추후 Menu로 수정 예정
-    @Column(nullable = false)
-    private UUID menuId;
 }

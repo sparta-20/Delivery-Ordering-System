@@ -26,6 +26,9 @@ public class User extends Timestamped {
     private String password;
 
     @Column(nullable = false)
+    private String phoneNumber;
+
+    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role = UserRoleEnum.CUSTOMER;
 
@@ -33,19 +36,41 @@ public class User extends Timestamped {
     @Enumerated(EnumType.STRING)
     private PublicStatus publicStatus = PublicStatus.PUBLIC;
 
-    public User(String nickname, String email, String password) {
+    public User(String nickname, String email, String password, String phoneNumber) {
         this.nickname = nickname;
         this.email = email;
         this.password = password;
+        this.phoneNumber = phoneNumber;
     }
 
-    public void update(String nickname, String email, PublicStatus publicStatus) {
+    public boolean isCustomer() {
+        return UserRoleEnum.CUSTOMER.equals(this.role);
+    }
+
+    public boolean isMaster() {
+        return UserRoleEnum.MASTER.equals(this.role);
+    }
+
+    public boolean isOwner() {
+        return UserRoleEnum.OWNER.equals(this.role);
+    }
+
+    public boolean isManager() {
+        return UserRoleEnum.MANAGER.equals(this.role);
+    }
+
+    public void update(String nickname, String email, PublicStatus publicStatus, String phoneNumber) {
         this.nickname = nickname;
         this.email = email;
         this.publicStatus = publicStatus;
+        this.phoneNumber = phoneNumber;
     }
 
     public void updatePassword(String encodePassword) {
         this.password = encodePassword;
+    }
+
+    public void updateRole(UserRoleEnum role) {
+        this.role = role;
     }
 }

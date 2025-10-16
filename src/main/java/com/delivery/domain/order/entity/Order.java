@@ -1,18 +1,21 @@
 package com.delivery.domain.order.entity;
 
+import com.delivery.domain.store.entity.Store;
 import com.delivery.global.common.entity.Timestamped;
 import com.delivery.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
-@NoArgsConstructor
 @Table(name = "p_order")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 @Getter
 public class Order extends Timestamped {
     @Id
@@ -32,17 +35,28 @@ public class Order extends Timestamped {
     @Column
     private String canceledReason;
 
+    @Column
+    private String message;
+
+    @Column
+    private String deliveryMessage;
+
+    @Column
+    private Integer deliveryFee;
+
+    @Column
+    private String phoneNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // Store 추가 필요
-
-    // 임시로 추가 -> 추후 Store과 연결
-    @Column(nullable = false)
-    private Long ownerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
 
     @OneToMany(mappedBy = "order")
+    @Builder.Default
     private List<OrderMenu> orderMenus = new ArrayList<>();
 
     public void changeStatus(OrderStatusEnum status) {
@@ -53,7 +67,7 @@ public class Order extends Timestamped {
         this.status = OrderStatusEnum.REJECTED;
         this.canceledReason = reason;
     }
-  
+
     public void cancel(String reason) {
         this.canceledReason = reason;
         this.status = OrderStatusEnum.CANCELED;
