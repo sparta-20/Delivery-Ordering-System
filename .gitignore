@@ -29,7 +29,7 @@ out/
 ##yml
 **/application.yml
 **/application-test.yml
-application.properties
+**/application.properties
 *.env
 
 ### NetBeans ###
