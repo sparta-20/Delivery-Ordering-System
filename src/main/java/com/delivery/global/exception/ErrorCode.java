@@ -67,9 +67,11 @@ public enum ErrorCode {
     // 장바구니 도메인
     DIFFERENT_STORE(HttpStatus.BAD_REQUEST, "C001", "같은 가게의 상품만 장바구니에 담을 수 있습니다."),
     CART_NOT_FOUND(HttpStatus.NOT_FOUND, "C002", "장바구니를 찾을 수 없습니다."),
+    ITEM_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "I001", "해당 상품을 찾을 수 없습니다."),
     CART_EMPTY(HttpStatus.BAD_REQUEST, "C002", "장바구니에 담긴 상품이 없습니다."),
 
-    ITEM_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "I001", "해당 상품을 찾을 수 없습니다.");
+    // 주소 도메인
+    ADDRESS_NOT_FOUND(HttpStatus.NOT_FOUND, "AD001", "주소를 찾을 수 없습니다.");
 
 
     private final HttpStatus status;
