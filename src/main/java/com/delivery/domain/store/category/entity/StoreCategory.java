@@ -1,4 +1,4 @@
-package com.delivery.domain.store.entity;
+package com.delivery.domain.store.category.entity;
 
 import com.delivery.global.common.entity.Timestamped;
 import jakarta.persistence.*;
