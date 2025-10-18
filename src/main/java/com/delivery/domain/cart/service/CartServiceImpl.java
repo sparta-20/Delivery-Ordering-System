@@ -44,8 +44,8 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartRes.CartListDto getCart(Long userId) {
-        User user = findUserById(userId);
-        Cart cart = getExistingCart(user);
+        Cart cart = cartRepository.findByUser_UserIdAndStatusWithItems(userId, CartStatusEnum.CART)
+                .orElseThrow(() -> new BusinessException(ErrorCode.CART_NOT_FOUND));
         List<CartRes.CartItemDetailDto> items = toItemDto(cart.getItems());
         int totalPrice = calculatePrice(cart.getItems());
         return CartRes.CartListDto.builder()
@@ -85,11 +85,6 @@ public class CartServiceImpl implements CartService {
                     return cart;
                 })
                 .orElseGet(() -> cartRepository.save(Cart.builder().user(user).store(menu.getStore()).build()));
-    }
-
-    private Cart getExistingCart(User user) {
-        return cartRepository.findByUser_UserIdAndStatus(user.getUserId(), CartStatusEnum.CART)
-                .orElseThrow(() -> new BusinessException(ErrorCode.CART_NOT_FOUND));
     }
 
     private void addCartItem(Cart cart, Menu menu, Integer quantity) {
