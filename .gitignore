@@ -27,7 +27,7 @@ out/
 !**/src/test/**/out/
 
 ##yml
-**/application.yml
+##**/application.yml
 **/application-test.yml
 **/application.properties
 **/application-test-sample.yml
