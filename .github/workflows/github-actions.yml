@@ -41,6 +41,10 @@ jobs:
           docker tag app ${{ secrets.DOCKER_USERNAME }}/delivery:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/delivery:latest
 
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
       - name: Deploy
         uses: appleboy/ssh-action@master
         with:
