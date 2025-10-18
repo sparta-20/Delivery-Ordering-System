@@ -30,7 +30,6 @@ out/
 **/application.yml
 **/application-test.yml
 **/application.properties
-**/application-test-sample.yml
 *.env
 
 ### NetBeans ###

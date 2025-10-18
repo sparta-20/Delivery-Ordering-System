@@ -24,7 +24,7 @@ jobs:
       - name: Make application.yml
         run: |
           cd ./src/main/resources
-          rm -f application.yml application-*.yml
+          rm -f application.yml
           touch ./application.yml
           echo "${{ secrets.APPLICATION }}" > ./application.yml
 
@@ -32,7 +32,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build -x test
+        run: ./gradlew build
 
       - name: Docker build
         run: |
