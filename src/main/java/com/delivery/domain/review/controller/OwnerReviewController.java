@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@Tag(name = "Owner / Reviews", description = "가게 사장용 리뷰 관리 API")
+@Tag(name = "Review", description = "리뷰 관리 API")
 @RestController
 @RequestMapping("/api/v1/owner/reviews")
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class OwnerReviewController {
     private final ReviewService reviewService;
 
     @Operation(
-            summary = "내 가게 리뷰 목록",
+            summary = "내 가게 리뷰 목록 (가게 사장용)",
             description = """
             사장 권한으로 특정 가게의 리뷰 목록을 조회합니다.
             
@@ -50,7 +50,7 @@ public class OwnerReviewController {
     }
 
     @Operation(
-            summary = "내 가게 리뷰 단건 상세",
+            summary = "내 가게 리뷰 단건 상세 (가게 사장용)",
             description = """
             사장 권한으로 특정 리뷰를 상세 조회합니다.
             

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@Tag(name = "Public / Reviews", description = "공개용 가게 리뷰 API")
+@Tag(name = "Review", description = "리뷰 관리 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/stores/{storeId}/reviews")
@@ -23,7 +23,7 @@ public class PublicReviewController {
     private final ReviewService reviewService;
 
     @Operation(
-            summary = "가게 리뷰 목록 (공개)",
+            summary = "가게 리뷰 목록 (공개용)",
             description = """
                     특정 가게의 리뷰 목록을 공개적으로 조회합니다.
                     
@@ -44,7 +44,7 @@ public class PublicReviewController {
     }
 
     @Operation(
-            summary = "가게 리뷰 통계 조회",
+            summary = "가게 리뷰 통계 조회 (공개용)",
             description = """
                     특정 가게의 리뷰 통계를 조회합니다.
                     
