@@ -31,6 +31,7 @@ public enum ErrorCode {
     FORBIDDEN_DELETE_STORE(HttpStatus.FORBIDDEN, "S004", "가게를 삭제할 권한이 없습니다."),
     FORBIDDEN_READ_STORE(HttpStatus.FORBIDDEN,"s005", "가게를 조회할 권한이 없습니다." ),
     OUT_OF_SERVICE_AREA(HttpStatus.FORBIDDEN,"S006","서비스 가능 지역 외 요청입니다." ),
+    STORE_NOT_FOUND_OR_FORBIDDEN(HttpStatus.NOT_FOUND, "S007", "가게가 존재하지 않거나 접근 권한이 없습니다."),
 
     // jwt
     TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "A001", "토큰이 존재하지 않습니다."),
@@ -54,9 +55,9 @@ public enum ErrorCode {
     REVIEW_UPDATE_FORBIDDEN(HttpStatus.FORBIDDEN, "R005", "본인이 작성한 리뷰만 수정할 수 있습니다."),
     REVIEW_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "R006", "리뷰 삭제 권한이 없습니다."),
     REVIEW_SEARCH_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "R007", "리뷰 검색 처리 중 오류가 발생했습니다."),
-    REVIEW_ACCESS_DENIED(HttpStatus.FORBIDDEN, "R008", "리뷰 접근 권한이 없습니다."),
-    INVALID_REVIEW_RATING(HttpStatus.BAD_REQUEST, "R009", "평점은 1~5점 사이여야 합니다."),
-    BAD_REQUEST_STORE_REQUIRED_FOR_CUSTOMER(HttpStatus.BAD_REQUEST, "R010", "고객 리뷰 검색 시 storeId는 필수입니다."),
+    REVIEW_FORBIDDEN(HttpStatus.FORBIDDEN, "R008", "리뷰 접근 권한이 없습니다."),
+    REVIEW_NOT_FOUND_OR_FORBIDDEN(HttpStatus.NOT_FOUND, "R009", "리뷰가 존재하지 않거나 접근 권한이 없습니다."),
+    STORE_REVIEW_STATS_NOT_FOUND(HttpStatus.NOT_FOUND, "R010", "가게 리뷰 통계를 찾을 수 없습니다."),
 
     // 메뉴 도메인
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "M001", "메뉴를 찾을 수 없습니다."),
@@ -64,7 +65,7 @@ public enum ErrorCode {
 
     // 주문 도메인
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "O001", "주문을 찾을 수 없습니다."),
-    ORDER_NOT_COMPLETED(HttpStatus.BAD_REQUEST, "O002", "배송이 완료된 주문만 리뷰 작성이 가능합니다."),
+    ORDER_NOT_DONE(HttpStatus.BAD_REQUEST, "O002", "배송이 완료된 주문만 리뷰 작성이 가능합니다."),
     INVALID_ORDER_STATUS(HttpStatus.BAD_REQUEST, "O003", "주문이 진행중이지 않습니다."),
     ORDER_CANCEL_TIME_EXCEEDED(HttpStatus.BAD_REQUEST, "O004", "주문 취소 가능 시간이 지났습니다."),
     ORDER_ALREADY_COMPLETED(HttpStatus.CONFLICT, "O002", "이미 완료된 주문입니다."),

@@ -46,4 +46,9 @@ public abstract class Timestamped {
         this.deletedAt = null;
         this.deletedBy = userId;
     }
+
+    public void restore() {
+        this.deletedAt = null;
+        this.deletedBy = null;
+    }
 }

@@ -1,10 +1,12 @@
 package com.delivery.domain.review.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Schema(description = "리뷰 수정 요청")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewUpdateReq {
