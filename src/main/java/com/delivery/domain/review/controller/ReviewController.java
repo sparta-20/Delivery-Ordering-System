@@ -7,6 +7,7 @@ import com.delivery.domain.review.dto.ReviewUpdateReq;
 import com.delivery.domain.review.service.ReviewService;
 import com.delivery.global.common.ApiRes;
 import com.delivery.global.security.service.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/reviews")
 @RequiredArgsConstructor
+@Tag(name = "Review", description = "리뷰 API")
 public class ReviewController {
 
     private final ReviewService reviewService;

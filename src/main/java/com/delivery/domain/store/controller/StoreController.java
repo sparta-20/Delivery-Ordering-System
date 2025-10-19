@@ -8,6 +8,7 @@ import com.delivery.global.common.ApiRes;
 import com.delivery.global.security.service.UserDetailsImpl;
 import com.delivery.domain.store.dto.StoreCreateReq;
 import com.delivery.domain.store.dto.StoreRes;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/stores")
+@Tag(name = "Store", description = "가게 API")
 public class StoreController {
 
     private final StoreService storeService;
