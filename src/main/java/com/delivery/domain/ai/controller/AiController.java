@@ -7,6 +7,7 @@ import com.delivery.domain.ai.entity.RequestTypeEnum;
 import com.delivery.domain.ai.service.AiService;
 import com.delivery.global.common.ApiRes;
 import com.delivery.global.security.service.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/ai")
+@Tag(name = "AI", description = "AI API")
 public class AiController {
 
     private final AiService aiService;

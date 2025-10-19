@@ -4,6 +4,7 @@ import com.delivery.domain.store.category.dto.StoreCategoryRes;
 import com.delivery.domain.store.category.service.StoreCategoryService;
 import com.delivery.domain.store.util.PageableUtils;
 import com.delivery.global.common.ApiRes;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/categories")
+@Tag(name = "Category", description = "카테고리 API")
 public class StoreCategoryController {
 
     private final StoreCategoryService storeCategoryService;

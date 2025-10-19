@@ -6,6 +6,7 @@ import com.delivery.domain.user.entity.User;
 import com.delivery.domain.user.service.UserService;
 import com.delivery.global.common.ApiRes;
 import com.delivery.global.security.service.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/v1/users")
+@Tag(name = "Admin")
 public class UserAdminController {
 
     private final UserService userService;
