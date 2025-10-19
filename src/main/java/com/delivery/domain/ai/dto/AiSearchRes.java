@@ -2,12 +2,14 @@ package com.delivery.domain.ai.dto;
 
 import com.delivery.domain.ai.entity.Ai;
 import com.delivery.domain.ai.entity.RequestTypeEnum;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Schema(description = "AI 검색 결과 DTO")
 @Getter
 @Builder
 public class AiSearchRes {

@@ -2,12 +2,14 @@ package com.delivery.domain.ai.dto;
 
 import com.delivery.domain.ai.entity.Ai;
 import com.delivery.domain.ai.entity.RequestTypeEnum;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Schema(description = "AI 응답 DTO")
 @Getter
 @Builder
 public class AiRes {
@@ -20,11 +22,11 @@ public class AiRes {
     private LocalDateTime createdAt;
 
     // Entity → DTO 변환
-    public static AiRes from(Ai ai, Long userId, UUID menuId) {
+    public static AiRes from(Ai ai) {
         return AiRes.builder()
                 .aiId(ai.getAiId())
-                .userId(userId)
-                .menuId(menuId)
+                .userId(ai.getUser().getUserId())
+                .menuId(ai.getMenu().getMenuId())
                 .requestType(ai.getRequestType())
                 .prompt(ai.getPrompt())
                 .response(ai.getResponse())

@@ -1,6 +1,7 @@
 package com.delivery.domain.ai.dto;
 
 import com.delivery.domain.ai.entity.RequestTypeEnum;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+@Schema(description = "AI 생성 요청 DTO")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AiCreateReq {
