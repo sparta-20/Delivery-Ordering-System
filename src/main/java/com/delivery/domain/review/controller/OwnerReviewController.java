@@ -5,6 +5,7 @@ import com.delivery.domain.review.service.ReviewService;
 import com.delivery.global.common.ApiRes;
 import com.delivery.global.security.service.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@Tag(name = "Owner / Reviews", description = "가게 사장용 리뷰 관리 API")
 @RestController
 @RequestMapping("/api/v1/owner/reviews")
 @RequiredArgsConstructor

@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@Tag(name = "Customer / Reviews", description = "고객용 리뷰 관리 API")
 @RestController
 @RequestMapping("/api/v1/reviews")
 @RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('CUSTOMER')")
-@Tag(name = "고객 리뷰 API", description = "고객의 리뷰 작성, 조회, 수정, 삭제 기능을 제공합니다.")
 public class CustomerReviewController {
 
     private final ReviewService reviewService;

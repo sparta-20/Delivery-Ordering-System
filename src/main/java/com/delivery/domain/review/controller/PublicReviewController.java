@@ -30,7 +30,6 @@ public class PublicReviewController {
                     - 삭제되지 않은 리뷰만 표시
                     - 기본 정렬: createdAt DESC
                     - page: 0부터 시작, size는 10/30/50만 허용
-                    - rating 필터(1~5) 선택 가능
                     """
     )
     @GetMapping
@@ -40,9 +39,8 @@ public class PublicReviewController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "DESC") Sort.Direction direction
     ) {
-        Page<PublicReviewRes> response = reviewService.getStoreReviews(
-                storeId, page, size, direction
-        );        return ResponseEntity.ok(ApiRes.success(response));
+        Page<PublicReviewRes> response = reviewService.getStoreReviews(storeId, page, size, direction);
+        return ResponseEntity.ok(ApiRes.success(response));
     }
 
     @Operation(
@@ -58,8 +56,9 @@ public class PublicReviewController {
                     """
     )
     @GetMapping("/stats")
-    public ApiRes<StoreReviewStats> getStoreReviewStats(@PathVariable UUID storeId) {
-        return ApiRes.success(reviewService.getStoreReviewStats(storeId));
+    public ResponseEntity<ApiRes<StoreReviewStats>> getStoreReviewStats(@PathVariable UUID storeId) {
+        StoreReviewStats response = reviewService.getStoreReviewStats(storeId);
+        return ResponseEntity.ok(ApiRes.success(response));
     }
 }
 
