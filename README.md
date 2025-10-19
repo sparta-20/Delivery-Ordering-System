@@ -23,13 +23,13 @@
 <img width="601" height="861" alt="제목 없는 다이어그램 drawio (3)" src="https://github.com/user-attachments/assets/b778ea4a-9663-4d8d-b6b6-422dac4026a2" />
 
 ### 🎯 3. Coding Conventions
-####📌 1. 커밋 메시지 규칙
+#### 📌 1. 커밋 메시지 규칙
 - refactor/기능명
 - feat/기능명
 - fix/버그 내용
 - docs/문서수정
 - test/테스트코드
-####📌 2. Java Code Style
+#### 📌 2. Java Code Style
 | 분류 | 상세 | 
 | --- | --- | 
 | 폴더명 | 소문자 + _(snake_case) | 
@@ -39,7 +39,7 @@
 | 상수명 | 대문자 + _(upper_snake_case) | 
 | Enum | Enum Suffix(OrderTypeEnum) |
 
-####📌 3. Git branch 전략
+#### 📌 3. Git branch 전략
 | 브랜치 | 상세 | 
 | --- | --- | 
 | main | 실제 서비스에서 배포되는 최종 버전을 관리하는 브랜치 | 
