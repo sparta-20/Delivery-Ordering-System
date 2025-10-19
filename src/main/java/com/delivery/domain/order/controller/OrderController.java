@@ -170,7 +170,7 @@ public class OrderController {
     }
 
     @Operation(
-            summary = "주문",
+            summary = "주문하기",
             description = "현재 로그인한 사용자의 장바구니 항목을 조회해 주문을 진행합니다."
     )
     @PreAuthorize("hasRole('CUSTOMER')")

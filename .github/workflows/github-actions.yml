@@ -47,17 +47,5 @@ jobs:
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker pull ${{ secrets.DOCKER_USERNAME }}/delivery:latest
             docker-compose down
-            docker run -d \
-              --name delivery-app \
-              -p 8080:8080 \
-              -e POSTGRES_HOST="${{ secrets.POSTGRES_HOST }}" \
-              -e POSTGRES_PORT="${{ secrets.POSTGRES_PORT }}" \
-              -e POSTGRES_DB="${{ secrets.POSTGRES_DB }}" \
-              -e POSTGRES_USERNAME="${{ secrets.POSTGRES_USERNAME }}" \
-              -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
-              -e POSTGRES_URL="jdbc:postgresql://${{ secrets.POSTGRES_HOST }}:${{ secrets.POSTGRES_PORT }}/${{ secrets.POSTGRES_DB }}" \
-              -e JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
-              -e GOOGLE_API_KEY="${{ secrets.GOOGLE_API_KEY }}" \
-              -e SPRING_PROFILES_ACTIVE=prod \
-              ${{ secrets.DOCKER_USERNAME }}/delivery:latest
+            docker-compose up
             docker image prune -f
