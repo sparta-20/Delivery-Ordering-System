@@ -21,20 +21,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@Tag(name = "AI", description = "AI 설명 생성 및 요청 기록 관리 API")
+@Tag(name = "Admin / AI", description = "관리자용 AI 관리 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/admin/ai")
 @PreAuthorize("hasAnyRole('MASTER','MANAGER')")
-public class AiAdminController {
+public class AdminAiController {
 
     private final AiService aiService;
 
-    /**
-     * AI 설명 생성 API
-     * 권한: MASTER / MANAGER
-     * 응답: 201 Created + ApiRes<AiRes>
-     */
     @Operation(
             summary = "AI 설명 생성 (관리자용)",
             description = "Gemini AI를 사용하여 메뉴 설명을 자동 생성합니다. MASTER 또는 MANAGER 권한이 필요합니다."
@@ -47,11 +42,6 @@ public class AiAdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiRes.success(response));
     }
 
-    /**
-     * AI 요청 기록 단건 조회 API
-     * 권한: MASTER / MANAGER
-     * 응답: 200 OK + ApiRes<AiRes>
-     */
     @Operation(
             summary = "AI 요청 기록 단건 조회 (관리자용)",
             description = "AI 요청 기록을 ID로 조회합니다. 관리자는 모든 기록을 조회할 수 있습니다."
@@ -63,11 +53,6 @@ public class AiAdminController {
         return ResponseEntity.ok(ApiRes.success(response));
     }
 
-    /**
-     * AI 요청 기록 논리 삭제 (Soft Delete) API
-     * 권한: MASTER / MANAGER
-     * 응답: 204 No Content
-     */
     @Operation(
             summary = "AI 요청 기록 삭제 (관리자용)",
             description = "AI 요청 기록을 논리 삭제(Soft Delete)합니다. 관리자는 모든 기록을 삭제할 수 있습니다."
@@ -80,12 +65,6 @@ public class AiAdminController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * AI 요청 기록 검색 API
-     * - 기본 정렬: createdAt DESC
-     * - 페이지 크기: 10, 30, 50만 허용 (기타 값은 10으로 강제)
-     * - 권한: MANAGER/MASTER는 전체 조회
-     */
     @Operation(
             summary = "AI 요청 기록 검색 (관리자용)",
             description = """

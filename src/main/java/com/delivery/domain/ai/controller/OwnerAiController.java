@@ -21,12 +21,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@Tag(name = "AI", description = "AI 설명 생성 및 요청 기록 관리 API")
+@Tag(name = "Owner / AI", description = "가게 사장용 AI 관리 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/owner/ai")
 @PreAuthorize("hasAnyRole('OWNER')")
-public class AiOwnerController {
+public class OwnerAiController {
 
     private final AiService aiService;
 
