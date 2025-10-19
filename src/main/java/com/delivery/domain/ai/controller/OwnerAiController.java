@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@Tag(name = "Owner / AI", description = "가게 사장용 AI 관리 API")
+@Tag(name = "AI", description = "AI 관리 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/owner/ai")

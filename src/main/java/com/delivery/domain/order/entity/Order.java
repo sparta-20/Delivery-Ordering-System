@@ -9,6 +9,7 @@ import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -72,4 +73,7 @@ public class Order extends Timestamped {
         this.canceledReason = reason;
         this.status = OrderStatusEnum.CANCELED;
     }
+
+    public boolean isOwnedBy(Long currentUserId) { return Objects.equals(this.user.getUserId(), currentUserId); }
+    public boolean isDone() { return this.status == OrderStatusEnum.DONE; }
 }

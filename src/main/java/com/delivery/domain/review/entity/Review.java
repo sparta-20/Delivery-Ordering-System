@@ -4,12 +4,14 @@ import com.delivery.domain.order.entity.Order;
 import com.delivery.domain.store.entity.Store;
 import com.delivery.domain.user.entity.User;
 import com.delivery.global.common.entity.Timestamped;
+import com.delivery.global.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -55,13 +57,14 @@ public class Review extends Timestamped {
         this.content = content;
     }
 
-    /**
-     * 리뷰 수정
-     * @param rating 평점 (1~5)
-     * @param content 리뷰 내용
-     */
+    // 리뷰 수정
     public void update(int rating, String content) {
         this.rating = rating;
         this.content = content;
+    }
+
+    // 리뷰 소유주인지
+    public boolean isOwnedBy(Long currentUserId) {
+        return Objects.equals(this.user.getUserId(), currentUserId);
     }
 }

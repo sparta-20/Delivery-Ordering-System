@@ -184,9 +184,9 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public Store getStoreByOwnerId(Long ownerId) {
-        return storeRepository.findByOwnerUserIdAndDeletedAtIsNull(ownerId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.STORE_NOT_FOUND));
+    public void validateStoreOwnership(Long ownerId, UUID storeId) {
+        boolean exists = storeRepository.existsByStoreIdAndOwnerUserIdAndDeletedAtIsNull(storeId, ownerId);
+        if (!exists) throw new BusinessException(ErrorCode.STORE_NOT_FOUND_OR_FORBIDDEN);
     }
 
     // categoryName을 categoryId에 매핑

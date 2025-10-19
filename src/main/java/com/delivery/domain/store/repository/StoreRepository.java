@@ -14,6 +14,5 @@ public interface StoreRepository extends JpaRepository<Store,UUID>, JpaSpecifica
 
     Optional<Store> findByStoreIdAndStatus(UUID storeId, StoreStatusEnum status);
     Page<Store> findAllByOwnerUserIdAndStatus(Long ownerUserId, StoreStatusEnum status, Pageable pageable);
-    // OWNER의 가게 조회 (리뷰 검색 시 사용)
-    Optional<Store> findByOwnerUserIdAndDeletedAtIsNull(Long userId);
+    boolean existsByStoreIdAndOwnerUserIdAndDeletedAtIsNull(UUID storeId, Long ownerId);
 }
