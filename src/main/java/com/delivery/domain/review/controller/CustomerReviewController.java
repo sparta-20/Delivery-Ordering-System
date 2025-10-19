@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@Tag(name = "Customer / Reviews", description = "고객용 리뷰 관리 API")
+@Tag(name = "Review", description = "리뷰 관리 API")
 @RestController
 @RequestMapping("/api/v1/reviews")
 @RequiredArgsConstructor
@@ -28,7 +28,7 @@ public class CustomerReviewController {
     private final ReviewService reviewService;
 
     @Operation(
-            summary = "리뷰 작성",
+            summary = "리뷰 작성 (고객용)",
             description = """
             주문 완료(배송 완료)된 주문에 대해 리뷰를 작성합니다.
             
@@ -49,7 +49,7 @@ public class CustomerReviewController {
     }
 
     @Operation(
-            summary = "내 리뷰 단건 조회",
+            summary = "내 리뷰 단건 조회 (고객용)",
             description = """
             작성한 리뷰의 상세 정보를 조회합니다.
             
@@ -73,7 +73,7 @@ public class CustomerReviewController {
     }
 
     @Operation(
-            summary = "내 리뷰 목록 조회",
+            summary = "내 리뷰 목록 조회 (고객용)",
             description = """
             본인이 작성한 모든 리뷰 목록을 조회합니다.
             
@@ -102,7 +102,7 @@ public class CustomerReviewController {
     }
 
     @Operation(
-            summary = "리뷰 수정",
+            summary = "리뷰 수정 (고객용)",
             description = """
             작성한 리뷰의 평점과 내용을 수정합니다.
             
@@ -126,7 +126,7 @@ public class CustomerReviewController {
     }
 
     @Operation(
-            summary = "리뷰 삭제",
+            summary = "리뷰 삭제 (고객용)",
             description = """
             작성한 리뷰를 삭제합니다. (Soft Delete)
             

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@Tag(name = "Admin / Reviews", description = "관리자용 리뷰 관리 API")
+@Tag(name = "Review", description = "리뷰 관리 API")
 @RestController
 @RequestMapping("/api/v1/admin/reviews")
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ public class AdminReviewController {
     private final ReviewService reviewService;
 
     @Operation(
-            summary = "전체 리뷰 목록 조회",
+            summary = "전체 리뷰 목록 조회 (관리자용)",
             description = """
             관리자 권한으로 모든 리뷰 목록을 조회합니다.
                                     
@@ -59,7 +59,7 @@ public class AdminReviewController {
     }
 
     @Operation(
-            summary = "리뷰 상세 조회",
+            summary = "리뷰 상세 조회 (관리자용)",
             description = """
             특정 리뷰의 상세 정보를 조회합니다.
             
@@ -85,7 +85,7 @@ public class AdminReviewController {
     }
 
     @Operation(
-            summary = "리뷰 삭제 (관리자 권한)",
+            summary = "리뷰 삭제 (관리자용)",
             description = """
             부적절한 리뷰를 관리자 권한으로 삭제합니다. (Soft Delete)
             
@@ -110,7 +110,7 @@ public class AdminReviewController {
     }
 
     @Operation(
-            summary = "삭제된 리뷰 복구 (관리자 권한)",
+            summary = "삭제된 리뷰 복구 (관리자용)",
             description = """
             삭제된 리뷰를 복구합니다. (Soft Delete 복구)
             
