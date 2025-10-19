@@ -21,13 +21,6 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Make application.yml
-        run: |
-          cd ./src/main/resources
-          rm -f application.yml
-          touch ./application.yml
-          echo "${{ secrets.APPLICATION }}" > ./application.yml
-
       - name: Make executable gradlew
         run: chmod +x ./gradlew
 
