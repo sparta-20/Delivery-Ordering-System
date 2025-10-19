@@ -47,5 +47,5 @@ jobs:
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker pull ${{ secrets.DOCKER_USERNAME }}/delivery:latest
             docker-compose down
-            docker-compose up
+            docker-compose up -d --env-file /home/ubuntu/.env
             docker image prune -f
