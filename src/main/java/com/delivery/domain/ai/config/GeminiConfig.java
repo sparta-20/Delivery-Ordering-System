@@ -52,7 +52,6 @@ public class GeminiConfig {
         GenerateContentConfig config = configCache.get(requestType);
 
         if (config == null) {
-            log.error("[Gemini] 지원하지 않는 RequestType 요청: {}", requestType);
             throw new BusinessException(ErrorCode.AI_UNSUPPORTED_REQUEST_TYPE);
         }
 
