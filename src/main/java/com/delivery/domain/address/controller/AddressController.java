@@ -6,6 +6,7 @@ import com.delivery.domain.address.dto.UpdateAddressReq;
 import com.delivery.domain.address.service.AddressService;
 import com.delivery.global.common.ApiRes;
 import com.delivery.global.security.service.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/addresses")
 @RequiredArgsConstructor
+@Tag(name = "Address", description = "주소 API")
 public class AddressController {
 
     private final AddressService addressService;

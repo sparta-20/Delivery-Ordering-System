@@ -4,6 +4,7 @@ import com.delivery.domain.auth.dto.SignUpReq;
 import com.delivery.domain.auth.service.AuthServiceImpl;
 import com.delivery.global.common.ApiRes;
 import com.delivery.global.jwt.JwtUtil;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Tag(name = "Auth", description = "Auth API")
 public class AuthController {
 
     private final AuthServiceImpl authService;

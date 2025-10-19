@@ -22,8 +22,12 @@ import com.delivery.domain.user.entity.UserRoleEnum;
 import com.delivery.domain.user.repository.UserRepository;
 import com.delivery.global.exception.BusinessException;
 import com.delivery.global.exception.ErrorCode;
+import com.delivery.global.util.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,19 +49,23 @@ public class OrderServiceImpl implements OrderService {
     private final AddressService addressService;
 
     @Override
-    public List<OrderRes.OrderListDto> getOrderList(Long userId) {
-        List<Order> orders = orderRepository.findByUser_UserIdAndDeletedAtIsNull(userId);
-        return orders.stream()
-                .map(OrderRes.OrderListDto::from)
-                .toList();
+    public Page<OrderRes.OrderListDto> getOrderList(Long userId,
+                                                          int page,
+                                                          int size,
+                                                          Sort.Direction direction) {
+        Pageable pageable = PageableUtils.createPageableWithCreatedAt(page, size, direction);
+        Page<Order> orders = orderRepository.findByUser_UserIdAndDeletedAtIsNull(userId, pageable);
+        return orders.map(OrderRes.OrderListDto::from);
     }
 
     @Override
-    public List<OrderRes.OrderListDto> getOrdersByOwner(Long ownerUserId) {
-        List<Order> orders = orderRepository.findByStore_Owner_UserId(ownerUserId);
-        return orders.stream()
-                .map(OrderRes.OrderListDto::from)
-                .toList();
+    public Page<OrderRes.OrderListDto> getOrdersByOwner(Long ownerUserId,
+                                                        int page,
+                                                        int size,
+                                                        Sort.Direction direction) {
+        Pageable pageable = PageableUtils.createPageableWithCreatedAt(page, size, direction);
+        Page<Order> orders = orderRepository.findByStore_Owner_UserId(ownerUserId, pageable);
+        return orders.map(OrderRes.OrderListDto::from);
     }
 
     @Override
@@ -70,6 +78,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
+    public void changeStatusByAdmin(Long userId, UUID orderId, OrderReq.ChangeOrderStatusDto dto) {
+        Order order = findOrderByOrderId(orderId);
+        order.changeStatus(dto.getStatus());
+    }
+
+    @Override
+    @Transactional
     public void rejectOrder(Long userId, UUID orderId, OrderReq.RejectOrderDto dto) {
         Order order = findOrderByOrderId(orderId);
         if (order.getStore().getOwner().getUserId().equals(userId)) order.rejectOrder(dto.getReason());
@@ -77,11 +92,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderRes.AllOrderListDto> getAllList() {
-        List<Order> orders = orderRepository.findAll();
-        return orders.stream()
-                .map(OrderRes.AllOrderListDto::from)
-                .toList();
+    @Transactional
+    public void rejectOrderByAdmin(Long userId, UUID orderId, OrderReq.RejectOrderDto dto) {
+        Order order = findOrderByOrderId(orderId);
+        order.rejectOrder(dto.getReason());
+    }
+
+    @Override
+    public Page<OrderRes.AllOrderListDto> getAllList(int page, int size, Sort.Direction direction) {
+        Pageable pageable = PageableUtils.createPageableWithCreatedAt(page, size, direction);
+        Page<Order> orders = orderRepository.findAll(pageable);
+        return orders.map(OrderRes.AllOrderListDto::from);
     }
 
     @Override
@@ -102,6 +123,14 @@ public class OrderServiceImpl implements OrderService {
                 throw new BusinessException(ErrorCode.FORBIDDEN);
             }
         }
+        return OrderRes.OrderDetailDto.from(order);
+    }
+
+    @Override
+    public OrderRes.OrderDetailDto getAdminOrderDetail(Long userId, UUID orderId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        Order order = findOrderByOrderId(orderId);
         return OrderRes.OrderDetailDto.from(order);
     }
 
@@ -156,7 +185,7 @@ public class OrderServiceImpl implements OrderService {
             order.getOrderMenus().add(orderMenu);
         }
 
-        cart.changeStatus(CartStatusEnum.CART_CANCEL);
+        cart.changeStatus(CartStatusEnum.ORDERED);
 
         return OrderRes.OrderDetailDto.from(order);
     }

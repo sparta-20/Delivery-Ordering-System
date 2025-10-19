@@ -7,6 +7,7 @@ import com.delivery.domain.menu.service.MenuService;
 import com.delivery.domain.user.entity.User;
 import com.delivery.global.common.ApiRes;
 import com.delivery.global.security.service.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/menus")
+@Tag(name = "Menu", description = "메뉴 API")
 public class MenuController {
 
     private final MenuService menuService;
